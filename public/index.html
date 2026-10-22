@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en" data-source-lang="en" data-source-lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>War of Lords - Dashboard</title>
+    <!-- 2026-10-02: this page was missing page-scale.js (every other page - pokoje/profile/ranking/
+         login/etc. - already has it), which is what makes the mobile browser view look IDENTICAL
+         to desktop (uniformly scaled down to fit, not reflowed into a different layout) - the
+         .nav-menu's absolute pixel positions below assume this same fixed 1998px design canvas.
+         Hidden until page-scale.js computes and applies the real scale on load, same as every page
+         that already has it - avoids a flash of the unscaled layout first. -->
+    <style>body{visibility:hidden;}</style>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+
+        .nav-menu {
+            background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat;
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            /* 2026-10-02, explicit request: tightened from 40px so "War of Lords" sits right under
+               the nav bar and the rest of the dashboard moves up into better view. */
+            margin-bottom: 10px;
+        }
+
+        .nav-menu a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #e8c766;
+        }
+
+        /* Baked-in default nav link layout, adopted site-wide from a player-arranged position
+           (see layout-editor.js) so every visitor sees the same arrangement by default. */
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { display: none !important; position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #adminPanelLink { position: absolute; left: 234.44px; top: 41.22px; width: 295.89px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .welcome-banner {
+            text-align: center;
+            /* 2026-10-02, explicit request: tightened from 30px, same "move everything up" goal
+               as .nav-menu's margin-bottom above. */
+            margin-bottom: 15px;
+            text-shadow: 0px 4px 8px rgba(0, 0, 0, 0.8);
+        }
+
+        .welcome-banner h1 {
+            color: #e8c766;
+            font-size: 36px;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .welcome-banner h1 .dash-welcome-nick {
+            text-transform: none;
+        }
+
+        .welcome-banner p {
+            color: #cbd5e1;
+            font-size: 16px;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .main-info-bar {
+            background: url('/pasek.png') center / 100% 100% no-repeat;
+            border-radius: 0;
+            padding: 15px 25px 55px;
+            margin-bottom: 40px;
+            max-width: 1000px;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-around;
+            /* 2026-10-02, explicit request: widen the gap between Kryptonim/Stan Funduszy/Ranga
+               Wojenna to roughly double what space-around alone was giving them. Additive on top
+               of space-around (not a replacement), so the existing per-item left:+-90px nudges
+               (tuned to line up with the /pasek.png banner artwork) still land in the same place. */
+            gap: 40px;
+            align-items: center;
+            text-align: center;
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1);
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            color: #94a3b8;
+            font-size: 13px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1000px;
+            width: 100%;
+            padding: 0 20px;
+            box-sizing: border-box;
+            margin-bottom: 40px;
+        }
+
+        .dash-card {
+            background: url('/ramka.png') center / 100% 100% no-repeat;
+            border-radius: 0;
+            padding: 30px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 280px;
+            transition: transform 0.2s, border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        .dash-card:hover {
+            transform: translateY(-5px);
+            border-color: #d4af37;
+        }
+
+        .dash-icon {
+            font-size: 45px;
+            margin-bottom: 15px;
+        }
+
+        .dash-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e8c766;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .dash-desc {
+            color: #cbd5e1;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        .btn-dash {
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%;
+            background-color: transparent;
+            color: #e8c766;
+            border: none;
+            padding: 12px 25px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 0;
+            cursor: pointer;
+            transition: color 0.2s;
+            width: 90%;
+            text-transform: uppercase;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-dash.disabled {
+            filter: grayscale(0.8);
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .btn-dash:hover {
+            color: #f0d78c;
+        }
+
+        .dash-ticket-info {
+            color: #fbbf24;
+            font-size: 11px;
+            font-weight: bold;
+            margin: -12px 0 10px;
+            line-height: 1.2;
+        }
+
+        .session-warning-banner {
+            margin: 0 auto 20px auto;
+            padding: 18px 22px;
+            background: rgba(248, 113, 113, 0.17);
+            border: 1px solid #f87171;
+            border-radius: 14px;
+            color: #f8fafc;
+            text-align: center;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+            max-width: 1000px;
+        }
+
+        .session-warning-text {
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+        }
+
+        .session-warning-btn {
+            background-color: #22c55e;
+            border: none;
+            color: #052e16;
+            padding: 10px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .session-warning-btn:hover {
+            background-color: #16a34a;
+        }
+
+        .session-leave-btn {
+            background-color: #ef4444;
+            border: none;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .session-leave-btn:hover {
+            background-color: #dc2626;
+        }
+
+        .news-box {
+            background: url('/ramka.png') center / 100% 100% no-repeat;
+            border-radius: 0;
+            padding: 25px;
+            max-width: 1000px;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0 20px;
+        }
+
+        .news-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #34d399;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .news-log {
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #cbd5e1;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .news-log:last-child {
+            margin-bottom: 0;
+        }
+
+        .log-time {
+            color: #a855f7;
+            font-weight: bold;
+        }
+
+        .bottom-panels-row {
+            display: flex;
+            gap: 20px;
+            max-width: 1000px;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0 20px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .bottom-panels-row .news-box {
+            flex: 1 1 400px;
+            margin: 0;
+            max-width: none;
+        }
+
+        .chat-messages {
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            height: 180px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .chat-row {
+            padding: 3px 0;
+            word-break: break-word;
+        }
+
+        .chat-time {
+            color: #64748b;
+            margin-right: 4px;
+        }
+
+        .chat-user {
+            color: #e8c766;
+            font-weight: bold;
+            margin-right: 4px;
+        }
+
+        .chat-user.is-admin {
+            color: #f59e0b;
+        }
+
+        .chat-text {
+            color: #e2e8f0;
+        }
+
+        .chat-form {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-form input {
+            flex: 1;
+            background: transparent;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 6px;
+            padding: 8px 10px;
+            color: #f8fafc;
+            box-sizing: border-box;
+        }
+
+        .chat-form button {
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%;
+            background-color: transparent;
+            border: none;
+            color: #e8c766;
+            font-weight: bold;
+            border-radius: 0;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        .chat-form button:hover {
+            color: #f0d78c;
+        }
+
+        .chat-login-hint {
+            color: #94a3b8;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        /* 2026-10-02: the @media (max-width: 1000px) block that used to live here (reflowing
+           .dashboard-grid to a single column and .main-info-bar to a vertical stack) is REMOVED
+           entirely, per explicit request that the mobile browser view look IDENTICAL to desktop
+           (three dash-cards in a row, same as the info bar), not a different reflowed layout.
+           index.html now has page-scale.js (added earlier today), which uniformly scales the whole
+           page down to fit instead — the same mechanism every other page on this site already
+           uses — so there is no longer any reflow breakpoint needed for this page at all. */
+
+        .blocked-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 10, 24, 0.92);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .blocked-card {
+            background: linear-gradient(180deg, #17233d, #0f1729);
+            border: 1px solid rgba(212, 175, 55, 0.45);
+            border-radius: 14px;
+            max-width: 560px;
+            width: 100%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            padding: 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        }
+        .blocked-card h2 {
+            color: #ef4444;
+            margin: 0 0 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 22px;
+        }
+        .blocked-card .blocked-subtext {
+            color: #94a3b8;
+            font-size: 14px;
+            margin: 0 0 16px;
+        }
+        .blocked-reason {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            border-radius: 8px;
+            padding: 14px;
+            color: #fca5a5;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .blocked-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 260px;
+            min-height: 60px;
+        }
+        .blocked-message {
+            padding: 9px 13px;
+            border-radius: 10px;
+            max-width: 85%;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .blocked-message.player {
+            align-self: flex-end;
+            background: rgba(212, 175, 55, 0.18);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+        }
+        .blocked-message.admin {
+            align-self: flex-start;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.35);
+        }
+        .blocked-message .meta {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+        .blocked-empty {
+            color: #64748b;
+            font-size: 13px;
+            text-align: center;
+            margin: auto;
+        }
+        .blocked-form {
+            display: flex;
+            gap: 10px;
+        }
+        .blocked-form textarea {
+            flex: 1;
+            resize: vertical;
+            min-height: 56px;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+        .blocked-form button {
+            align-self: flex-end;
+            background: #d4af37;
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .blocked-form button:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+        .blocked-logout {
+            text-align: center;
+            margin-top: 14px;
+        }
+        .blocked-logout a {
+            color: #64748b;
+            font-size: 13px;
+            text-decoration: underline;
+        }
+        #rulesAcceptedBtn:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/texts/index.js"></script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+    <div class="blocked-overlay" id="blockedOverlay">
+        <div class="blocked-card">
+            <h2>Account blocked</h2>
+            <p class="blocked-subtext">You cannot play at the moment. Below you will find the reason for the block and your conversation with the administrators.</p>
+            <div class="blocked-reason" id="blockedReasonText"></div>
+            <div class="blocked-messages" id="blockedMessages"></div>
+            <div class="blocked-form">
+                <textarea id="blockedMessageInput" placeholder="Write a message to the administrators..."></textarea>
+                <button type="button" id="blockedSendBtn" onclick="sendBlockedMessage()">Send</button>
+            </div>
+            <div class="blocked-logout">
+                <a href="#" onclick="blockedLogout(); return false;">Log out</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="blocked-overlay" id="rulesGateOverlay">
+        <div class="blocked-card" style="max-width: 480px;">
+            <h2 style="color:#e8c766;">Before you start</h2>
+            <p class="blocked-subtext">Please read the game rules before you start playing.</p>
+            <p style="margin: 0 0 20px; font-size: 14px; color:#cbd5e1;">Read the <a href="/zasady.html" target="_blank" style="color:#e8c766;">game rules and mechanics</a>, then confirm below.</p>
+            <label style="display:flex; align-items:flex-start; gap:10px; margin-bottom:20px; font-size:14px; cursor:pointer;">
+                <input type="checkbox" id="rulesAcceptedCheckbox" style="margin-top:3px;" />
+                <span>I have read and understood the game rules.</span>
+            </label>
+            <button type="button" id="rulesAcceptedBtn" disabled onclick="acceptRules()" style="width:100%; padding:12px; background:#d4af37; color:#0f172a; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Done</button>
+        </div>
+    </div>
+
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html" class="active">Home</a>
+        <a id="navRooms" href="pokoje.html">Battle Rooms</a>
+        <a id="navTournaments" href="turnieje.html">Tournaments</a>
+        <a id="navRanking" href="ranking.html">Overall Ranking</a>
+        <a id="navProfile" href="profile.html">Profile</a>
+        <a id="navRules" href="zasady.html">Rules</a>
+    </div>
+
+    <div id="adminPanelLink" style="display:none;">
+        <a href="admin.html" style="display:inline-block; background:#f59e0b; color:#111827; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;" data-i18n="home.adminPanel">👑 ADMIN PANEL</a>
+    </div>
+
+    <div id="activeGameBanner" class="session-warning-banner" style="display:none;">
+        <div class="session-warning-text">⚠️ You have a game in progress! <button class="session-warning-btn" id="resumeBattleBtn" data-i18n="home.resumeBattle">Return to battle</button><button class="session-leave-btn" id="leaveActiveGameBtn">Leave the game</button></div>
+    </div>
+
+    <div id="freeTrialBanner" class="session-warning-banner" style="display:none; background: rgba(52, 211, 153, 0.14); border-color:#34d399;">
+        <div class="session-warning-text">🎓 New commander! Try the game for free against bots before you play for real. <button class="session-warning-btn" id="startFreeTrialBtn" onclick="startFreeTrial()">First free game</button></div>
+    </div>
+
+    <div class="welcome-banner">
+        <h1 id="dash-welcome">War of Lords</h1>
+    </div>
+
+    <div class="main-info-bar">
+        <div class="info-item" style="position: relative; top: 10px; left: 90px;">
+            <span class="info-label">Codename</span>
+            <span class="info-value" id="dash-nick" style="color: #e8c766;">---</span>
+        </div>
+        <div class="info-item" style="border-left: 1px solid rgba(212, 175, 55, 0.3); border-right: 1px solid rgba(212, 175, 55, 0.3); padding: 0 40px; position: relative; top: 10px;">
+            <span class="info-label">Prizes to claim</span>
+            <span class="info-value" id="dash-punkty" style="color: #34d399;">0 DOGE</span>
+            <span id="dash-won" style="display:block;font-size:12px;color:#94a3b8;margin-top:2px;">Total won: 0 DOGE</span>
+        </div>
+        <div class="info-item" style="position: relative; top: 10px; left: -90px;">
+            <span class="info-label">War Rank</span>
+            <span class="info-value" id="dash-mmr" style="color: #fbbf24;">1200 MMR</span>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="dash-card">
+            <div class="dash-icon">🏅</div>
+            <div class="dash-title">Mini-Tournaments</div>
+            <div class="dash-desc">Short rounds with DOGE prizes for 1st, 2nd and 3rd place. Pick a room, join with your wallet and play.</div>
+            <div class="dash-ticket-info" id="dashMiniTournamentTickets"></div>
+            <a href="/mini-tournaments" class="btn-dash" id="btnDashMiniTournaments">See Mini-Tournaments</a>
+        </div>
+
+        <div class="dash-card">
+            <div class="dash-icon">🎯</div>
+            <div class="dash-title">Live Bets</div>
+            <div class="dash-desc">Do not want to play? Bet 20 DOGE on who wins a running game and win with the right pick.</div>
+            <a href="live.html" class="btn-dash">See live games</a>
+        </div>
+
+        <div class="dash-card">
+            <div class="dash-icon">🏆</div>
+            <div class="dash-title">Hall of Fame</div>
+            <div class="dash-desc">See the overall player ranking based on Skill Points (MMR).</div>
+            <a href="ranking.html" class="btn-dash" data-i18n="home.seeRanking">See ranking</a>
+        </div>
+    </div>
+
+    <div class="bottom-panels-row">
+        <div class="news-box">
+            <div class="news-title">📜 How to play</div>
+            <div class="news-log">
+                <span>Press <b>Connect wallet</b> at the top and sign in with X. Your DogeOS wallet is your account.</span>
+                <span class="log-time">[1]</span>
+            </div>
+            <div class="news-log">
+                <span>Open <b>Mini-Tournaments</b>, pick a room and press <b>Join</b>. The entry is paid in DOGE straight from your wallet.</span>
+                <span class="log-time">[2]</span>
+            </div>
+            <div class="news-log">
+                <span>Play the round. The top 3 players win DOGE prizes. Prefer to watch? Bet on the winner in <b>Live Bets</b>.</span>
+                <span class="log-time">[3]</span>
+            </div>
+            <div class="news-log">
+                <span>Press the gold <b>Claim</b> button in the top right corner to get your prize into your wallet.</span>
+                <span class="log-time">[4]</span>
+            </div>
+            <div class="news-log">
+                <span>This is the DogeOS testnet: the DOGE here are test coins with no real value.</span>
+                <span class="log-time">[TESTNET]</span>
+            </div>
+        </div>
+
+        <div class="news-box" id="playerChatBox">
+            <div class="news-title">💬 Player Chat</div>
+            <div id="globalChatMessages" class="chat-messages"></div>
+            <form id="globalChatForm" class="chat-form">
+                <input type="text" id="globalChatInput" maxlength="300" placeholder="Write a message..." autocomplete="off" />
+                <button type="submit">Send</button>
+            </form>
+            <p class="chat-login-hint" id="chatLoginHint" style="display:none;">Log in to write in the chat.</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="./fingerprint.js"></script>
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+
+        function authHeaders() {
+            return { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+        }
+
+        async function loadMainProfile() {
+            if (!token) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/me', { headers: authHeaders() });
+                if (!response.ok) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('token');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                const data = await response.json();
+                const user = data.user || {};
+                const nick = user.username || 'Commander';
+                document.getElementById('dash-nick').innerText = nick;
+                // Wygrane: do odebrania z kontraktu + lacznie wygrane (a gdy gracz nie mial portfela - saldo w grze).
+                const fmtDoge = (v) => Number(v || 0).toLocaleString('en-US', { maximumFractionDigits: 2 });
+                document.getElementById('dash-punkty').innerText = `${fmtDoge(user.dogeBalance)} DOGE`;
+                fetch('/api/chain/me', { headers: authHeaders() }).then((r) => (r.ok ? r.json() : null)).then((c) => {
+                    if (!c) return;
+                    const toClaim = Number(c.claimable || 0) + Number(user.dogeBalance || 0);
+                    const el = document.getElementById('dash-punkty');
+                    el.innerText = `${fmtDoge(toClaim)} DOGE`;
+                    el.style.color = toClaim > 0 ? '#e8c766' : '#34d399';
+                    document.getElementById('dash-won').innerText = `Total won: ${fmtDoge(c.totalWon)} DOGE`;
+                }).catch(() => {});
+                document.getElementById('dash-mmr').innerText = `${user.skillPoints || 1200} MMR`;
+
+                if (user.isAdmin || user.username === 'Dariano') {
+                    document.getElementById('adminPanelLink').style.display = 'block';
+                }
+
+                showFreeTrialBannerIfEligible(user);
+            } catch (err) {
+                console.error('Błąd profilu:', err);
+                localStorage.removeItem('authToken');
+            }
+        }
+
+        window.addEventListener('wol:claimed', () => loadMainProfile());
+
+        function showFreeTrialBannerIfEligible(user) {
+            const banner = document.getElementById('freeTrialBanner');
+            if (!banner) return;
+            banner.style.display = (user && !user.freeTrialUsed) ? 'block' : 'none';
+        }
+
+        async function startFreeTrial() {
+            const btn = document.getElementById('startFreeTrialBtn');
+            btn.disabled = true;
+            btn.textContent = 'Starting...';
+            try {
+                const response = await fetch('/api/trial/start', { method: 'POST', headers: authHeaders() });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    alert(data.error || 'Could not start the trial game.');
+                    btn.disabled = false;
+                    btn.textContent = 'First free game';
+                    return;
+                }
+                window.location.href = `/game.html?roundId=${data.roundId}`;
+            } catch (err) {
+                console.error('Błąd rozpoczynania rozgrywki próbnej:', err);
+                btn.disabled = false;
+                btn.textContent = 'First free game';
+            }
+        }
+
+        function clearActiveGameBanner() {
+            const banner = document.getElementById('activeGameBanner');
+            if (banner) {
+                banner.style.display = 'none';
+            }
+            localStorage.removeItem('warlord-active-round-id');
+        }
+
+        // "Trwająca rozgrywka" only ever means an actual active Round — sitting in a Room's waiting
+        // queue is not a game in progress, so there's no queue-resume case here anymore (see
+        // GET /api/game/state on the server, which now only ever reports an active Round).
+        async function leaveActiveGame(roundId) {
+            if (!roundId) return;
+            const leaveBtn = document.getElementById('leaveActiveGameBtn');
+            if (leaveBtn) leaveBtn.disabled = true;
+            try {
+                const response = await fetch(`/api/rounds/${roundId}/forfeit`, {
+                    method: 'POST',
+                    headers: authHeaders()
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    console.error('Błąd opuszczania rozgrywki:', data.error);
+                    if (leaveBtn) leaveBtn.disabled = false;
+                    return;
+                }
+                clearActiveGameBanner();
+            } catch (err) {
+                console.error('Błąd opuszczania rozgrywki:', err);
+                if (leaveBtn) leaveBtn.disabled = false;
+            }
+        }
+
+        function showResumeButton(roundId) {
+            if (!roundId) return;
+            const banner = document.getElementById('activeGameBanner');
+            const button = document.getElementById('resumeBattleBtn');
+            const leaveBtn = document.getElementById('leaveActiveGameBtn');
+            const goToGame = () => {
+                window.location.href = `/game.html?roundId=${roundId}`;
+            };
+            banner.style.display = 'block';
+            button.onclick = goToGame;
+            if (leaveBtn) {
+                leaveBtn.disabled = false;
+                leaveBtn.onclick = () => leaveActiveGame(roundId);
+            }
+            const trialBanner = document.getElementById('freeTrialBanner');
+            if (trialBanner) trialBanner.style.display = 'none';
+        }
+
+        async function checkActiveGame() {
+            if (!token) {
+                clearActiveGameBanner();
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/game/state', { headers: authHeaders() });
+                if (!response.ok) {
+                    clearActiveGameBanner();
+                    return;
+                }
+                const data = await response.json();
+                if (!data?.state || data.state.status === 'finished') {
+                    clearActiveGameBanner();
+                    return;
+                }
+                const roundId = data?.state?.roundId;
+                if (roundId) {
+                    showResumeButton(roundId);
+                } else {
+                    clearActiveGameBanner();
+                }
+            } catch (err) {
+                console.error('Błąd sprawdzania aktywnej gry:', err);
+                clearActiveGameBanner();
+            }
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str == null ? '' : String(str);
+            return div.innerHTML;
+        }
+
+        function renderBlockedMessages(messages) {
+            const container = document.getElementById('blockedMessages');
+            if (!messages || !messages.length) {
+                container.innerHTML = '<div class="blocked-empty">No messages — write to the administrators below.</div>';
+                return;
+            }
+            container.innerHTML = messages.map((m) => `
+                <div class="blocked-message ${m.sender === 'admin' ? 'admin' : 'player'}">
+                    <div>${escapeHtml(m.text)}</div>
+                    <div class="meta">${m.sender === 'admin' ? 'Administracja' : 'Ty'} · ${new Date(m.at).toLocaleString('pl-PL')}</div>
+                </div>
+            `).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        let blockedPollInterval = null;
+
+        function showBlockedOverlay(data) {
+            document.getElementById('blockedReasonText').textContent = data.blockReason || 'Your account has been blocked by the administrators.';
+            renderBlockedMessages(data.messages);
+            document.getElementById('blockedOverlay').style.display = 'flex';
+            if (!blockedPollInterval) {
+                blockedPollInterval = setInterval(async () => {
+                    try {
+                        const response = await fetch('/api/me/block-status', { headers: authHeaders() });
+                        if (!response.ok) return;
+                        const fresh = await response.json();
+                        if (!fresh.isBlocked) {
+                            window.location.reload();
+                            return;
+                        }
+                        renderBlockedMessages(fresh.messages);
+                    } catch (err) {
+                        console.error('Błąd odświeżania konwersacji:', err);
+                    }
+                }, 8000);
+            }
+        }
+
+        async function sendBlockedMessage() {
+            const textarea = document.getElementById('blockedMessageInput');
+            const text = textarea.value.trim();
+            if (!text) return;
+            const sendBtn = document.getElementById('blockedSendBtn');
+            sendBtn.disabled = true;
+            try {
+                const response = await fetch('/api/me/block-status/message', {
+                    method: 'POST', headers: authHeaders(), body: JSON.stringify({ text })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    textarea.value = '';
+                    renderBlockedMessages(data.messages);
+                }
+            } catch (err) {
+                console.error('Błąd wysyłania wiadomości:', err);
+            } finally {
+                sendBtn.disabled = false;
+            }
+        }
+
+        function blockedLogout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            window.location.href = '/login.html';
+        }
+
+        // Checked BEFORE anything else on the page — a blocked account must never bounce through
+        // the normal /api/me 403->clear-token->login.html path, it should stay logged in and see the
+        // reason + conversation instead.
+        async function checkBlockStatus() {
+            if (!token) return false;
+            try {
+                const response = await fetch('/api/me/block-status', { headers: authHeaders() });
+                if (!response.ok) return false;
+                const data = await response.json();
+                if (data.isBlocked) {
+                    showBlockedOverlay(data);
+                    return true;
+                }
+                return false;
+            } catch (err) {
+                console.error('Błąd sprawdzania statusu blokady:', err);
+                return false;
+            }
+        }
+
+        // Gate shown once per account, before anything else on the page — see hasAcceptedRules on
+        // the User model and POST /api/me/accept-rules. Never re-shown once accepted.
+        async function checkRulesAccepted() {
+            if (!token) return false;
+            try {
+                const response = await fetch('/api/me', { headers: authHeaders() });
+                if (!response.ok) return false;
+                const data = await response.json();
+                if (data.user && !data.user.hasAcceptedRules) {
+                    document.getElementById('rulesGateOverlay').style.display = 'flex';
+                    return true;
+                }
+                return false;
+            } catch (err) {
+                console.error('Błąd sprawdzania akceptacji zasad:', err);
+                return false;
+            }
+        }
+
+        async function acceptRules() {
+            const btn = document.getElementById('rulesAcceptedBtn');
+            btn.disabled = true;
+            try {
+                const response = await fetch('/api/me/accept-rules', { method: 'POST', headers: authHeaders() });
+                if (!response.ok) throw new Error('accept-rules failed');
+                document.getElementById('rulesGateOverlay').style.display = 'none';
+                loadMainProfile();
+                checkActiveGame();
+            } catch (err) {
+                console.error('Błąd akceptacji zasad:', err);
+                btn.disabled = false;
+            }
+        }
+
+        document.getElementById('rulesAcceptedCheckbox').addEventListener('change', (e) => {
+            document.getElementById('rulesAcceptedBtn').disabled = !e.target.checked;
+        });
+
+        function appendChatMessage(msg) {
+            const box = document.getElementById('globalChatMessages');
+            if (!box || !msg) return;
+            const row = document.createElement('div');
+            row.className = 'chat-row';
+            const time = new Date(msg.at || Date.now()).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+            const timeSpan = document.createElement('span');
+            timeSpan.className = 'chat-time';
+            timeSpan.textContent = time;
+            const userSpan = document.createElement('span');
+            userSpan.className = `chat-user${msg.isAdmin ? ' is-admin' : ''}`;
+            userSpan.textContent = `${msg.username || '?'}:`;
+            const textSpan = document.createElement('span');
+            textSpan.className = 'chat-text';
+            textSpan.textContent = msg.text || '';
+            row.appendChild(timeSpan);
+            row.appendChild(userSpan);
+            row.appendChild(textSpan);
+            box.appendChild(row);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // Global player chat, live via Socket.io — not gated behind a specific room/lobby, just a
+        // valid login (see globalChat:send/globalChat:message in src/server.js).
+        function initGlobalChat() {
+            const form = document.getElementById('globalChatForm');
+            const input = document.getElementById('globalChatInput');
+            const hint = document.getElementById('chatLoginHint');
+            if (!token) {
+                if (form) form.style.display = 'none';
+                if (hint) hint.style.display = 'block';
+                return;
+            }
+            const deviceId = window.WLBFingerprint ? window.WLBFingerprint.getDeviceId() : null;
+            const chatSocket = io(window.location.origin, { auth: { token, deviceId } });
+            chatSocket.on('globalChat:history', (history) => {
+                const box = document.getElementById('globalChatMessages');
+                if (box) box.innerHTML = '';
+                (history || []).forEach(appendChatMessage);
+            });
+            chatSocket.on('globalChat:message', appendChatMessage);
+            if (form) {
+                form.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    const text = input.value.trim();
+                    if (!text) return;
+                    chatSocket.emit('globalChat:send', text);
+                    input.value = '';
+                });
+            }
+        }
+
+        async function initIndexPage() {
+            const blocked = await checkBlockStatus();
+            if (blocked) return;
+            const rulesPending = await checkRulesAccepted();
+            if (rulesPending) return;
+            loadMainProfile();
+            checkActiveGame();
+            initGlobalChat();
+        }
+        initIndexPage();
+    </script>
+    <script>
+        (function () {
+            fetch('/api/settings/tournament-tickets')
+                .then((r) => r.ok ? r.json() : null)
+                .then((data) => {
+                    if (!data) return;
+                    const dashEl = document.getElementById('dashTournamentTickets');
+                    const dashBtn = document.getElementById('btnDashTournaments');
+                    if (!data.exists) {
+                        // No tournament scheduled/recent at all — block the tile entirely.
+                        if (dashEl) dashEl.textContent = '🔒 No tournament scheduled right now';
+                        if (dashBtn) { dashBtn.classList.add('disabled'); dashBtn.removeAttribute('href'); }
+                        return;
+                    }
+                    if (dashEl) {
+                        dashEl.textContent = data.salesPausedByAdmin
+                            ? '⛔ Ticket sales paused'
+                            : `🎫 Tickets left: ${data.remaining ?? '—'} / ${data.total ?? '—'}`;
+                    }
+                })
+                .catch((err) => console.error('Błąd ładowania puli biletów turniejowych:', err));
+
+            fetch('/api/settings/mini-tournament-ticket-price')
+                .then((r) => r.ok ? r.json() : null)
+                .then((data) => {
+                    if (!data) return;
+                    const dashEl = document.getElementById('dashMiniTournamentTickets');
+                    if (dashEl) dashEl.textContent = '';
+                })
+                .catch((err) => console.error('Błąd ładowania puli biletów Mini-Turnieju:', err));
+
+            // "Ustalony Mini-Turniej" = przynajmniej jeden pokój Mini-Turniejowy aktualnie istnieje —
+            // brak jakiegokolwiek blokuje kafelek, tak samo jak brak zaplanowanej edycji dużego turnieju.
+            fetch('/api/rooms?miniTournament=1')
+                .then((r) => r.ok ? r.json() : [])
+                .then((rooms) => {
+                    if (Array.isArray(rooms) && rooms.length > 0) return;
+                    const dashEl = document.getElementById('dashMiniTournamentTickets');
+                    const dashBtn = document.getElementById('btnDashMiniTournaments');
+                    if (dashEl) dashEl.textContent = '🔒 No Mini-Tournaments available right now';
+                    if (dashBtn) { dashBtn.classList.add('disabled'); dashBtn.removeAttribute('href'); }
+                })
+                .catch((err) => console.error('Błąd sprawdzania dostępności Mini-Turniejów:', err));
+        })();
+    </script>
+    <script src="./site-footer.js"></script>
+    <script src="/page-scale.js"></script>
+    <script src="/wol-connect.js"></script>
+    <script>WolConnect.ensureUsername();</script>
+    <script src="/wol-guest.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+node_modules/
+.env
+.env.*
+!.env.example
+runtime/
+.tmp/
+*.log
+# Duze pliki binarne aplikacji mobilnej - kopie w E:\Backup_WarOfLords i na serwerze
+public/mobile-app/releases/
+*.apk
+# Stare kopie robocze
+backup_before_gold_theme/
+backup_pre_multiplayer_rewrite/
+backup_users_before_wipe_*.json
+
+# Zbudowany pakiet DogeOS Connect Kit (cd chain/connect-ui && npm install && npm run build)
+public/vendor/dogeos-connect.js
+public/vendor/dogeos-connect.css
+deploy/vps/.invite
+
+# secrets and local state (never commit)
+.env
+.env.*
+chain/.env.chain*
+chain/demo-fans.json
+runtime/
+node_modules/
+chain/artifacts/
+chain/cache/

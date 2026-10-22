@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>War of Lords - Live Bets</title>
+<style>
+  :root { --gold:#e8c766; --card:rgba(10,16,33,.92); --line:rgba(212,175,55,.35); --muted:#94a3b8; --good:#34d399; --bad:#f87171; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#0b1020 url('/assets/background.png') center/cover fixed; color:#f8fafc; font-family:'Segoe UI',system-ui,sans-serif; }
+  .banner { background:#7c2d12; color:#ffedd5; text-align:center; padding:8px 12px; font-size:14px; font-weight:600; letter-spacing:.03em; }
+  header { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; padding:18px 24px 6px; max-width:1000px; margin:0 auto; }
+  h1 { margin:0; color:var(--gold); text-transform:uppercase; letter-spacing:.05em; font-size:26px; text-shadow:0 3px 8px rgba(0,0,0,.8); }
+  h1 small { display:block; font-size:13px; color:var(--muted); letter-spacing:.02em; text-transform:none; margin-top:4px; }
+  h2 { color:var(--gold); margin:0 0 10px; font-size:17px; text-transform:uppercase; letter-spacing:.03em; }
+  a { color:#7dd3fc; } .back { color:var(--gold); text-decoration:none; font-weight:600; }
+  main { max-width:1000px; margin:0 auto; padding:10px 24px 70px; display:flex; flex-direction:column; gap:18px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px 22px; box-shadow:0 8px 24px rgba(0,0,0,.45); }
+  .muted { color:var(--muted); font-size:14px; line-height:1.5; }
+  .rules { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin-top:12px; }
+  .rule { background:rgba(15,23,42,.7); border:1px solid #1f2a44; border-radius:8px; padding:10px 12px; font-size:13.5px; color:#cbd5e1; }
+  .rule b { color:var(--gold); display:block; font-size:18px; }
+  .market h3 { margin:0 0 4px; font-size:18px; }
+  .tag { display:inline-block; padding:2px 9px; border-radius:99px; font-size:12px; font-weight:700; margin-left:8px; vertical-align:middle; }
+  .tag.open { background:#064e3b; color:#6ee7b7; } .tag.closed { background:#713f12; color:#fde68a; } .tag.resolved { background:#1e3a5f; color:#93c5fd; } .tag.cancelled { background:#3f3f46; color:#d4d4d8; }
+  .meta { color:var(--muted); font-size:13.5px; margin-bottom:8px; }
+  .player { display:flex; align-items:center; gap:12px; padding:9px 0; border-top:1px solid #1f2a44; flex-wrap:wrap; }
+  .player .name { flex:1 1 150px; font-weight:700; font-size:16px; }
+  .player .info { color:var(--muted); font-size:13px; min-width:150px; }
+  button { background:linear-gradient(#e8c766,#b8932f); color:#1a1405; border:0; border-radius:8px; padding:9px 16px; font-weight:800; cursor:pointer; font-size:14px; }
+  button.secondary { background:#1e293b; color:#e2e8f0; border:1px solid #334155; }
+  button:disabled { opacity:.4; cursor:not-allowed; }
+  .win { color:var(--good); font-weight:700; } .mine { color:var(--gold); font-weight:700; }
+  .result { margin-top:8px; padding:10px 12px; border-radius:8px; background:rgba(30,58,95,.35); font-size:13.5px; line-height:1.55; }
+  .status { margin-top:10px; padding:9px 12px; border-radius:6px; font-size:14px; display:none; }
+  .status.show { display:block; } .status.ok { background:#064e3b; } .status.err { background:#7f1d1d; }
+  input[type=text] { background:#0f172a; color:#f8fafc; border:1px solid #334155; border-radius:6px; padding:8px 10px; font-size:14px; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:8px 0; }
+  .hidden { display:none !important; }
+  #resultsOverlay { position:fixed; inset:0; z-index:99990; background:rgba(5,8,18,.88); display:none; align-items:center; justify-content:center; padding:16px; }
+  #resultsOverlay.show { display:flex; }
+  .resbox { background:#0f172a; border:1px solid rgba(212,175,55,.6); border-radius:14px; padding:26px 28px; max-width:520px; width:100%; max-height:92vh; overflow:auto; text-align:center; box-shadow:0 14px 46px rgba(0,0,0,.65); }
+  .resbox h2 { font-size:22px; margin-bottom:4px; }
+  .resbox .sub { color:var(--muted); font-size:14px; margin-bottom:14px; }
+  .resbox .winner { font-size:24px; font-weight:800; color:var(--gold); margin:6px 0 10px; }
+  .resbox .split { font-size:13.5px; color:#cbd5e1; line-height:1.6; margin-bottom:12px; }
+  .resbox table { width:100%; border-collapse:collapse; font-size:14px; margin:8px 0 14px; text-align:left; }
+  .resbox td, .resbox th { padding:6px 8px; border-bottom:1px solid #1f2a44; }
+  .resbox tr.mine td { background:rgba(232,199,102,.12); font-weight:700; }
+  .resbox .w { color:var(--good); font-weight:700; } .resbox .l { color:var(--bad); } .resbox .r { color:var(--muted); }
+  .resbox .you { padding:10px 12px; border-radius:8px; margin:6px 0 14px; font-size:15px; font-weight:700; }
+  .resbox .you.won { background:rgba(6,78,59,.6); color:#6ee7b7; } .resbox .you.lost { background:rgba(127,29,29,.45); color:#fecaca; } .resbox .you.refund { background:rgba(63,63,70,.6); color:#e4e4e7; }
+  .resbox .btns { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+<div class="banner">DogeOS TESTNET &mdash; test DOGE only, no real value.</div>
+<header>
+  <h1>Live Bets<small>Bet on who wins a running game &mdash; you do not have to play.</small></h1>
+  <a class="back" href="/">&larr; Back to the game</a>
+</header>
+
+<main>
+  <section class="card">
+    <h2>How it works</h2>
+    <p class="muted">Pick the player you think will win a game that has just started. Every bet is the same: <b id="stakeText">20 DOGE</b>, paid from your wallet. Betting stays open for the first part of the game (one sixth of its length), then it closes and everyone waits for the result.</p>
+    <div class="rules">
+      <div class="rule"><b>20%</b> of all bets stays with the game (prize pool of the next tournaments).</div>
+      <div class="rule"><b>20%</b> goes to the player who won the game as a bonus &mdash; at most half of that tournament's first prize.</div>
+      <div class="rule"><b>The rest</b> is shared by the people who picked the winner, and they never get less than their own bet back.</div>
+      <div class="rule"><b>Refund</b> if fewer than <span id="minBetsText">3</span> people bet, if nobody picked the winner, or if everybody picked the same player.</div>
+    </div>
+    <p class="muted" style="margin-top:10px">Players of a game cannot bet on it. One bet per wallet per game. Winnings are collected with the gold <b>Claim</b> button in the top right corner.</p>
+  </section>
+
+  <section id="markets"><div class="card"><p class="muted">Loading games…</p></div></section>
+
+  <section class="card" id="mineCard">
+    <h2>My bets</h2>
+    <div id="myBets" class="muted">-</div>
+  </section>
+
+  <div class="status" id="status"></div>
+
+  <section class="card hidden" id="adminCard">
+    <h2>Admin &middot; demo game</h2>
+    <p class="muted">Creates a betting market that is not tied to a live round (for demos). Settle it with the buttons in the list above.</p>
+    <div class="row">
+      <input type="text" id="admTitle" value="Demo duel" style="flex:1 1 180px">
+      <input type="text" id="admNames" value="Sir Aldric, Lady Morwen, Baron Grimm" style="flex:2 1 260px">
+      <input type="text" id="admMin" value="5" style="width:70px" title="betting window (minutes)">
+      <button id="admCreate">Create</button>
+    </div>
+  </section>
+</main>
+
+<div id="resultsOverlay"><div class="resbox" id="resultsBox"></div></div>
+<script src="/wol-connect.js"></script>
+<script src="/wol-guest.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const fmt = (v, d = 2) => Number(v).toLocaleString('en-US', { maximumFractionDigits: d });
+  const token = () => localStorage.getItem('authToken') || localStorage.getItem('token');
+  let me = null, rules = { stake: '20', minBets: 3 };
+  const say = (kind, text) => { const el = $('status'); el.className = 'status show ' + kind; el.textContent = text; };
+  const clock = (ms) => { const s = Math.max(0, Math.floor(ms / 1000)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+
+  async function load() {
+    try {
+      const data = await WolConnect.api('GET', '/api/chain/markets', null, token());
+      rules = data.rules || rules;
+      $('stakeText').textContent = fmt(rules.stake) + ' DOGE';
+      $('minBetsText').textContent = rules.minBets;
+      render(data.markets);
+      showResults(data.markets);
+    } catch (e) {
+      $('markets').innerHTML = `<div class="card"><p class="muted">${token() ? esc(e.message) : 'Connect your wallet to see the live games.'}</p></div>`;
+    }
+    if (token()) loadMine();
+  }
+
+  function render(markets) {
+    if (document.activeElement && $('markets').contains(document.activeElement)) return;
+    if (!markets.length) { $('markets').innerHTML = '<div class="card"><p class="muted">No games to bet on right now. A game appears here as soon as a Mini-Tournament round starts.</p></div>'; return; }
+    $('markets').innerHTML = markets.map((m) => {
+      const now = Date.now();
+      const closes = new Date(m.closesAt).getTime();
+      const ends = m.roundEndsAt ? new Date(m.roundEndsAt).getTime() : null;
+      let meta;
+      if (m.status === 'open') meta = `Betting closes in <b>${clock(closes - now)}</b>`;
+      else if (m.status === 'closed') meta = 'Betting closed' + (ends && ends > now ? ` &middot; game ends in ${clock(ends - now)}` : ' &middot; waiting for the result');
+      else if (m.status === 'resolved') meta = `Winner: <span class="win">${esc(m.winnerName || '')}</span>`;
+      else meta = 'Game cancelled or not enough bets &mdash; all bets are refunded';
+      const players = m.outcomes.map((o) => {
+        const canBet = m.status === 'open' && !m.myOutcome;
+        const win = m.status === 'resolved' && m.winnerOutcome === o.outcome;
+        return `<div class="player"><span class="name">${esc(o.username)}${win ? ' 🏆' : ''}${o.mine ? ' <span class="mine">· your pick</span>' : ''}</span>
+          <span class="info">${o.bets} bet${o.bets === 1 ? '' : 's'}${m.status === 'open' ? ` &middot; a new bet wins ~${fmt(o.payoutIfWinDoge)} DOGE` : ''}</span>
+          ${canBet ? `<button data-bet="${m.id}|${o.outcome}|${esc(o.username)}">Bet ${fmt(m.stakeDoge)} DOGE</button>` : ''}
+          ${me && me.isAdmin && (m.status === 'open' || m.status === 'closed') ? `<button class="secondary" data-resolve="${m.id}|${o.outcome}">Winner</button>` : ''}</div>`;
+      }).join('');
+      const res = m.result ? `<div class="result">Total pool <b>${fmt(m.result.total)}</b> DOGE &rarr; people who picked the winner share <b>${fmt(m.result.payoutPool)}</b> &middot; winner of the game gets <b>${fmt(m.result.winnerBonus)}</b> &middot; the game keeps <b>${fmt(m.result.house)}</b></div>` : '';
+      const cancel = me && me.isAdmin && (m.status === 'open' || m.status === 'closed') ? `<div class="row"><button class="secondary" data-cancel="${m.id}">Cancel (refund everyone)</button></div>` : '';
+      return `<div class="card market"><h3>${esc(m.title)}<span class="tag ${m.status}">${m.status === 'open' ? 'betting open' : m.status}</span></h3>
+        <div class="meta">${meta} &middot; ${m.bets} bet${m.bets === 1 ? '' : 's'} &middot; pool ${fmt(m.totalDoge)} DOGE</div>${players}${res}${cancel}</div>`;
+    }).join('');
+    document.querySelectorAll('button[data-bet]').forEach((b) => b.onclick = async () => {
+      const [id, outcome, name] = b.dataset.bet.split('|');
+      if (!token()) { location.href = '/login.html'; return; }
+      if (await WolConnect.placeBet(id, outcome, name)) load();
+    });
+    document.querySelectorAll('button[data-resolve]').forEach((b) => b.onclick = () => settle({ marketId: b.dataset.resolve.split('|')[0], outcome: b.dataset.resolve.split('|')[1] }));
+    document.querySelectorAll('button[data-cancel]').forEach((b) => b.onclick = () => settle({ marketId: b.dataset.cancel, cancel: true }));
+  }
+
+  // Okno wynikow po zakonczeniu gry, na ktora gracz obstawil (jak ekran konca rundy): zwyciezca, kto wygral, kto przegral.
+  let resultsOpen = false;
+  function seenList() { try { return JSON.parse(localStorage.getItem('wolSeenMarkets') || '[]'); } catch (e) { return []; } }
+  function markSeen(id) { try { const l = seenList(); l.push(id); localStorage.setItem('wolSeenMarkets', JSON.stringify(l.slice(-60))); } catch (e) { /* ignore */ } }
+
+  function showResults(markets) {
+    if (resultsOpen || !token()) return;
+    const seen = seenList();
+    const m = markets.find((x) => (x.status === 'resolved' || x.status === 'cancelled') && x.myOutcome && x.bettors && !seen.includes(x.id));
+    if (!m) return;
+    resultsOpen = true;
+    const mine = m.bettors.find((b) => b.mine);
+    const rows = m.bettors.map((b) => `<tr class="${b.mine ? 'mine' : ''}"><td>${esc(b.name)}${b.mine ? ' (you)' : ''}</td><td>${esc(b.pick)}</td><td class="${b.result === 'won' ? 'w' : b.result === 'lost' ? 'l' : 'r'}">${b.result === 'won' ? '+' + fmt(b.payoutDoge) : b.result === 'refund' ? 'refund ' + fmt(b.payoutDoge) : 'lost'}</td></tr>`).join('');
+    const split = m.result ? `Pool <b>${fmt(m.result.total)}</b> DOGE &rarr; people who picked the winner <b>${fmt(m.result.payoutPool)}</b> &middot; winner of the game <b>${fmt(m.result.winnerBonus)}</b> &middot; the game <b>${fmt(m.result.house)}</b>` : 'Not enough bets, or nobody (or everybody) picked the winner &mdash; every bet is refunded.';
+    const you = !mine ? '' : mine.result === 'won' ? `<div class="you won">You picked the winner! +${fmt(mine.payoutDoge)} DOGE</div>` : mine.result === 'refund' ? `<div class="you refund">Your ${fmt(mine.payoutDoge)} DOGE bet is refunded</div>` : '<div class="you lost">Not this time &mdash; you did not pick the winner</div>';
+    const canClaim = mine && (mine.result === 'won' || mine.result === 'refund');
+    $('resultsBox').innerHTML = `<h2>Game results</h2><div class="sub">${esc(m.title)}</div>
+      ${m.status === 'resolved' ? `<div class="winner">🏆 ${esc(m.winnerName || '')}</div>` : '<div class="winner">Game cancelled / bets refunded</div>'}
+      <div class="split">${split}</div>${you}
+      <table><thead><tr><th>Bettor</th><th>Picked</th><th>Result</th></tr></thead><tbody>${rows}</tbody></table>
+      <div class="btns">${canClaim ? '<button id="resClaim">Claim ' + fmt(mine.payoutDoge) + ' DOGE</button>' : ''}<button class="secondary" id="resMenu">Back to menu</button></div>`;
+    $('resultsOverlay').classList.add('show');
+    markSeen(m.id);
+    $('resMenu').onclick = () => { location.href = '/index.html'; };
+    if (canClaim) $('resClaim').onclick = async () => { await WolConnect.claimPrize(); };
+  }
+
+  async function loadMine() {
+    try {
+      const { bets } = await WolConnect.api('GET', '/api/chain/me/bets', null, token());
+      $('myBets').innerHTML = bets.length ? bets.map((b) => {
+        const state = b.status === 'open' || b.status === 'closed' ? 'waiting for the result'
+          : b.refunded ? (b.collectable ? `refund ${fmt(b.payoutDoge)} DOGE ready to claim` : 'refunded')
+          : b.lost ? '<span style="color:var(--bad)">lost</span>'
+          : b.collectable ? `<span class="win">won ${fmt(b.payoutDoge)} DOGE &mdash; press Claim (top right)</span>` : 'paid out';
+        return `<div class="player"><span class="name">${esc(b.title)} &mdash; ${esc(b.outcomeName)}</span><span class="info">${fmt(b.stakeDoge)} DOGE</span><span class="info">${state}</span></div>`;
+      }).join('') : 'You have not placed any bets yet.';
+    } catch (e) { $('myBets').textContent = '-'; }
+  }
+
+  async function settle(body) {
+    try { say('ok', 'Sending on-chain transactions…'); await WolConnect.api('POST', '/api/chain/admin/resolve', body, token()); say('ok', 'Game settled.'); load(); }
+    catch (e) { say('err', e.message); }
+  }
+  $('admCreate').onclick = async () => {
+    try {
+      say('ok', 'Opening the market on-chain…');
+      await WolConnect.api('POST', '/api/chain/admin/demo-market', { title: $('admTitle').value, names: $('admNames').value.split(','), minutes: Number($('admMin').value) }, token());
+      say('ok', 'Demo game created.'); load();
+    } catch (e) { say('err', e.message); }
+  };
+
+  (async () => {
+    if (token()) { try { me = await WolConnect.api('GET', '/api/chain/me', null, token()); $('adminCard').classList.toggle('hidden', !me.isAdmin); } catch (e) { /* ignore */ } }
+    load();
+    setInterval(load, 10000);
+  })();
+})();
+</script>
+</body>
+</html>

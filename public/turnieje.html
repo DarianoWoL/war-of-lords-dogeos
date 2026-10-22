@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en" data-source-lang="en" data-source-lang="en" data-source-lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="tour.pageTitle">War of Lords - Tournaments</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+
+        .nav-menu { background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat; width: 100%; padding: 15px 0; text-align: center; margin-bottom: 30px; }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 20px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+
+        /* Baked-in default nav link layout, adopted site-wide from a player-arranged position
+           (see layout-editor.js) so every visitor sees the same arrangement by default. */
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { display: none !important; position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .info-bar { background: url('/pasek.png') center / 100% 100% no-repeat; border-radius: 0; padding: 0px 25px 15px; margin-bottom: 30px; max-width: 1100px; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 4px 15px rgba(0, 0, 0, 0.3); }
+        .info-bar #playerBarNick { font-size: 22px; color: #e8c766; font-weight: bold; }
+        .info-bar #playerBarBalance { font-size: 18px; font-weight: bold; }
+
+        .page-heading { max-width: 1100px; width: 100%; padding: 0 20px; box-sizing: border-box; margin-bottom: 20px; text-align: center; }
+        .page-heading h1 { margin: 0 0 6px; color: #e8c766; font-size: 30px; text-transform: uppercase; letter-spacing: 0.04em; }
+        .page-heading p { margin: 0; color: #cbd5e1; }
+
+        /* Base/default look before layout-editor.js takes over positioning (see that file) — once
+           it runs, every one of these becomes an independently draggable/resizable floating panel
+           and these values just become "the size it starts at". align-self here is just what puts
+           each ranking panel on its named side by default (body is a column flex container). */
+        .mmr-ranking-panel { align-self: flex-start; width: 260px; background: linear-gradient(180deg, rgba(18, 27, 48, 0.92), rgba(10, 16, 33, 0.94)); backdrop-filter: blur(4px); border: 1px solid rgba(212, 175, 55, 0.32); border-radius: 16px; padding: 20px 20px 30px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); margin: 0 0 20px 20px; max-height: 800px; overflow-y: auto; }
+        .mmr-ranking-panel h2 { margin: 0 0 6px; font-size: 17px; color: #e8c766; text-transform: uppercase; letter-spacing: 0.03em; }
+        .mmr-ranking-panel .mmr-subtext { font-size: 12px; color: #94a3b8; line-height: 1.5; margin: 0 0 8px; }
+        .mmr-pool-hint { font-size: 12px; color: #a78bfa; font-weight: 700; margin: 0 0 14px; }
+        .mmr-ranking-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+        .mmr-ranking-list li { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; background: rgba(15, 23, 42, 0.55); font-size: 13px; }
+        .mmr-ranking-list li.mmr-top5 { border: 1px solid rgba(212, 175, 55, 0.45); background: rgba(212, 175, 55, 0.1); }
+        .mmr-ranking-list .mmr-rank-pos { color: #94a3b8; font-weight: 700; min-width: 16px; }
+        .mmr-ranking-list .mmr-rank-name { flex: 1; color: #f1f5f9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .mmr-ranking-list .mmr-rank-gain { color: #34d399; font-weight: 700; white-space: nowrap; }
+        .mmr-ranking-list .mmr-wildcard-badge { font-size: 10px; font-weight: 700; color: #1a1408; background: linear-gradient(180deg, #f3d97c, #d4af37); padding: 2px 6px; border-radius: 999px; white-space: nowrap; letter-spacing: 0.02em; }
+        .mmr-ranking-empty { color: #64748b; font-size: 13px; }
+
+        .qualification-ranking-panel { align-self: flex-end; width: 260px; background: linear-gradient(180deg, rgba(18, 27, 48, 0.92), rgba(10, 16, 33, 0.94)); backdrop-filter: blur(4px); border: 1px solid rgba(212, 175, 55, 0.32); border-radius: 16px; padding: 20px 20px 30px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); margin: 0 20px 20px 0; max-height: 900px; overflow-y: auto; }
+        .qualification-ranking-panel h2 { margin: 0 0 6px; font-size: 17px; color: #e8c766; text-transform: uppercase; letter-spacing: 0.03em; }
+        .qualification-ranking-panel .qual-subtext { font-size: 12px; color: #94a3b8; line-height: 1.5; margin: 0 0 14px; }
+        .qual-ranking-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+        .qual-ranking-list li { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; background: rgba(15, 23, 42, 0.55); font-size: 13px; }
+        .qual-ranking-list li.qual-advances { border: 1px solid rgba(52, 211, 153, 0.45); background: rgba(52, 211, 153, 0.1); }
+        .qual-ranking-list .qual-rank-pos { color: #94a3b8; font-weight: 700; min-width: 24px; }
+        .qual-ranking-list .qual-rank-name { flex: 1; color: #f1f5f9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .qual-ranking-list .qual-rank-points { color: #fbbf24; font-weight: 700; white-space: nowrap; }
+        .qual-ranking-empty { color: #64748b; font-size: 13px; }
+        .qual-direct-pass-box { border: 1px solid rgba(52, 211, 153, 0.45); background: rgba(52, 211, 153, 0.1); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; }
+        .qual-direct-pass-box .qual-direct-pass-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: #34d399; margin-bottom: 6px; }
+        .qual-direct-pass-box ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+        .qual-direct-pass-box li { font-size: 13px; color: #f1f5f9; }
+
+        .rooms-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; max-width: 1100px; width: 100%; padding: 0 20px; box-sizing: border-box; }
+        /* 2026-10-02, explicit request: removed the @media (max-width: 640px) rule that used to
+           stack .rooms-grid into a single wide column on mobile - page-scale.js (already loaded
+           on this page) scales the whole page down to fit instead, same as pokoje.html. */
+
+        .room-card { background: url('/tlopokoi.png') center / 100% 100% no-repeat; border-radius: 0; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; min-height: 340px; transition: transform 0.2s, border-color 0.2s; position: relative; overflow: hidden; text-align: center; align-items: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); }
+        .room-card:hover:not(.locked) { transform: translateY(-2px); border-color: #d4af37; }
+
+        .room-info { width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .room-card h3 { margin: 0 0 10px 0; font-size: 26px; text-transform: uppercase; color: #e8c766; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .room-card .room-meta-text { font-size: 16px; color: #cbd5e1; margin: 4px 0; font-weight: 500; }
+
+        .tournament-badge { display: inline-block; margin-bottom: 10px; padding: 4px 14px; border-radius: 999px; background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.4); color: #f0d78c; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-size: 12px; }
+
+        .btn-join { background-image: url('/przycisk.png'); background-size: 100% 100%; background-color: transparent; color: #e8c766; border: none; padding: 12px 25px; font-size: 15px; font-weight: bold; border-radius: 0; cursor: pointer; transition: color 0.2s; width: 80%; text-transform: uppercase; margin-top: auto; }
+        .btn-join:hover { color: #f0d78c; }
+
+        .room-card.locked { filter: brightness(0.8); }
+        .room-card .admin-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 16px; }
+        .room-card .admin-action-btn { background-image: url('/przycisk.png'); background-size: 100% 100%; background-color: transparent; color: #cbd5e1; border: none; border-radius: 0; padding: 10px 12px; cursor: pointer; font-size: 13px; transition: color 0.2s; }
+        .room-card .admin-action-btn:hover { color: #e8c766; }
+        .room-card.locked .lock-notice { display: block; }
+        .room-card.locked .btn-join { background-image: none !important; color: #94a3b8 !important; cursor: not-allowed; }
+        .session-warning-banner { width: 100%; max-width: 1100px; margin: 0 auto 20px auto; padding: 18px 22px; background: rgba(248, 113, 113, 0.17); border: 1px solid #f87171; border-radius: 14px; color: #f8fafc; text-align: center; box-shadow: 0 6px 18px rgba(0,0,0,0.18); }
+        .session-warning-text { font-size: 16px; font-weight: 700; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px; }
+        .session-warning-btn { background-image: url('/przycisk.png'); background-size: 100% 100%; background-color: transparent; border: none; color: #22c55e; padding: 10px 18px; border-radius: 0; cursor: pointer; font-size: 14px; font-weight: bold; transition: color 0.2s; }
+        .session-warning-btn:hover { color: #6ee7b7; }
+        .session-leave-btn { background-image: url('/przycisk.png'); background-size: 100% 100%; background-color: transparent; border: none; color: #ef4444; padding: 10px 18px; border-radius: 0; cursor: pointer; font-size: 14px; font-weight: bold; transition: color 0.2s; }
+        .session-leave-btn:hover { color: #fca5a5; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-overlay.active { display: flex; }
+        .modal-window { background: linear-gradient(180deg, rgba(16, 25, 45, 0.98), rgba(8, 15, 29, 0.99)); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 16px; width: min(600px, 90%); padding: 25px; box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 10px 30px rgba(0,0,0,0.45); }
+        .modal-window h3 { margin-top: 0; color: #e8c766; text-transform: uppercase; letter-spacing: 0.04em; }
+        .modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .modal-row.full { grid-column: 1 / -1; }
+        .modal-window label { display: block; margin-bottom: 6px; color: #cbd5e1; font-size: 0.95rem; }
+        .modal-window input { width: 100%; padding: 10px; border: 1px solid rgba(212, 175, 55, 0.28); border-radius: 8px; background: #0f172a; color: #f8fafc; }
+        .modal-buttons { display: flex; justify-content: flex-end; gap: 12px; }
+        .modal-buttons button { padding: 12px 18px; border: none; border-radius: 0; cursor: pointer; font-weight: bold; background-image: url('/przycisk.png'); background-size: 100% 100%; background-color: transparent; transition: color 0.2s; }
+        .modal-buttons .btn-save { color: #34d399; }
+        .modal-buttons .btn-save:hover { color: #6ee7b7; }
+        .modal-buttons .btn-cancel { color: #f8fafc; }
+        .modal-buttons .btn-cancel:hover { color: #cbd5e1; }
+
+        .turnieje-toggle-bar { display: flex; gap: 14px; max-width: 1100px; width: 100%; padding: 0 20px; box-sizing: border-box; margin-bottom: 20px; }
+        .turnieje-toggle-btn {
+            flex: 1;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            border: none;
+            border-radius: 0;
+            color: #94a3b8;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            padding: 14px 10px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .turnieje-toggle-btn:hover { color: #e2e8f0; }
+        .turnieje-toggle-btn.active {
+            color: #f0d78c;
+        }
+
+        .semifinal-view { max-width: 1750px; width: 100%; padding: 0 20px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 25px; }
+        .bracket-row { display: flex; gap: 25px; align-items: flex-start; justify-content: center; width: 100%; flex-wrap: wrap; }
+        .semifinal-panel { width: 280px; flex: 0 0 280px; background: linear-gradient(180deg, rgba(18, 27, 48, 0.92), rgba(10, 16, 33, 0.94)); backdrop-filter: blur(4px); border: 1px solid rgba(212, 175, 55, 0.32); border-radius: 16px; padding: 20px 20px 26px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); max-height: 900px; overflow-y: auto; box-sizing: border-box; }
+        .semifinal-panel h2 { margin: 0 0 6px; font-size: 18px; color: #e8c766; text-transform: uppercase; letter-spacing: 0.03em; text-align: center; }
+        .semifinal-panel .semifinal-subtext { font-size: 12px; color: #94a3b8; line-height: 1.5; text-align: center; margin: 0 0 16px; }
+        .semifinal-room-heading { font-size: 12px; font-weight: 700; color: #f0d78c; text-transform: uppercase; letter-spacing: 0.03em; margin: 16px 0 6px; }
+        .semifinal-room-heading:first-of-type { margin-top: 0; }
+        .semifinal-players-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+        .semifinal-players-list li { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; background: rgba(15, 23, 42, 0.55); font-size: 13px; }
+        .semifinal-players-list li.semifinal-direct { border: 1px solid rgba(52, 211, 153, 0.45); background: rgba(52, 211, 153, 0.1); }
+        .semifinal-players-list .semifinal-rank-pos { color: #94a3b8; font-weight: 700; min-width: 16px; }
+        .semifinal-players-list .semifinal-name { flex: 1; color: #f1f5f9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .semifinal-players-list .semifinal-points { color: #fbbf24; font-weight: 700; white-space: nowrap; }
+        .semifinal-players-list .semifinal-badge { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; color: #34d399; white-space: nowrap; }
+        .semifinal-players-empty { color: #64748b; font-size: 13px; text-align: center; }
+        #adminPanelLink { position: absolute; left: 234.44px; top: 41.22px; width: 295.89px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        /* Baked-in default layout, adopted from a player-arranged position (see layout-editor.js,
+           removed from this page) so every visitor sees the same arrangement by default. */
+        .turnieje-toggle-bar { position: absolute; left: 504.666px; top: 326.778px; width: 1100px; margin: 0; box-sizing: border-box; }
+        .info-bar { position: absolute; left: 513.556px; top: 135px; width: 1098.89px; height: 154.618px; margin: 0; box-sizing: border-box; }
+        #mmrRankingPanel { position: absolute; left: 57.7777px; top: 168.113px; width: 335.33px; height: 802.222px; margin: 0; box-sizing: border-box; }
+        #qualRankingPanel { position: absolute; left: 1702.88px; top: 166.666px; width: 361.997px; height: 1055.56px; margin: 0; box-sizing: border-box; }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/texts/turnieje.js"></script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+    <script>
+        window.alert = function () {};
+        window.confirm = function () { return true; };
+    </script>
+
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Home</a>
+        <a id="navRooms" href="pokoje.html">Battle Rooms</a>
+        <a id="navTournaments" href="turnieje.html" class="active">Tournaments</a>
+        <a id="navShop" href="live.html">Live Bets</a>
+        <a id="navRanking" href="ranking.html">Overall Ranking</a>
+        <a id="navProfile" href="profile.html">Profile</a>
+        <a id="navRules" href="zasady.html">Rules</a>
+    </div>
+
+    <div id="adminPanelLink" style="display:none;">
+        <a href="admin.html" style="display:inline-block; background:#f59e0b; color:#111827; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;" data-i18n="home.adminPanel">👑 ADMIN PANEL</a>
+    </div>
+
+    <div class="turnieje-toggle-bar">
+        <button type="button" class="turnieje-toggle-btn active" id="turniejeTabQual" onclick="setTurniejeView('qualification')" data-i18n="tour.tabQual">Qualifiers</button>
+        <button type="button" class="turnieje-toggle-btn" id="turniejeTabSemifinal" onclick="setTurniejeView('semifinal')" data-i18n="tour.tabSemi">Semi-final</button>
+        <button type="button" class="turnieje-toggle-btn" id="turniejeTabFinal" onclick="setTurniejeView('final')" data-i18n="tour.tabFinal">Final</button>
+    </div>
+
+    <div class="rooms-grid" id="roomsGrid" style="margin-top:210px;">
+        <div class="room-card">
+            <div class="room-info">
+                <h3 data-i18n="tour.loadingTitle">Loading tournaments...</h3>
+                <div class="room-meta-text" data-i18n="tour.loadingText">Please wait, fetching data from the server.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-bar">
+        <span id="playerBarNick" data-i18n="shop.commanderLoading">Commander: Loading...</span>
+    </div>
+
+    <aside class="mmr-ranking-panel" id="mmrRankingPanel">
+        <h2 data-i18n="tour.mmr.title">🏅 Monthly Free Ranking</h2>
+        <p class="mmr-subtext" data-i18n-html="tour.mmr.text">Points are calculated with the same algorithm as in the Qualifiers (villages + kills while attacking + battles overall) from the 1st of the month — only from <strong>regular rounds</strong> (Battle Rooms) with at least 8 players; tournament rounds do not count here. The TOP 5 of this list get a <strong>Wild Card to the Semi-final</strong> at the end of the month — a free promotion without qualifying rounds.</p>
+        <p class="mmr-pool-hint" id="mmrPoolHint"></p>
+        <ol class="mmr-ranking-list" id="mmrRankingList">
+            <li class="mmr-ranking-empty" data-i18n="tour.loading">Loading...</li>
+        </ol>
+    </aside>
+
+    <aside class="qualification-ranking-panel" id="qualRankingPanel">
+        <h2 data-i18n="tour.qual.title">🎟️ Qualification ranking</h2>
+        <p class="qual-subtext" data-i18n-html="tour.qual.text">One tournament ticket = 4 qualifying rounds. The sum of points you score in all your <strong>tournament</strong> rounds counts towards this ranking — the TOP 35 after the qualifiers advance to the semi-finals. Full rules and scoring: <a href="zasady-turnieju.html">Tournament Rules</a></p>
+        <div id="qualDirectPassBox" style="display:none;"></div>
+        <ol class="qual-ranking-list" id="qualRankingList">
+            <li class="qual-ranking-empty" data-i18n="tour.loading">Loading...</li>
+        </ol>
+    </aside>
+
+    <div id="adminNotice" class="session-warning-banner" style="display:none;">
+        <div class="session-warning-text" id="adminNoticeText"></div>
+    </div>
+
+    <div id="activeGameBanner" class="session-warning-banner" style="display:none;">
+        <div class="session-warning-text"><span data-i18n="tour.active.text">⚠️ You have a battle in progress!</span> <button class="session-warning-btn" id="resumeBattleBtn" data-i18n="tour.active.resume">Return to battle</button><button class="session-leave-btn" id="leaveActiveGameBtn" data-i18n="tour.active.leave">Leave the game</button></div>
+    </div>
+
+    <div class="semifinal-view" id="semifinalView" style="display:none; margin-top:200px;">
+        <div class="bracket-row">
+            <aside class="semifinal-panel" id="semifinalPanelLeft">
+                <h2 data-i18n="tour.semi.title12">🏅 Semi-final 1 and 2</h2>
+                <p class="semifinal-subtext" data-i18n="tour.semi.text">Who is playing and the current score (village points) in these two rooms.</p>
+                <div id="semifinalLeftRooms"><div class="semifinal-players-empty" data-i18n="tour.loading">Loading...</div></div>
+            </aside>
+            <div class="rooms-grid" id="semifinalRoomsGrid"></div>
+            <aside class="semifinal-panel" id="semifinalPanelRight">
+                <h2 data-i18n="tour.semi.title34">🏅 Semi-final 3 and 4</h2>
+                <p class="semifinal-subtext" data-i18n="tour.semi.text">Who is playing and the current score (village points) in these two rooms.</p>
+                <div id="semifinalRightRooms"><div class="semifinal-players-empty" data-i18n="tour.loading">Loading...</div></div>
+            </aside>
+        </div>
+    </div>
+
+    <div class="semifinal-view" id="finalView" style="display:none; margin-top:200px;">
+        <div class="bracket-row">
+            <aside class="semifinal-panel" id="finalRankingPanel">
+                <h2 data-i18n="tour.final.title">👑 Final ranking</h2>
+                <p class="semifinal-subtext" data-i18n="tour.final.text">The Final score is counted in village points — the same as in a regular round.</p>
+                <ol class="semifinal-players-list" id="finalRankingList">
+                    <li class="semifinal-players-empty" data-i18n="tour.loading">Loading...</li>
+                </ol>
+            </aside>
+            <div class="rooms-grid" id="finalRoomsGrid"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="editRoomModal">
+        <div class="modal-window">
+            <h3 data-i18n="tour.edit.title">Edit tournament</h3>
+            <div class="modal-row full">
+                <label for="editRoomName" data-i18n="tour.edit.name">Tournament name</label>
+                <input type="text" id="editRoomName" placeholder="Tournament name" data-i18n-attr="placeholder:tour.edit.name"/>
+            </div>
+            <div class="modal-row">
+                <div>
+                    <label for="editMaxPlayers" data-i18n="tour.edit.maxPlayers">Maximum number of players</label>
+                    <input type="number" id="editMaxPlayers" min="2" max="20" />
+                </div>
+                <div>
+                    <label for="editRoundDuration" data-i18n="tour.edit.duration">Round length (minutes)</label>
+                    <input type="number" id="editRoundDuration" min="15" max="600" step="15" />
+                </div>
+            </div>
+            <div class="modal-row">
+                <div>
+                    <label for="editEcoModifier" data-i18n="tour.edit.eco">Economy modifier</label>
+                    <input type="number" id="editEcoModifier" min="-1" max="5" step="0.25" />
+                </div>
+                <div>
+                    <label for="editMilitaryModifier" data-i18n="tour.edit.military">Military modifier</label>
+                    <input type="number" id="editMilitaryModifier" min="-1" max="5" step="0.25" />
+                </div>
+            </div>
+            <div class="modal-row full">
+                <label for="editPlayersCanAddBots"><input type="checkbox" id="editPlayersCanAddBots" /> <span data-i18n="tour.edit.allowBots">Allow players to add bots in the lobby themselves</span></label>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-cancel" type="button" onclick="closeEditRoomModal()" data-i18n="common.cancel">Cancel</button>
+                <button class="btn-save" type="button" onclick="saveRoomChanges()" data-i18n="tour.edit.save">Save changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="/wol-connect.js"></script>
+    <script src="/fingerprint.js"></script>
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        // Gosc (bez portfela) moze przegladac liste, ale nic nie zrobi - akcje odsylaja do logowania.
+        const GUEST = !token;
+
+        const headers = {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            'Content-Type': 'application/json'
+        };
+
+        let playerId = null;
+        let isAdmin = false;
+        let actualAdmin = false;
+        let forceAdmin = false;
+        let currentEditRoom = null;
+
+        // Dynamic origin: works unchanged on localhost, on the LAN, or through an ngrok tunnel.
+        const deviceId = window.WLBFingerprint ? window.WLBFingerprint.getDeviceId() : null;
+        const socket = GUEST ? { on() {}, off() {}, emit() {}, connected: false } : io(window.location.origin, { auth: { token, deviceId } });
+        socket.on('account:blocked', () => {
+            window.location.href = '/index.html';
+        });
+
+        function setAdminControlsVisibility() {
+            const adminNotice = document.getElementById('adminNotice');
+            const adminNoticeText = document.getElementById('adminNoticeText');
+            if (!adminNotice || !adminNoticeText) return;
+
+            if (forceAdmin) {
+                adminNoticeText.textContent = 'Admin mode forced in the UI. Remember that admin endpoints may still require real server permissions.';
+                adminNotice.style.display = 'block';
+            } else {
+                adminNotice.style.display = 'none';
+            }
+        }
+
+        const nick = localStorage.getItem('username') || localStorage.getItem('warlordNick') || i18n.t('shop.defaultNick');
+        const renderNickBar = () => { document.getElementById('playerBarNick').innerText = i18n.t('shop.commander', { name: nick }); };
+        renderNickBar();
+
+        const roomsGrid = document.getElementById('roomsGrid');
+        const semifinalRoomsGrid = document.getElementById('semifinalRoomsGrid');
+        const finalRoomsGrid = document.getElementById('finalRoomsGrid');
+
+        function createRoomCard(room) {
+            const players = room.waitingCount || 0;
+            const max = room.maxGraczy || 10;
+            const isPaused = room.isPaused === true;
+            const isFull = false;
+            const stage = room.tournamentStage || 'qualification';
+            const isSemifinal = stage === 'semifinal';
+            const isFinal = stage === 'final';
+            const isBracketStage = isSemifinal || isFinal; // semifinal or final — never ticket-gated, "inactive until X" wording
+
+            const card = document.createElement('div');
+            card.className = 'room-card' + (isPaused ? ' locked' : '');
+
+            const info = document.createElement('div');
+            info.className = 'room-info';
+
+            const badge = document.createElement('div');
+            badge.className = 'tournament-badge';
+            badge.textContent = isFinal ? i18n.t('tour.card.badgeFinal') : (isSemifinal ? i18n.t('tour.card.badgeSemi') : i18n.t('tour.card.badgeTournament'));
+            info.appendChild(badge);
+
+            const title = document.createElement('h3');
+            title.textContent = room.nazwaPokoju || i18n.t('tour.card.defaultName');
+            info.appendChild(title);
+
+            const statusText = document.createElement('div');
+            statusText.className = 'room-meta-text';
+            statusText.textContent = isPaused ? i18n.t('tour.card.statusPaused') : i18n.t('tour.card.statusOpen');
+            statusText.style.color = isPaused ? '#f87171' : '#cbd5e1';
+            info.appendChild(statusText);
+
+            const capacityText = document.createElement('div');
+            capacityText.className = 'room-meta-text';
+            capacityText.textContent = i18n.t('tour.card.perMatch', { n: max });
+            info.appendChild(capacityText);
+
+            const durationMinutes = Math.round((room.ustawienia?.dlugoscRundySekundy || 3600) / 60);
+            const durationText = document.createElement('div');
+            durationText.className = 'room-meta-text';
+            durationText.textContent = i18n.t('tour.card.duration', { n: durationMinutes });
+            info.appendChild(durationText);
+
+            if (!isBracketStage) {
+                const ticketText = document.createElement('div');
+                ticketText.className = 'room-meta-text';
+                ticketText.style.color = '#a78bfa';
+                ticketText.style.fontWeight = 'bold';
+                ticketText.textContent = i18n.t('tour.card.ticketRequired');
+                info.appendChild(ticketText);
+            }
+
+            const playersText = document.createElement('div');
+            playersText.className = 'room-meta-text';
+            playersText.style.fontSize = '14px';
+            playersText.innerHTML = i18n.t('tour.card.registered', { n: Number(players), max: Number(max) });
+            info.appendChild(playersText);
+
+            card.appendChild(info);
+
+            const lockNotice = document.createElement('div');
+            lockNotice.className = 'lock-notice';
+            if (isPaused) {
+                lockNotice.textContent = isFinal
+                    ? i18n.t('tour.card.inactiveFinal')
+                    : (isSemifinal ? i18n.t('tour.card.inactiveSemi') : i18n.t('tour.card.paused'));
+            } else {
+                lockNotice.textContent = isFull ? i18n.t('tour.card.full') : i18n.t('tour.card.waitingFull');
+            }
+            card.appendChild(lockNotice);
+
+            const button = document.createElement('button');
+            button.className = 'btn-join';
+            button.type = 'button';
+            button.textContent = isPaused ? (isBracketStage ? i18n.t('tour.card.btnInactive') : i18n.t('tour.card.btnPaused')) : (isFull ? i18n.t('tour.card.btnFull') : i18n.t('tour.card.btnJoin'));
+            button.disabled = isFull || isPaused;
+            button.addEventListener('click', () => joinRoom(room._id, room.nazwaPokoju));
+            card.appendChild(button);
+
+            if (isAdmin) {
+                const actions = document.createElement('div');
+                actions.className = 'admin-actions';
+
+                const pauseBtn = document.createElement('button');
+                pauseBtn.className = 'admin-action-btn';
+                pauseBtn.textContent = room.isPaused ? i18n.t('tour.card.resume') : i18n.t('tour.card.pause');
+                pauseBtn.addEventListener('click', () => toggleRoomPause(room._id, room.isPaused));
+                actions.appendChild(pauseBtn);
+
+                const editBtn = document.createElement('button');
+                editBtn.className = 'admin-action-btn';
+                editBtn.textContent = i18n.t('tour.card.edit');
+                editBtn.addEventListener('click', () => openEditRoomModal(room));
+                actions.appendChild(editBtn);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'admin-action-btn';
+                deleteBtn.textContent = i18n.t('tour.card.remove');
+                deleteBtn.addEventListener('click', () => deleteRoom(room._id, room.nazwaPokoju));
+                actions.appendChild(deleteBtn);
+
+                card.appendChild(actions);
+            }
+
+            return card;
+        }
+
+        function renderRoomsGrid(rooms) {
+            roomsGrid.innerHTML = '';
+            if (!rooms.length) {
+                roomsGrid.innerHTML = i18n.t('tour.card.none');
+                return;
+            }
+            rooms.forEach(room => {
+                roomsGrid.appendChild(createRoomCard(room));
+            });
+        }
+
+        async function loadRooms() {
+            try {
+                // Tournament rooms are the same Room documents as regular rooms, just flagged
+                // isTournament:true — this tab only ever shows those (see GET /api/rooms?tournament=1
+                // in server.js), regular Pokoje Bitewne never lists them.
+                const response = await fetch('/api/rooms?tournament=1', { headers });
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || i18n.t('tour.err.list'));
+                }
+                const data = await response.json();
+                const rooms = Array.isArray(data) ? data : (data.rooms || []);
+                renderRoomsGrid(rooms);
+            } catch (error) {
+                console.error(error);
+                roomsGrid.innerHTML = `<div class="room-card"><div class="room-info"><h3>${i18n.t('tour.err.listTitle')}</h3><div class="room-meta-text">${error.message}</div></div></div>`;
+            }
+        }
+
+        function renderSemifinalRoomsGrid(rooms) {
+            semifinalRoomsGrid.innerHTML = '';
+            rooms.forEach(room => {
+                semifinalRoomsGrid.appendChild(createRoomCard(room));
+            });
+        }
+
+        // The 4 permanent semifinal rooms (see ensureSemifinalRooms in server.js) — always exactly
+        // 4, so unlike loadRooms() there's no "brak pokoi" empty state to handle.
+        async function loadSemifinalRooms() {
+            try {
+                const response = await fetch('/api/rooms?tournament=1&stage=semifinal', { headers });
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || i18n.t('tour.err.semiRooms'));
+                }
+                const data = await response.json();
+                const rooms = Array.isArray(data) ? data : (data.rooms || []);
+                renderSemifinalRoomsGrid(rooms);
+            } catch (error) {
+                console.error(error);
+                semifinalRoomsGrid.innerHTML = `<div class="room-card"><div class="room-info"><h3>${i18n.t('tour.err.roomsTitle')}</h3><div class="room-meta-text">${error.message}</div></div></div>`;
+            }
+        }
+
+        function renderFinalRoomsGrid(rooms) {
+            finalRoomsGrid.innerHTML = '';
+            rooms.forEach(room => {
+                finalRoomsGrid.appendChild(createRoomCard(room));
+            });
+        }
+
+        // The single permanent final room (see ensureFinalRoom in server.js).
+        async function loadFinalRooms() {
+            try {
+                const response = await fetch('/api/rooms?tournament=1&stage=final', { headers });
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || i18n.t('tour.err.finalRoom'));
+                }
+                const data = await response.json();
+                const rooms = Array.isArray(data) ? data : (data.rooms || []);
+                renderFinalRoomsGrid(rooms);
+            } catch (error) {
+                console.error(error);
+                finalRoomsGrid.innerHTML = `<div class="room-card"><div class="room-info"><h3>${i18n.t('tour.err.roomTitle')}</h3><div class="room-meta-text">${error.message}</div></div></div>`;
+            }
+        }
+
+        async function joinRoom(roomId, roomName) {
+            if (GUEST) { window.location.href = '/login.html'; return; }
+            if (!roomId) return alert(i18n.t('tour.err.badRoomId'));
+            try {
+                const response = await fetch(`/api/rooms/${roomId}/join`, {
+                    method: 'POST',
+                    headers
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    if (WolConnect.isActiveGameError(result.error) && await WolConnect.handleActiveGame()) return joinRoom(roomId, roomName);
+                    throw new Error(result.error || i18n.t('tour.err.join'));
+                }
+                const joinedRoom = result.room || {};
+                const displayName = joinedRoom.nazwaPokoju || roomName || 'Tournament';
+                window.location.href = `/poczekalnia.html?roomId=${roomId}&roomName=${encodeURIComponent(displayName)}`;
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        async function loadProfile() {
+            if (GUEST) { loadRooms(); return; }
+            try {
+                const response = await fetch('/api/auth/me', { headers });
+                if (!response.ok) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('token');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                const profile = await response.json();
+                forceAdmin = localStorage.getItem('forceAdmin') === 'true';
+                actualAdmin = profile.role === 'ADMIN';
+                isAdmin = forceAdmin || actualAdmin;
+                playerId = profile._id;
+                setAdminControlsVisibility();
+                const adminPanelLinkEl = document.getElementById('adminPanelLink');
+                if (adminPanelLinkEl) adminPanelLinkEl.style.display = isAdmin ? 'block' : 'none';
+                await checkActiveGame();
+                loadRooms();
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function checkActiveGame() {
+            try {
+                const response = await fetch('/api/game/state', { headers });
+                if (!response.ok) return hideActiveGameBanner();
+                const data = await response.json();
+                if (data && data.state && data.state.roundId && data.state.status !== 'finished') {
+                    showActiveGameBanner(data.state.roundId);
+                } else {
+                    hideActiveGameBanner();
+                }
+            } catch (err) {
+                console.error('Błąd sprawdzania aktywnej gry:', err);
+                hideActiveGameBanner();
+            }
+        }
+
+        async function leaveActiveGame(roundId) {
+            if (!roundId) return;
+            const leaveBtn = document.getElementById('leaveActiveGameBtn');
+            if (leaveBtn) leaveBtn.disabled = true;
+            try {
+                const response = await fetch(`/api/rounds/${roundId}/forfeit`, {
+                    method: 'POST',
+                    headers
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    console.error('Błąd opuszczania rozgrywki:', data.error);
+                    if (leaveBtn) leaveBtn.disabled = false;
+                    return;
+                }
+                hideActiveGameBanner();
+                loadRooms();
+            } catch (err) {
+                console.error('Błąd opuszczania rozgrywki:', err);
+                if (leaveBtn) leaveBtn.disabled = false;
+            }
+        }
+
+        function showActiveGameBanner(roundId) {
+            const banner = document.getElementById('activeGameBanner');
+            const button = document.getElementById('resumeBattleBtn');
+            const leaveBtn = document.getElementById('leaveActiveGameBtn');
+            banner.style.display = 'block';
+            button.onclick = () => {
+                window.location.href = `/game.html?roundId=${roundId}`;
+            };
+            if (leaveBtn) {
+                leaveBtn.disabled = false;
+                leaveBtn.onclick = () => leaveActiveGame(roundId);
+            }
+
+            let timerEl = document.getElementById('activeGameTimer');
+            if (!timerEl) {
+                timerEl = document.createElement('span');
+                timerEl.id = 'activeGameTimer';
+                timerEl.style.marginLeft = '12px';
+                banner.querySelector('.session-warning-text').appendChild(timerEl);
+            }
+            async function updateTimer() {
+                try {
+                    const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+                    const res = await fetch('/api/game/state', { headers: { 'Authorization': 'Bearer ' + token } });
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    if (!data || !data.state || !data.state.endsAt) return;
+                    const endsAt = new Date(data.state.endsAt);
+                    const diff = Math.max(0, Math.floor((endsAt.getTime() - Date.now()) / 1000));
+                    const hours = String(Math.floor(diff / 3600)).padStart(2, '0');
+                    const mins = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
+                    const secs = String(diff % 60).padStart(2, '0');
+                    timerEl.innerText = i18n.t('tour.timeLeft', { time: `${hours}:${mins}:${secs}` });
+                } catch (e) {
+                    // ignore
+                }
+            }
+            updateTimer();
+            if (banner.dataset.timerId) {
+                try { clearInterval(Number(banner.dataset.timerId)); } catch (e) {}
+            }
+            banner.dataset.timerId = String(setInterval(updateTimer, 1000));
+        }
+
+        function hideActiveGameBanner() {
+            const banner = document.getElementById('activeGameBanner');
+            if (banner && banner.dataset && banner.dataset.timerId) {
+                try { clearInterval(Number(banner.dataset.timerId)); } catch (e) {}
+                delete banner.dataset.timerId;
+            }
+            if (banner) {
+                banner.style.display = 'none';
+            }
+        }
+
+        function openEditRoomModal(room) {
+            currentEditRoom = room;
+            document.getElementById('editRoomName').value = room.nazwaPokoju || '';
+            document.getElementById('editMaxPlayers').value = room.maxGraczy || 10;
+            document.getElementById('editRoundDuration').value = Math.floor((room.ustawienia?.dlugoscRundySekundy || 7200) / 60);
+            document.getElementById('editEcoModifier').value = room.ustawienia?.modyfikatorCzasuEkonomii ?? 0;
+            document.getElementById('editMilitaryModifier').value = room.ustawienia?.modyfikatorCzasuWojska ?? 0;
+            document.getElementById('editPlayersCanAddBots').checked = Boolean(room.playersCanAddBots);
+            document.getElementById('editRoomModal').classList.add('active');
+        }
+
+        function closeEditRoomModal() {
+            currentEditRoom = null;
+            document.getElementById('editRoomModal').classList.remove('active');
+        }
+
+        function numOrDefault(value, fallback) {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? parsed : fallback;
+        }
+
+        async function saveRoomChanges() {
+            if (!currentEditRoom) return;
+            const payload = {
+                nazwaPokoju: document.getElementById('editRoomName').value,
+                maxGraczy: Number(document.getElementById('editMaxPlayers').value) || 10,
+                roundDurationMinutes: Number(document.getElementById('editRoundDuration').value) || 120,
+                economyTimeModifier: numOrDefault(document.getElementById('editEcoModifier').value, 0),
+                militaryTimeModifier: numOrDefault(document.getElementById('editMilitaryModifier').value, 0),
+                playersCanAddBots: document.getElementById('editPlayersCanAddBots').checked
+            };
+            try {
+                const response = await fetch(`/api/rooms/${currentEditRoom._id}`, {
+                    method: 'PUT',
+                    headers,
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || i18n.t('tour.err.save'));
+                closeEditRoomModal();
+                loadRooms();
+                alert(i18n.t('tour.updated'));
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        }
+
+        async function toggleRoomPause(roomId, currentValue) {
+            try {
+                const response = await fetch(`/api/rooms/${roomId}/pause`, {
+                    method: 'PUT',
+                    headers
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || i18n.t('tour.err.toggle'));
+                loadRooms();
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        }
+
+        async function deleteRoom(roomId, roomName) {
+            try {
+                const response = await fetch(`/api/rooms/${roomId}`, {
+                    method: 'DELETE',
+                    headers
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || i18n.t('tour.err.remove'));
+                loadRooms();
+                alert(i18n.t('tour.removed'));
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        }
+
+        function formatMmrGain(value) {
+            return value > 0 ? `+${value}` : `${value}`;
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str == null ? '' : String(str);
+            return div.innerHTML;
+        }
+
+        async function loadMmrRanking() {
+            const list = document.getElementById('mmrRankingList');
+            try {
+                const [leaderboardRes, poolRes] = await Promise.all([
+                    fetch('/api/tournament/mmr-leaderboard?limit=50'),
+                    fetch('/api/settings/tournament-tickets')
+                ]);
+                if (poolRes.ok) {
+                    const pool = await poolRes.json();
+                    document.getElementById('mmrPoolHint').textContent = i18n.t('tour.mmr.poolHint', { remaining: pool.remaining, total: pool.total });
+                }
+                if (!leaderboardRes.ok) throw new Error(i18n.t('tour.mmr.loadError'));
+                const data = await leaderboardRes.json();
+                const entries = data.leaderboard || [];
+                const directPassSlots = data.directPassSlots || 5;
+                if (!entries.length) {
+                    list.innerHTML = `<li class="mmr-ranking-empty">${i18n.t('tour.mmr.empty')}</li>`;
+                    return;
+                }
+                list.innerHTML = entries.map((entry, index) => `
+                    <li class="${index < directPassSlots ? 'mmr-top5' : ''}" title="${index < directPassSlots ? i18n.t('tour.mmr.wildcardTitle') : ''}">
+                        <span class="mmr-rank-pos">${index + 1}.</span>
+                        <span class="mmr-rank-name">${escapeHtml(entry.username)}</span>
+                        ${index < directPassSlots ? `<span class="mmr-wildcard-badge">${i18n.t('tour.mmr.wildcard')}</span>` : ''}
+                        <span class="mmr-rank-gain">${formatMmrGain(entry.gained)}</span>
+                    </li>
+                `).join('');
+            } catch (error) {
+                console.error(error);
+                list.innerHTML = `<li class="mmr-ranking-empty">${i18n.t('tour.err.rankingLoad')}</li>`;
+            }
+        }
+
+        async function loadQualificationRanking() {
+            const list = document.getElementById('qualRankingList');
+            const directPassBox = document.getElementById('qualDirectPassBox');
+            try {
+                const response = await fetch('/api/tournament/qualification-leaderboard?limit=35');
+                if (!response.ok) throw new Error(i18n.t('tour.qual.loadError'));
+                const data = await response.json();
+                const entries = data.leaderboard || [];
+                const semifinalSlots = data.semifinalSlots || 35;
+                const directPassPlayers = data.directPassPlayers || [];
+
+                if (directPassPlayers.length) {
+                    directPassBox.style.display = 'block';
+                    directPassBox.innerHTML = `
+                        <div class="qual-direct-pass-title">${i18n.t('tour.qual.directPass')}</div>
+                        <ul>${directPassPlayers.map((p) => `<li>${escapeHtml(p.username)}</li>`).join('')}</ul>
+                    `;
+                } else {
+                    directPassBox.style.display = 'none';
+                }
+
+                if (!entries.length) {
+                    list.innerHTML = `<li class="qual-ranking-empty">${i18n.t('tour.qual.empty')}</li>`;
+                    return;
+                }
+                list.innerHTML = entries.map((entry, index) => `
+                    <li class="${index < semifinalSlots ? 'qual-advances' : ''}">
+                        <span class="qual-rank-pos">${index + 1}.</span>
+                        <span class="qual-rank-name">${escapeHtml(entry.username)}</span>
+                        <span class="qual-rank-points">${entry.points}</span>
+                    </li>
+                `).join('');
+            } catch (error) {
+                console.error(error);
+                list.innerHTML = `<li class="qual-ranking-empty">${i18n.t('tour.err.rankingLoad')}</li>`;
+            }
+        }
+
+        function statusLabel(status) {
+            if (status === 'active') return i18n.t('tour.semi.live');
+            if (status === 'finished') return i18n.t('tour.semi.finished');
+            return i18n.t('tour.semi.waiting');
+        }
+
+        function renderSemifinalPlayersList(listEl, players) {
+            if (!players || !players.length) {
+                listEl.innerHTML = `<li class="semifinal-players-empty">${i18n.t('tour.semi.noPlayers')}</li>`;
+                return;
+            }
+            listEl.innerHTML = players.map((p, i) => `
+                <li>
+                    <span class="semifinal-rank-pos">${i + 1}.</span>
+                    <span class="semifinal-name">${escapeHtml(p.username)}</span>
+                    <span class="semifinal-points">${i18n.t('tour.semi.points', { n: p.points })}</span>
+                </li>
+            `).join('');
+        }
+
+        async function loadBracketResults(stage) {
+            const response = await fetch(`/api/tournament/bracket-results?stage=${stage}`);
+            if (!response.ok) throw new Error(i18n.t('tour.err.results'));
+            const data = await response.json();
+            return data.rooms || [];
+        }
+
+        async function loadSemifinalRankings() {
+            const leftEl = document.getElementById('semifinalLeftRooms');
+            const rightEl = document.getElementById('semifinalRightRooms');
+            try {
+                const rooms = await loadBracketResults('semifinal');
+                leftEl.innerHTML = '';
+                rightEl.innerHTML = '';
+                rooms.forEach((room, index) => {
+                    const target = index < 2 ? leftEl : rightEl;
+                    const heading = document.createElement('div');
+                    heading.className = 'semifinal-room-heading';
+                    heading.textContent = (room.roomName || i18n.t('tour.semi.defaultName')) + statusLabel(room.status);
+                    target.appendChild(heading);
+                    const list = document.createElement('ol');
+                    list.className = 'semifinal-players-list';
+                    target.appendChild(list);
+                    renderSemifinalPlayersList(list, room.players);
+                });
+            } catch (error) {
+                console.error(error);
+                leftEl.innerHTML = `<div class="semifinal-players-empty">${i18n.t('tour.err.resultsLoad')}</div>`;
+                rightEl.innerHTML = `<div class="semifinal-players-empty">${i18n.t('tour.err.resultsLoad')}</div>`;
+            }
+        }
+
+        async function loadFinalRanking() {
+            const list = document.getElementById('finalRankingList');
+            try {
+                const rooms = await loadBracketResults('final');
+                const room = rooms[0];
+                renderSemifinalPlayersList(list, room ? room.players : []);
+            } catch (error) {
+                console.error(error);
+                list.innerHTML = `<li class="semifinal-players-empty">${i18n.t('tour.err.rankingLoad')}</li>`;
+            }
+        }
+
+        function setTurniejeView(view) {
+            const isQual = view === 'qualification';
+            const isSemifinal = view === 'semifinal';
+            const isFinal = view === 'final';
+            ['mmrRankingPanel', 'qualRankingPanel', 'roomsGrid'].forEach((id) => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = isQual ? '' : 'none';
+            });
+            document.getElementById('semifinalView').style.display = isSemifinal ? 'flex' : 'none';
+            document.getElementById('finalView').style.display = isFinal ? 'flex' : 'none';
+            document.getElementById('turniejeTabQual').classList.toggle('active', isQual);
+            document.getElementById('turniejeTabSemifinal').classList.toggle('active', isSemifinal);
+            document.getElementById('turniejeTabFinal').classList.toggle('active', isFinal);
+            // adminNotice/activeGameBanner manage their own visibility elsewhere (admin status,
+            // active-game check) — force them off on the semifinal/final tabs, and re-run those
+            // checks when coming back to Kwalifikacje so they're not stuck hidden.
+            if (isQual) {
+                setAdminControlsVisibility();
+                checkActiveGame();
+            } else {
+                document.getElementById('adminNotice').style.display = 'none';
+                document.getElementById('activeGameBanner').style.display = 'none';
+                if (isSemifinal) { loadSemifinalRooms(); loadSemifinalRankings(); }
+                if (isFinal) { loadFinalRooms(); loadFinalRanking(); }
+            }
+        }
+
+        loadProfile();
+        loadMmrRanking();
+        loadQualificationRanking();
+
+        // Keep every ranking panel fresh on its own — cheap GETs, refreshed regardless of which
+        // tab is currently visible so switching tabs never shows stale data. Covers both what the
+        // user asked for: a 1-minute floor even if nothing changes, PLUS an immediate refresh the
+        // moment a qualification room actually finishes (semifinal/final rounds don't have an
+        // equivalent global broadcast yet, so those two stay on the 1-minute poll only).
+        function refreshAllTurniejeRankings() {
+            loadMmrRanking();
+            loadQualificationRanking();
+            loadSemifinalRankings();
+            loadFinalRanking();
+        }
+        setInterval(refreshAllTurniejeRankings, 60000);
+        // Zmiana jezyka: listy pokoi i rankingi budowane w skrypcie rysujemy od nowa.
+        document.addEventListener('wol:langchange', () => {
+            renderNickBar();
+            loadRooms();
+            loadSemifinalRooms();
+            loadFinalRooms();
+            refreshAllTurniejeRankings();
+        });
+        socket.on('tournament:roomFinished', refreshAllTurniejeRankings);
+        socket.on('tournament:completed', refreshAllTurniejeRankings);
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+    <script src="/page-scale.js"></script>
+    <script src="/wol-guest.js"></script>
+</body>
+</html>

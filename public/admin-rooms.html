@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>War of Lords - Zarządzanie Pokojami</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+        .nav-menu {
+            background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat;
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 16px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .shell { width: 100%; max-width: 900px; padding: 0 20px 40px; box-sizing: border-box; }
+        .back-link { display: inline-block; margin-bottom: 18px; color: #94a3b8; text-decoration: none; font-size: 14px; }
+        .back-link:hover { color: #e8c766; }
+        .page-header { text-align: center; margin-bottom: 28px; }
+        .page-header h1 { margin: 0; font-size: 32px; color: #e8c766; letter-spacing: 1px; text-transform: uppercase; }
+        .page-header p { margin: 10px auto 0; max-width: 700px; color: #cbd5e1; font-size: 15px; line-height: 1.6; }
+
+        .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; width: 100%; box-sizing: border-box; }
+        @media (max-width: 640px) { .dashboard-grid { grid-template-columns: 1fr; } }
+        .dash-card {
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96));
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 18px;
+            padding: 30px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 220px;
+            transition: transform 0.2s, border-color 0.2s;
+            box-sizing: border-box;
+        }
+        .dash-card:hover { transform: translateY(-5px); border-color: #d4af37; }
+        .dash-icon { font-size: 45px; margin-bottom: 15px; }
+        .dash-title { font-size: 20px; font-weight: bold; color: #e8c766; text-transform: uppercase; margin-bottom: 10px; }
+        .dash-desc { color: #cbd5e1; font-size: 14px; margin-bottom: 20px; line-height: 1.4; flex-grow: 1; }
+        .btn-dash {
+            border: none; border-radius: 10px; cursor: pointer; font-weight: bold;
+            width: 90%; padding: 12px 18px; font-size: 14px; text-transform: uppercase; text-decoration: none; display: inline-block;
+            background: linear-gradient(180deg, #e8c766, #b8901f); color: #1c1408; transition: transform 0.2s, background-color 0.2s;
+        }
+        .btn-dash:hover { transform: translateY(-1px); background: linear-gradient(180deg, #f0d78c, #c9a227); }
+        .panel-alert { background: rgba(248, 113, 113, 0.15); border: 1px solid #f87171; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; color: #f8fafc; }
+    </style>
+</head>
+<body>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="/index.html">Główna</a>
+        <a id="navRooms" href="/pokoje.html">Pokoje Bitewne</a>
+        <a id="navTournaments" href="/turnieje.html">Turnieje</a>
+        <a id="navShop" href="/sklep.html">Sklep</a>
+        <a id="navRanking" href="/ranking.html">Ranking Ogólny</a>
+        <a id="navProfile" href="/profile.html">Profil</a>
+        <a id="navRules" href="/zasady.html">Zasady</a>
+        <a id="navAdmin" href="/admin.html" class="active">Panel Admina</a>
+    </div>
+
+    <div class="shell">
+        <a class="back-link" href="/admin.html">&larr; Wróć do panelu administratora</a>
+        <div class="page-header">
+            <h1>🚪 Zarządzanie Pokojami</h1>
+            <p>Wybierz etap, którego pokojami chcesz zarządzać — pauza/wznowienie, kończenie rund i podgląd na żywo.</p>
+        </div>
+
+        <div id="adminWarning" class="panel-alert" style="display:none;"></div>
+
+        <div class="dashboard-grid">
+            <div class="dash-card">
+                <div class="dash-icon">⚔️</div>
+                <div class="dash-title">Zwykłe Rundy</div>
+                <div class="dash-desc">Pokoje rozgrywek standardowych i mecze towarzyskie.</div>
+                <a href="/admin/rooms/regular" class="btn-dash">Zarządzaj</a>
+            </div>
+
+            <div class="dash-card">
+                <div class="dash-icon">🎟️</div>
+                <div class="dash-title">Rundy Kwalifikacyjne</div>
+                <div class="dash-desc">Pokoje etapu kwalifikacji Turnieju Miesięcznego (rundy 1-4).</div>
+                <a href="/admin/rooms/qualifiers" class="btn-dash">Zarządzaj</a>
+            </div>
+
+            <div class="dash-card">
+                <div class="dash-icon">🥈</div>
+                <div class="dash-title">Rundy Półfinałowe</div>
+                <div class="dash-desc">4 stałe pokoje etapu półfinałowego.</div>
+                <a href="/admin/rooms/semifinals" class="btn-dash">Zarządzaj</a>
+            </div>
+
+            <div class="dash-card">
+                <div class="dash-icon">🏆</div>
+                <div class="dash-title">Finał</div>
+                <div class="dash-desc">Pokój meczu finałowego.</div>
+                <a href="/admin/rooms/final" class="btn-dash">Zarządzaj</a>
+            </div>
+
+            <div class="dash-card">
+                <div class="dash-icon">👥</div>
+                <div class="dash-title">Gracze</div>
+                <div class="dash-desc">Lista graczy, blokady, wykryte multikonta, podejrzane powiązania i skrzynka pocztowa.</div>
+                <a href="/admin/rooms/players" class="btn-dash">Zarządzaj</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (!token) { window.location.href = '/login.html'; }
+        const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        function showAdminError(message) {
+            const warning = document.getElementById('adminWarning');
+            warning.style.display = 'block';
+            warning.innerText = message;
+        }
+
+        async function fetchAdminProfile() {
+            try {
+                const response = await fetch('/api/auth/me', { headers });
+                if (!response.ok) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('token');
+                    return window.location.href = '/login.html';
+                }
+                const profile = await response.json();
+                if (!profile.isAdmin) return showAdminError('Brak uprawnień administratora.');
+            } catch (err) {
+                console.error(err);
+                showAdminError('Błąd ładowania panelu.');
+            }
+        }
+
+        fetchAdminProfile();
+    </script>
+    <script src="/page-scale.js"></script>
+</body>
+</html>

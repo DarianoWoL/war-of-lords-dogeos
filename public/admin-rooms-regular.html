@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>War of Lords - Zwykłe Rundy</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;
+            background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif;
+            margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; padding-bottom: 60px;
+        }
+        .nav-menu { background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat; width: 100%; padding: 15px 0; text-align: center; margin-bottom: 30px; }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 16px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .shell { width: 100%; max-width: 1200px; padding: 0 20px 40px; box-sizing: border-box; }
+        .back-link { display: inline-block; margin-bottom: 18px; color: #94a3b8; text-decoration: none; font-size: 14px; }
+        .back-link:hover { color: #e8c766; }
+        .page-header { text-align: center; margin-bottom: 24px; }
+        .page-header h1 { margin: 0; font-size: 30px; color: #e8c766; letter-spacing: 1px; text-transform: uppercase; }
+        .page-header p { margin: 10px auto 0; max-width: 700px; color: #cbd5e1; font-size: 15px; line-height: 1.6; }
+        .panel-alert { background: rgba(248, 113, 113, 0.15); border: 1px solid #f87171; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; color: #f8fafc; }
+
+        .admin-view-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+        .admin-view-tab { border: 1px solid rgba(212, 175, 55, 0.28); border-radius: 10px; background: #0f172a; color: #cbd5e1; padding: 10px 16px; font-size: 14px; font-weight: bold; cursor: pointer; }
+        .admin-view-tab.active { background: linear-gradient(180deg, #e8c766, #b8901f); color: #1c1408; border-color: transparent; }
+
+        .rooms-tile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .room-tile {
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.92), rgba(10, 16, 33, 0.94));
+            border: 1px solid rgba(212, 175, 55, 0.32); border-radius: 16px; padding: 20px;
+            transition: transform 0.2s, border-color 0.2s; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+        }
+        .room-tile:hover { transform: translateY(-2px); border-color: #d4af37; }
+        .room-tile-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+        .room-tile-title { margin: 0 0 6px; color: #e8c766; font-size: 18px; }
+        .room-tile-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px 14px; margin-bottom: 14px; font-size: 13px; color: #e2e8f0; }
+        .room-tile-players { color: #cbd5e1; font-size: 12.5px; line-height: 1.5; margin-bottom: 14px; }
+        .room-tile-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+        .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: bold; }
+        .status-pill.active { background: rgba(52,211,153,0.18); color: #34d399; }
+        .status-pill.lobby { background: rgba(212, 175, 55, 0.18); color: #e8c766; }
+        .status-pill.finished, .status-pill.paused { background: rgba(248,113,113,0.18); color: #f87171; }
+        .btn-small { border: none; border-radius: 10px; cursor: pointer; font-weight: bold; padding: 10px 12px; font-size: 13px; min-width: 100px; background: #1e293b; color: #f8fafc; border: 1px solid rgba(212, 175, 55, 0.28); }
+        .btn-small:hover { background: #334155; }
+        .btn-red { background: #ef4444; color: #fff; border-color: transparent; }
+        .btn-green { background: #34d399; color: #0f172a; border-color: transparent; }
+
+        .panel-card { background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96)); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 18px; padding: 24px; margin-bottom: 24px; }
+        .panel-card h2 { margin: 0 0 8px; font-size: 18px; color: #e8c766; text-transform: uppercase; letter-spacing: 0.03em; }
+        .panel-card .subtext { margin: 0 0 16px; color: #cbd5e1; font-size: 13px; line-height: 1.5; }
+        .panel-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px; }
+        .panel-row label { color: #cbd5e1; font-size: 13px; display: block; margin-bottom: 8px; }
+        .panel-row input[type="text"], .panel-row input[type="number"] { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.28); background: #0f172a; color: #f8fafc; font-size: 14px; box-sizing: border-box; }
+        .btn-action { border: none; border-radius: 10px; cursor: pointer; font-weight: bold; padding: 14px 18px; background: linear-gradient(180deg, #e8c766, #b8901f); color: #1c1408; margin-top: 6px; text-decoration: none; display: inline-block; text-align: center; }
+        .btn-action:hover { background: linear-gradient(180deg, #f0d78c, #c9a227); }
+    </style>
+</head>
+<body>
+    <script>
+        window.alert = function () {};
+        window.confirm = function () { return true; };
+    </script>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="/index.html">Główna</a>
+        <a id="navRooms" href="/pokoje.html">Pokoje Bitewne</a>
+        <a id="navTournaments" href="/turnieje.html">Turnieje</a>
+        <a id="navShop" href="/sklep.html">Sklep</a>
+        <a id="navRanking" href="/ranking.html">Ranking Ogólny</a>
+        <a id="navProfile" href="/profile.html">Profil</a>
+        <a id="navRules" href="/zasady.html">Zasady</a>
+        <a id="navAdmin" href="/admin.html" class="active">Panel Admina</a>
+    </div>
+
+    <div class="shell">
+        <a class="back-link" href="/admin/rooms">&larr; Wróć do Zarządzania Pokojami</a>
+        <div class="page-header">
+            <h1>⚔️ Zwykłe Rundy</h1>
+            <p>Pokoje rozgrywek standardowych i mecze towarzyskie — pauza/wznowienie, kończenie rund, podgląd na żywo.</p>
+        </div>
+
+        <div id="adminWarning" class="panel-alert" style="display:none;"></div>
+
+        <div class="panel-card">
+            <h2>Tworzenie nowego pokoju</h2>
+            <p class="subtext">Utwórz nowy pokój bitewny z własnymi ustawieniami. Rundy są darmowe — bez wpisowego i bez nagród za wygraną.</p>
+            <div class="panel-row">
+                <div><label for="adminRoomName">Nazwa pokoju</label><input type="text" id="adminRoomName" placeholder="Nazwa pokoju" /></div>
+                <div><label for="adminRoomMaxPlayers">Maksymalna liczba graczy</label><input type="number" id="adminRoomMaxPlayers" min="2" max="20" value="10" /></div>
+                <div><label for="adminRoundDuration">Długość rundy (minuty)</label><input type="number" id="adminRoundDuration" min="15" max="600" value="60" /></div>
+            </div>
+            <div class="panel-row">
+                <div><label for="adminEcoModifier">Modyfikator ekonomii</label><input type="number" id="adminEcoModifier" min="-5" max="5" step="0.25" value="0" /></div>
+                <div><label for="adminMilitaryModifier">Modyfikator wojska</label><input type="number" id="adminMilitaryModifier" min="-5" max="5" step="0.25" value="0" /></div>
+            </div>
+            <div class="panel-row">
+                <div><label><input type="checkbox" id="adminRoomPlayersCanAddBots" /> Pozwól graczom samodzielnie dodawać boty w poczekalni</label></div>
+            </div>
+            <div class="panel-row">
+                <div><label><input type="checkbox" id="adminRoomIsMiniTournament" onchange="toggleMiniTournamentFields()" /> 🏆 To jest Mini-Turniej (nagrody VPLN, widoczny na /mini-tournaments)</label></div>
+            </div>
+            <div id="miniTournamentFields" style="display:none;">
+                <p class="subtext">⚠️ Podane kwoty wypłacane są zwycięzcom w 100% (bez potrącenia podatku) — Organizator nie jest płatnikiem podatku dochodowego, zob. Regulamin §5b.</p>
+                <div class="panel-row">
+                    <div><label for="miniPrize1">Nagroda VPLN — 1. miejsce</label><input type="number" id="miniPrize1" min="0" value="0" /></div>
+                    <div><label for="miniPrize2">Nagroda VPLN — 2. miejsce</label><input type="number" id="miniPrize2" min="0" value="0" /></div>
+                    <div><label for="miniPrize3">Nagroda VPLN — 3. miejsce</label><input type="number" id="miniPrize3" min="0" value="0" /></div>
+                </div>
+                <div class="panel-row">
+                    <div><label><input type="checkbox" id="miniRequiresTicket" /> Wymagaj Biletu do Mini-Turnieju, żeby dołączyć</label></div>
+                </div>
+            </div>
+            <button class="btn-action" onclick="createAdminRoom()">Utwórz pokój</button>
+        </div>
+
+        <div class="panel-card">
+            <h2>Tworzenie pokoju — system Gotowości</h2>
+            <p class="subtext">Gracze startują rundę sami, klikając „Gotowy" w poczekalni — potrzeba minimum 5 graczy, a runda rusza automatycznie (10s odliczania), gdy wszyscy potwierdzą gotowość.</p>
+            <div class="panel-row">
+                <div><label for="readyRoomName">Nazwa pokoju</label><input type="text" id="readyRoomName" placeholder="Nazwa pokoju" /></div>
+                <div><label for="readyRoomDuration">Długość rundy (minuty)</label><input type="number" id="readyRoomDuration" min="15" max="600" value="60" /></div>
+            </div>
+            <div class="panel-row">
+                <div><label><input type="checkbox" id="readyRoomPlayersCanAddBots" /> Pozwól graczom samodzielnie dodawać boty w poczekalni</label></div>
+            </div>
+            <button class="btn-action" onclick="createReadyRoom()">Utwórz pokój z systemem Gotowości</button>
+        </div>
+
+        <div class="panel-card">
+            <h2>Tworzenie pokoju — tryb drużynowy</h2>
+            <p class="subtext">Mapa drużynowa — od 2 do 10 drużyn.</p>
+            <div class="panel-row">
+                <div><label for="teamRoomName">Nazwa pokoju</label><input type="text" id="teamRoomName" placeholder="Nazwa pokoju" /></div>
+                <div><label for="teamRoomDuration">Długość rundy (minuty)</label><input type="number" id="teamRoomDuration" min="15" max="600" value="60" /></div>
+                <div><label for="teamRoomTeamCount">Liczba drużyn (2-10)</label><input type="number" id="teamRoomTeamCount" min="2" max="10" value="2" /></div>
+            </div>
+            <button class="btn-action" id="createTeamRoomBtn" onclick="createTeamRoom()">Utwórz pokój drużynowy</button>
+            <a href="/edytor_mapy_druzynowej.html" class="btn-action" style="margin-left:10px;">🗺️ Edytor pozycji wiosek na mapie</a>
+        </div>
+
+        <div class="admin-view-tabs">
+            <button type="button" class="admin-view-tab active" id="tabRoomsAll" onclick="setSubView('rooms-all')">Aktywne pokoje</button>
+            <button type="button" class="admin-view-tab" id="tabRoomsOngoing" onclick="setSubView('rooms-ongoing')">Trwające rundy</button>
+        </div>
+
+        <div class="rooms-tile-grid" id="roomsContainer">
+            <p style="color:#cbd5e1;">Ładowanie...</p>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (!token) { window.location.href = '/login.html'; }
+        const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        function showAdminError(message) {
+            const warning = document.getElementById('adminWarning');
+            warning.style.display = 'block';
+            warning.style.background = 'rgba(248, 113, 113, 0.15)';
+            warning.style.borderColor = '#f87171';
+            warning.innerText = message;
+        }
+
+        // Room creation previously gave NO confirmation at all beyond the room quietly appearing in
+        // the (possibly long, scrolled-past) list below - an admin who missed that had no way to
+        // tell a "create" click actually worked, and could end up retrying with the exact same name,
+        // which used to hang the whole request for a minute+ before failing (see POST /api/rooms's
+        // now-fixed duplicate-name handling in server.js).
+        let successHideTimer = null;
+        function showAdminSuccess(message) {
+            const warning = document.getElementById('adminWarning');
+            warning.style.display = 'block';
+            warning.style.background = 'rgba(52, 211, 153, 0.15)';
+            warning.style.borderColor = '#34d399';
+            warning.innerText = message;
+            clearTimeout(successHideTimer);
+            successHideTimer = setTimeout(() => { warning.style.display = 'none'; }, 4000);
+        }
+
+        function numOrDefault(value, def) {
+            const n = Number(value);
+            return Number.isFinite(n) ? n : def;
+        }
+
+        function toggleMiniTournamentFields() {
+            document.getElementById('miniTournamentFields').style.display =
+                document.getElementById('adminRoomIsMiniTournament').checked ? 'block' : 'none';
+        }
+
+        async function createAdminRoom() {
+            document.getElementById('adminWarning').style.display = 'none';
+            const isMiniTournament = document.getElementById('adminRoomIsMiniTournament').checked;
+            const payload = {
+                name: document.getElementById('adminRoomName').value.trim(),
+                maxPlayers: Number(document.getElementById('adminRoomMaxPlayers').value) || 10,
+                playersCanAddBots: document.getElementById('adminRoomPlayersCanAddBots').checked,
+                settings: {
+                    dlugoscRundySekundy: Number(document.getElementById('adminRoundDuration').value) * 60 || 3600,
+                    modyfikatorCzasuEkonomii: numOrDefault(document.getElementById('adminEcoModifier').value, 0),
+                    modyfikatorCzasuWojska: numOrDefault(document.getElementById('adminMilitaryModifier').value, 0)
+                },
+                isMiniTournament,
+                miniTournamentPrizes: isMiniTournament ? {
+                    place1VPLN: numOrDefault(document.getElementById('miniPrize1').value, 0),
+                    place2VPLN: numOrDefault(document.getElementById('miniPrize2').value, 0),
+                    place3VPLN: numOrDefault(document.getElementById('miniPrize3').value, 0)
+                } : undefined,
+                requiresMiniTournamentTicket: isMiniTournament ? document.getElementById('miniRequiresTicket').checked : false
+            };
+            try {
+                const response = await fetch('/api/rooms', { method: 'POST', headers, body: JSON.stringify(payload) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się utworzyć pokoju.');
+                showAdminSuccess(`Utworzono pokój „${result.room.nazwaPokoju}".`);
+                await loadRoomTemplates();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        async function createReadyRoom() {
+            const payload = {
+                name: document.getElementById('readyRoomName').value.trim(),
+                roomType: 'percentage',
+                playersCanAddBots: document.getElementById('readyRoomPlayersCanAddBots').checked,
+                settings: { dlugoscRundySekundy: Number(document.getElementById('readyRoomDuration').value) * 60 || 3600 }
+            };
+            try {
+                const response = await fetch('/api/rooms', { method: 'POST', headers, body: JSON.stringify(payload) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się utworzyć pokoju.');
+                showAdminSuccess(`Utworzono pokój „${result.room.nazwaPokoju}".`);
+                await loadRoomTemplates();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        async function createTeamRoom() {
+            const payload = {
+                name: document.getElementById('teamRoomName').value.trim(),
+                roomType: 'team',
+                teamCount: Math.min(10, Math.max(2, Number(document.getElementById('teamRoomTeamCount').value) || 2)),
+                settings: { dlugoscRundySekundy: Number(document.getElementById('teamRoomDuration').value) * 60 || 3600 }
+            };
+            try {
+                const response = await fetch('/api/rooms', { method: 'POST', headers, body: JSON.stringify(payload) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się utworzyć pokoju.');
+                showAdminSuccess(`Utworzono pokój „${result.room.nazwaPokoju}".`);
+                await loadRoomTemplates();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        let currentSubView = 'rooms-all';
+        let lastRoomTemplates = [];
+        let lastRounds = [];
+
+        function formatRoundClock(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m}:${String(s).padStart(2, '0')}`;
+        }
+
+        function createRoomTemplateCard(room) {
+            const waitingCount = room.waitingCount || 0;
+            const maxPlayers = room.maxGraczy || room.maxPlayers || 10;
+            const isPaused = !!room.isPaused;
+            const statusLabel = isPaused ? 'Zapauzowany' : 'Dostępny';
+            const statusClass = isPaused ? 'paused' : 'lobby';
+            const container = document.createElement('div');
+            container.className = 'room-tile';
+            const isMini = !!room.isMiniTournament;
+            container.innerHTML = `
+                <div class="room-tile-header">
+                    <div>
+                        <h3 class="room-tile-title">${isMini ? '🏆 ' : ''}${room.nazwaPokoju || room.roomName}</h3>
+                        <div class="status-pill ${statusClass}">${statusLabel}</div>
+                    </div>
+                </div>
+                <div class="room-tile-info">
+                    <div><strong>W kolejce:</strong> ${waitingCount} / ${maxPlayers}</div>
+                    <div><strong>Czas rundy:</strong> ${Math.floor((room.ustawienia?.dlugoscRundySekundy || 3600) / 60)} min</div>
+                    <div><strong>Prędkość:</strong> ${room.speedFactor ?? 1}x</div>
+                    ${isMini ? `<div><strong>Nagrody VPLN:</strong> ${room.miniTournamentPrizes?.place1VPLN || 0}/${room.miniTournamentPrizes?.place2VPLN || 0}/${room.miniTournamentPrizes?.place3VPLN || 0}</div>` : ''}
+                    ${isMini ? `<div><strong>Bilet wymagany:</strong> ${room.requiresMiniTournamentTicket ? 'Tak' : 'Nie'}</div>` : ''}
+                </div>
+                <div class="room-tile-players">
+                    ${room.waitingPlayers?.length ? `W kolejce: ${room.waitingPlayers.map(p => p.username).join(', ')}` : 'Brak graczy w kolejce.'}
+                </div>
+                <div class="room-tile-actions">
+                    <button class="btn-small" onclick="togglePauseRoom('${room._id}')">${isPaused ? 'Wznów' : 'Pauza'}</button>
+                    <button class="btn-small btn-red" onclick="deleteAdminRoom('${room._id}', '${room.nazwaPokoju || room.roomName}')">Usuń pokój</button>
+                </div>
+            `;
+            return container;
+        }
+
+        function createRoundCard(round) {
+            const remaining = round.roundEndsAt ? Math.max(0, Math.floor((new Date(round.roundEndsAt).getTime() - Date.now()) / 1000)) : null;
+            const container = document.createElement('div');
+            container.className = 'room-tile';
+            container.innerHTML = `
+                <div class="room-tile-header">
+                    <div>
+                        <h3 class="room-tile-title">${round.roomName}</h3>
+                        <div class="status-pill active">Trwa runda${remaining !== null ? ` • ${formatRoundClock(remaining)}` : ''}</div>
+                    </div>
+                </div>
+                <div class="room-tile-info">
+                    <div><strong>Gracze:</strong> ${round.currentPlayersCount || (round.players || []).length}</div>
+                    <div><strong>Czas rundy:</strong> ${Math.floor((round.settings?.dlugoscRundySekundy || 3600) / 60)} min</div>
+                    <div><strong>Prędkość:</strong> ${round.speedFactor ?? 1}x</div>
+                </div>
+                <div class="room-tile-players">
+                    ${round.players?.length ? `Gracze: ${round.players.map(p => p.name || p.username).join(', ')}` : 'Brak graczy.'}
+                </div>
+                <div class="room-tile-actions">
+                    <button class="btn-small btn-green" onclick="spectateRound('${round._id}')">Oglądaj</button>
+                    <button class="btn-small btn-red" onclick="endAdminRound('${round._id}')">Zakończ</button>
+                    <button class="btn-small btn-red" onclick="deleteAdminRound('${round._id}', '${round.roomName}')">Usuń rundę</button>
+                </div>
+            `;
+            return container;
+        }
+
+        function renderRooms() {
+            const container = document.getElementById('roomsContainer');
+            const list = currentSubView === 'rooms-ongoing' ? lastRounds : lastRoomTemplates;
+            if (!list.length) {
+                container.innerHTML = `<p style="color:#cbd5e1;">${currentSubView === 'rooms-ongoing' ? 'Brak trwających rund w tej chwili.' : 'Brak żadnych utworzonych pokoi.'}</p>`;
+                return;
+            }
+            container.innerHTML = '';
+            list.forEach((item) => container.appendChild(currentSubView === 'rooms-ongoing' ? createRoundCard(item) : createRoomTemplateCard(item)));
+        }
+
+        function setSubView(sub) {
+            currentSubView = sub;
+            document.getElementById('tabRoomsAll').classList.toggle('active', sub === 'rooms-all');
+            document.getElementById('tabRoomsOngoing').classList.toggle('active', sub === 'rooms-ongoing');
+            renderRooms();
+        }
+
+        async function loadRoomTemplates() {
+            try {
+                const response = await fetch('/api/admin/rooms', { headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Błąd przy pobieraniu pokoi.');
+                lastRoomTemplates = result;
+                if (currentSubView === 'rooms-all') renderRooms();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        async function loadRounds() {
+            try {
+                const response = await fetch('/api/admin/rounds', { headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Błąd przy pobieraniu rund.');
+                lastRounds = result;
+                if (currentSubView === 'rooms-ongoing') renderRooms();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        function loadAll() {
+            loadRoomTemplates();
+            loadRounds();
+        }
+
+        async function spectateRound(roundId) {
+            window.location.href = `/game.html?roundId=${roundId}`;
+        }
+
+        async function togglePauseRoom(roomId) {
+            try {
+                const response = await fetch(`/api/rooms/${roomId}/pause`, { method: 'PUT', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zmienić stanu pauzy.');
+                await loadRoomTemplates();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        async function endAdminRound(roundId) {
+            try {
+                const response = await fetch(`/api/rounds/${roundId}/end`, { method: 'PUT', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zakończyć rundy.');
+                await loadRounds();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        async function deleteAdminRound(roundId, name) {
+            if (!window.confirm(`Na pewno usunąć rundę "${name}"?`)) return;
+            try {
+                const response = await fetch(`/api/rounds/${roundId}`, { method: 'DELETE', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się usunąć rundy.');
+                await loadRounds();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        async function deleteAdminRoom(roomId, name) {
+            if (!window.confirm(`Na pewno usunąć pokój "${name}"?`)) return;
+            try {
+                const response = await fetch(`/api/rooms/${roomId}`, { method: 'DELETE', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się usunąć pokoju.');
+                await loadRoomTemplates();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        async function init() {
+            const response = await fetch('/api/auth/me', { headers });
+            if (!response.ok) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('token');
+                return window.location.href = '/login.html';
+            }
+            const profile = await response.json();
+            if (!profile.isAdmin) return showAdminError('Brak uprawnień administratora.');
+            loadAll();
+            setInterval(loadAll, 5000);
+        }
+
+        init();
+    </script>
+    <script src="/page-scale.js"></script>
+</body>
+</html>

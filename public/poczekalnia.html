@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en" data-source-lang="en" data-source-lang="en" data-source-lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>War of Lords - Lobby</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #ffffff;
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .lobby-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .lobby-columns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            width: 100%;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .settings-panel {
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96));
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 8px;
+            padding: 20px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0px 4px 15px rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+        }
+
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid #262626;
+            font-size: 14px;
+        }
+
+        .settings-row:last-child {
+            border-bottom: none;
+        }
+
+        .settings-label {
+            color: #94a3b8;
+        }
+
+        .settings-value {
+            color: #f8fafc;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        /* "Lista Graczy" panel: moved to the right side and scaled to 90% of its original
+           width/height (and every internal padding/font/margin) so it always fits on screen. */
+        .lobby-container {
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96));
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 8px;
+            padding: 18px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0px 4px 15px rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #e8c766;
+            margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .player-panel h2 {
+            font-size: 21.6px;
+            margin: 0 0 14.4px 0;
+        }
+
+        .player-list {
+            list-style: none;
+            padding: 0;
+            margin: 18px 0;
+            display: block;
+            max-height: none;
+            overflow: visible;
+        }
+
+        #playerListContainer {
+            display: block;
+            max-height: none;
+            overflow: visible;
+        }
+
+        .mm-box {
+            min-height: 430px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            background-color: #1f2937;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+        }
+        .mm-icon { font-size: 40px; }
+        .mm-status-text { font-size: 16px; font-weight: 600; color: #e2e8f0; }
+        .mm-sub-text { font-size: 13px; color: #94a3b8; max-width: 320px; }
+        .mm-ring { position: relative; width: 96px; height: 96px; }
+        .mm-ring svg { transform: rotate(-90deg); }
+        .mm-ring-bg { fill: none; stroke: #374151; stroke-width: 8; }
+        .mm-ring-fg { fill: none; stroke: #10b981; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.2s linear; }
+        .mm-ring-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; color: #f1f5f9; }
+        .mm-accept-btn { padding: 12px 32px; font-size: 16px; font-weight: 700; background: #16a34a; color: white; border: none; border-radius: 8px; cursor: pointer; }
+        .mm-accept-btn:disabled { background: #374151; cursor: default; }
+        .mm-cancel-btn { padding: 8px 20px; font-size: 13px; background: transparent; color: #94a3b8; border: 1px solid #4b5563; border-radius: 6px; cursor: pointer; }
+        .mm-retry-btn { padding: 10px 24px; font-size: 14px; font-weight: 700; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; }
+
+        .player-item {
+            background-color: #262626;
+            padding: 9px;
+            margin-bottom: 7.2px;
+            border-left: 4px solid #d4af37;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .player-name {
+            font-weight: bold;
+        }
+
+        .status-ready {
+            color: #10b981;
+            font-size: 12.6px;
+        }
+
+        .btn-leave {
+            display: block;
+            width: 100%;
+            padding: 10.8px;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #ef4444;
+            border: none;
+            border-radius: 0;
+            font-size: 14.4px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            box-sizing: border-box;
+            transition: color 0.2s;
+        }
+
+        .btn-leave:hover {
+            color: #fca5a5;
+        }
+
+        .btn-leave.is-locked {
+            background-image: none;
+            color: #94a3b8;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-leave.is-locked:hover {
+            color: #94a3b8;
+        }
+
+        .ready-toggle-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .ready-toggle-btn:disabled:hover {
+            background-color: #334155;
+        }
+
+        .ready-toggle-btn.is-ready:disabled:hover {
+            background-color: #10b981;
+        }
+
+        .btn-bot-test {
+            display: block;
+            width: 100%;
+            padding: 10.8px;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #e8c766;
+            border: none;
+            border-radius: 0;
+            font-size: 14.4px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 13.5px;
+            box-sizing: border-box;
+            transition: color 0.2s;
+        }
+
+        .btn-bot-test:hover {
+            color: #f0d78c;
+        }
+
+        .player-item {
+            background-color: #18181b;
+            border-left: 4px solid #d4af37;
+            padding: 10.8px 12.6px;
+            margin-bottom: 9px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+        }
+
+        .player-name {
+            font-weight: 700;
+            font-size: 14.4px;
+        }
+
+        .status-ready {
+            color: #10b981;
+            font-size: 12.6px;
+        }
+
+        .player-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .kick-btn {
+            background-color: #7f1d1d;
+            color: #fecaca;
+            border: 1px solid #ef4444;
+            border-radius: 4px;
+            width: 22px;
+            height: 22px;
+            line-height: 1;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .kick-btn:hover {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .vote-kick-btn {
+            background-color: rgba(127, 29, 29, 0.35);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1.2;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .vote-kick-btn:hover {
+            background-color: rgba(239, 68, 68, 0.55);
+            color: white;
+        }
+
+        .vote-kick-btn.voted {
+            background-color: rgba(239, 68, 68, 0.7);
+            color: white;
+            cursor: default;
+        }
+
+        .ready-toggle-btn {
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #cbd5e1;
+            border: none;
+            border-radius: 0;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+
+        .ready-toggle-btn:hover {
+            color: #f1f5f9;
+        }
+
+        .ready-toggle-btn.is-ready {
+            color: #10b981;
+        }
+
+        .ready-toggle-btn.is-ready:hover {
+            color: #6ee7b7;
+        }
+
+        .ready-badge {
+            font-size: 12.6px;
+            font-weight: bold;
+        }
+
+        .ready-badge.is-ready {
+            color: #10b981;
+        }
+
+        .ready-badge.is-waiting {
+            color: #94a3b8;
+        }
+
+        .ready-min-players-note {
+            text-align: center;
+            color: #f59e0b;
+            font-size: 12px;
+            margin: -6px 0 10px;
+        }
+
+        #timerDisplay {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #f59e0b;
+            margin: 15px 0;
+            width: 100%;
+        }
+
+        .nav-menu { background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat; width: 100%; padding: 15px 0; text-align: center; margin-bottom: 20px; }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 16px; font-weight: bold; font-size: 15px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+
+        /* Baked-in default nav link layout, adopted site-wide from a player-arranged position
+           (see layout-editor.js) so every visitor sees the same arrangement by default. */
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { display: none !important; position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        /* Team-mode lobby (roomType 'team') — a grid of up to 10 team cards instead of the classic
+           flat 10-slot list, plus a lobby chat so players can agree on team count/size themselves. */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 14px 0;
+        }
+
+        .team-card {
+            background-color: #18181b;
+            border: 1px solid #334155;
+            border-left: 4px solid #64748b;
+            border-radius: 6px;
+            padding: 10px;
+        }
+
+        .team-card-header {
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .team-member-list {
+            list-style: none;
+            margin: 0 0 8px 0;
+            padding: 0;
+        }
+
+        .team-member-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+            font-size: 12.6px;
+            padding: 3px 0;
+        }
+
+        .team-join-btn {
+            width: 100%;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #cbd5e1;
+            border: none;
+            border-radius: 0;
+            padding: 5px 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .team-join-btn:hover {
+            color: #f1f5f9;
+        }
+
+        .team-join-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .team-add-bot-btn {
+            width: 100%;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #e8c766;
+            border: none;
+            border-radius: 0;
+            padding: 5px 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: color 0.2s;
+        }
+
+        .team-add-bot-btn:hover {
+            color: #f0d78c;
+        }
+
+        .team-add-bot-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #teamChatMessages {
+            background-color: #0f172a;
+            border: 1px solid #262626;
+            border-radius: 6px;
+            padding: 8px;
+            height: 160px;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            font-size: 12.6px;
+        }
+
+        .team-chat-row { padding: 2px 0; word-break: break-word; }
+        .team-chat-time { color: #64748b; margin-right: 4px; }
+        .team-chat-user { color: #e8c766; font-weight: bold; margin-right: 4px; }
+        .team-chat-text { color: #e2e8f0; }
+
+        .team-chat-form {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .team-chat-form input {
+            flex: 1;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            padding: 8px;
+            color: #f8fafc;
+        }
+
+        .team-chat-form button {
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #e8c766;
+            border: none;
+            border-radius: 0;
+            padding: 8px 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .team-chat-form button:hover {
+            color: #f0d78c;
+        }
+        #adminPanelLink { position: absolute; left: 234.44px; top: 41.22px; width: 295.89px; height: 60px; margin: 0; box-sizing: border-box; }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/texts/poczekalnia.js"></script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+    <script>
+        window.alert = function () {};
+        window.confirm = function () { return true; };
+    </script>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Home</a>
+        <a id="navRooms" href="pokoje.html">Battle Rooms</a>
+        <a id="navTournaments" href="turnieje.html">Tournaments</a>
+        <a id="navShop" href="live.html">Live Bets</a>
+        <a id="navRanking" href="ranking.html">Overall Ranking</a>
+        <a id="navProfile" href="profile.html">Profile</a>
+        <a id="navRules" href="zasady.html">Rules</a>
+    </div>
+
+    <div id="adminPanelLink" style="display:none;">
+        <a href="admin.html" style="display:inline-block; background:#f59e0b; color:#111827; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">👑 ADMIN PANEL</a>
+    </div>
+
+    <div class="lobby-wrapper">
+        <h1 id="lobbyTitle">Poczekalnia Bitwy</h1>
+        <div id="timerDisplay">Waiting for players...</div>
+
+        <div class="lobby-columns">
+            <div class="settings-panel">
+                <h2>Room Settings</h2>
+                <div id="roomSettingsList">
+                    <div class="settings-row"><span class="settings-label">Loading...</span></div>
+                </div>
+            </div>
+
+            <div class="lobby-container player-panel">
+                <div id="classicPlayerSection">
+                    <h2>Player List (<span id="slotsCount">0</span>/10)</h2>
+                    <div id="readyMinPlayersNote" class="ready-min-players-note" style="display:none;">At least 5 players are needed for the “Ready” buttons to work.</div>
+                    <div class="player-list" id="playerListContainer"></div>
+                </div>
+
+                <div id="matchmakingSection" style="display:none;">
+                    <h2>Mini-Tournament — Matchmaking</h2>
+                    <div class="mm-box" id="mmBox"></div>
+                </div>
+
+                <div id="teamPlayerSection" style="display:none;">
+                    <h2>Teams (<span id="teamPlayersCount">0</span> players)</h2>
+                    <div id="teamLobbyContainer"></div>
+                </div>
+
+                <button class="btn-bot-test" id="btnAddBot" style="display:none;" onclick="dodajBota()">🤖 Add a bot</button>
+                <button class="btn-bot-test" id="btnStartGame" style="display:none; background:#16a34a;" onclick="rozpocznijGre()">▶️ Start game</button>
+                <a href="/index.html" class="btn-leave" id="btnLeaveLobby">Leave the Lobby</a>
+
+                <div id="teamChatPanel" style="display:none;">
+                    <h2 style="font-size:16px;">Lobby chat</h2>
+                    <div id="teamChatMessages"></div>
+                    <form id="teamChatForm" class="team-chat-form">
+                        <input type="text" id="teamChatInput" maxlength="300" placeholder="Write a message..." autocomplete="off" />
+                        <button type="submit">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="/fingerprint.js"></script>
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+
+        const headers = {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+
+        // Must match VOTE_KICK_THRESHOLD in src/server.js's lobby:voteKick handler - purely for the
+        // "X/5" label here, the server enforces the real threshold.
+        const VOTE_KICK_THRESHOLD = 5;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('roomId');
+        const roomName = urlParams.get('roomName') ? decodeURIComponent(urlParams.get('roomName')) : 'battle';
+        const playerNick = localStorage.getItem('username') || localStorage.getItem('warlordNick') || 'Commander';
+        localStorage.setItem('warlordNick', playerNick);
+
+        document.getElementById('lobbyTitle').innerText = `Room: ${roomName.toUpperCase()}`;
+        document.getElementById('btnLeaveLobby').href = '/index.html';
+
+        let playerId = null;
+        let isAdmin = false;
+        let currentRoomType = 'standard';
+        let currentPlayersCanAddBots = false;
+        // Blind matchmaking (Mini-Tournament rooms only) — see joinLobby/showMatchmakingSection.
+        let isMiniTournamentRoom = false;
+        // Monthly Tournament rooms (qualification/semifinal/final) - bots are never allowed here in
+        // real play, see the server-side hard block on lobby:addBot/POST .../add-bots.
+        let isTournamentRoom = false;
+        let roomSettingsLoadedPromise = null;
+        let mmPhase = 'idle'; // idle | searching | matchFound | removed
+        let mmDeadlineAt = null;
+        let mmMatchId = null;
+        let mmAlreadyAccepted = false;
+        let mmRemovedReason = 'not_accepted'; // not_accepted | room_gone | ticket_lost
+        let mmCountdownInterval = null;
+        // Once the server starts the round-start countdown, the roster is locked: nobody can
+        // un-ready or leave until the round actually begins (or the countdown gets cancelled).
+        let lobbyLocked = false;
+
+        function applyLobbyLockUI() {
+            const leaveBtn = document.getElementById('btnLeaveLobby');
+            if (leaveBtn) {
+                leaveBtn.classList.toggle('is-locked', lobbyLocked);
+                leaveBtn.setAttribute('aria-disabled', lobbyLocked ? 'true' : 'false');
+            }
+            document.querySelectorAll('.ready-toggle-btn, .team-join-btn, .team-add-bot-btn').forEach((btn) => {
+                btn.disabled = lobbyLocked;
+            });
+        }
+        // Dynamic origin: works unchanged on localhost, on the LAN, or through an ngrok tunnel.
+        const deviceId = window.WLBFingerprint ? window.WLBFingerprint.getDeviceId() : null;
+        const socket = io(window.location.origin, { auth: { token, deviceId } });
+        socket.on('connect', () => {
+            loadProfile();
+        });
+
+        socket.on('lobby:update_list', (data) => {
+            // For Mini-Tournament rooms this only ever fires with the REAL post-accept roster (see
+            // resolveMatch/matchmaking:join server-side) — hide the blind overlay and reveal it.
+            if (isMiniTournamentRoom) showMatchmakingSection(false);
+            renderPlayers(data || []);
+            // Keeps "Maks. graczy" and the automatic-rewards note in sync as people join/leave —
+            // this panel used to only ever load once, on page open.
+            loadRoomSettings();
+        });
+
+        socket.on('matchmaking:state', (data) => {
+            showMatchmakingSection(true);
+            mmPhase = data.phase;
+            mmDeadlineAt = data.deadlineAt || null;
+            mmMatchId = data.matchId || null;
+            mmAlreadyAccepted = !!data.alreadyAccepted;
+            renderMatchmakingBox();
+        });
+
+        socket.on('matchmaking:matchFound', (data) => {
+            showMatchmakingSection(true);
+            mmPhase = 'matchFound';
+            mmDeadlineAt = data.deadlineAt;
+            mmMatchId = data.matchId;
+            mmAlreadyAccepted = false;
+            renderMatchmakingBox();
+        });
+
+        socket.on('matchmaking:requeued', () => {
+            mmPhase = 'searching';
+            mmMatchId = null;
+            mmDeadlineAt = null;
+            mmAlreadyAccepted = false;
+            renderMatchmakingBox();
+        });
+
+        socket.on('matchmaking:removed', (data) => {
+            mmPhase = 'removed';
+            mmRemovedReason = (data && data.reason) || 'not_accepted';
+            mmMatchId = null;
+            mmDeadlineAt = null;
+            mmAlreadyAccepted = false;
+            renderMatchmakingBox();
+        });
+
+        socket.on('countdown', ({ remaining }) => {
+            if (remaining !== null && remaining !== undefined) {
+                updateTimer(`The game starts in ${remaining}s`, '#10b981');
+            }
+            lobbyLocked = true;
+            applyLobbyLockUI();
+        });
+
+        socket.on('countdownCancelled', () => {
+            updateTimer('Waiting for players...', '#f59e0b');
+            lobbyLocked = false;
+            applyLobbyLockUI();
+        });
+
+        socket.on('gameStarted', (data) => {
+            const redirect = data?.redirectUrl || '/game.html';
+            const targetRoundId = data?.roundId;
+            window.location.href = `${redirect}?roundId=${targetRoundId}&roomName=${encodeURIComponent(roomName)}`;
+        });
+        socket.on('game:error', (message) => {
+            console.error('=== FRONTEND game:error:', message);
+            alert(`Game start error: ${message}`);
+        });
+        socket.on('account:blocked', () => {
+            window.location.href = '/index.html';
+        });
+
+        // Short notification "ping" synthesized via Web Audio API rather than an audio file, so the
+        // chat alert doesn't depend on shipping/loading a sound asset. Lazily creates the
+        // AudioContext on first use since browsers block autoplay of audio contexts created before
+        // any user interaction. Kept identical to playChatNotificationSound in public/game.js.
+        let chatNotifyAudioCtx = null;
+        function playChatNotificationSound() {
+            try {
+                if (!chatNotifyAudioCtx) {
+                    const Ctx = window.AudioContext || window.webkitAudioContext;
+                    if (!Ctx) return;
+                    chatNotifyAudioCtx = new Ctx();
+                }
+                const ctx = chatNotifyAudioCtx;
+                const oscillator = ctx.createOscillator();
+                const gain = ctx.createGain();
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, ctx.currentTime);
+                gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
+                oscillator.connect(gain);
+                gain.connect(ctx.destination);
+                oscillator.start(ctx.currentTime);
+                oscillator.stop(ctx.currentTime + 0.25);
+            } catch (err) {
+                // Audio is a non-critical nicety - never let it break chat rendering.
+            }
+        }
+
+        socket.on('lobby:chatMessage', (msg) => {
+            const box = document.getElementById('teamChatMessages');
+            if (!box || !msg) return;
+            const row = document.createElement('div');
+            row.className = 'team-chat-row';
+            const time = new Date(msg.at || Date.now()).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+            const timeSpan = document.createElement('span');
+            timeSpan.className = 'team-chat-time';
+            timeSpan.textContent = time;
+            const userSpan = document.createElement('span');
+            userSpan.className = 'team-chat-user';
+            userSpan.textContent = `${msg.username || '?'}:`;
+            const textSpan = document.createElement('span');
+            textSpan.className = 'team-chat-text';
+            textSpan.textContent = msg.text || '';
+            row.appendChild(timeSpan);
+            row.appendChild(userSpan);
+            row.appendChild(textSpan);
+            box.appendChild(row);
+            box.scrollTop = box.scrollHeight;
+            if (msg.username !== playerNick) {
+                playChatNotificationSound();
+            }
+        });
+
+        // Must match PLAYER_COLORS in src/server.js — used only as a fallback for players whose
+        // room entry has no server-assigned color yet (e.g. rooms created before this field existed).
+        // (Was previously a copy-paste of gameEngine.js's TEAM palette below, not server.js's real
+        // standard-room PLAYER_COLORS — a legacy-entry fallback color could clash with or mismatch
+        // whatever color that same player actually got assigned everywhere else in the room.)
+        const colorPalette = ['#3b82f6', '#ef4444', '#f59e0b', '#10b981', '#a78bfa', '#f472b6', '#06b6d4', '#8b5cf6', '#fb7185', '#f97316'];
+        let countdownSeconds = 15;
+        let countdownInterval = null;
+        let countdownActive = false;
+
+        // Team rooms use a completely separate rendering path (team-card grid instead of a flat
+        // 10-slot list) — decided up front so the classic per-slot loop below is never touched for
+        // 'standard'/'percentage' rooms and keeps behaving exactly as before.
+        const TEAM_COLOR_PALETTE = ['#1e3a8a', '#14532d', '#f97316', '#8b5cf6', '#dc2626', '#eab308', '#71717a', '#92400e', '#38bdf8', '#4ade80'];
+        const TEAM_CAPACITY = 5;
+        // Admin-chosen per room at creation (2-5), read from room.teamCount in loadRoomSettings() —
+        // how many of the map's 10 fixed regions this room actually uses/shows in the lobby.
+        let currentTeamCount = 2;
+
+        function isSamePlayer(p) {
+            const name = p.username || p.name;
+            return (p.userId && p.userId === playerId) || name === playerNick;
+        }
+
+        function renderTeamLobby(players) {
+            const container = document.getElementById('teamLobbyContainer');
+            container.innerHTML = '';
+            document.getElementById('teamPlayersCount').innerText = String(players.length);
+
+            const byTeam = new Map();
+            players.forEach((p) => {
+                if (p.teamId == null) return;
+                if (!byTeam.has(p.teamId)) byTeam.set(p.teamId, []);
+                byTeam.get(p.teamId).push(p);
+            });
+            const myCurrentTeamId = (players.find(isSamePlayer) || {}).teamId ?? null;
+
+            const gridEl = document.createElement('div');
+            gridEl.className = 'team-grid';
+
+            for (let teamId = 1; teamId <= currentTeamCount; teamId += 1) {
+                const members = byTeam.get(teamId) || [];
+                const color = TEAM_COLOR_PALETTE[teamId - 1];
+                const card = document.createElement('div');
+                card.className = 'team-card';
+                card.style.borderLeftColor = color;
+
+                const header = document.createElement('div');
+                header.className = 'team-card-header';
+                header.style.color = color;
+                header.textContent = `Team ${teamId} (${members.length}/${TEAM_CAPACITY})`;
+                card.appendChild(header);
+
+                const list = document.createElement('ul');
+                list.className = 'team-member-list';
+                members.forEach((p) => {
+                    const name = p.username || p.name || 'Player';
+                    const isSelf = isSamePlayer(p);
+                    const ready = !!p.isBot || !!p.ready;
+                    const li = document.createElement('li');
+                    const nameSpan = document.createElement('span');
+                    nameSpan.textContent = name + (isSelf ? ' (Ty)' : '');
+                    li.appendChild(nameSpan);
+                    if (isSelf && !p.isBot) {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = `ready-toggle-btn team-ready-btn${ready ? ' is-ready' : ''}`;
+                        btn.textContent = ready ? '✓ Ready' : 'Ready';
+                        li.appendChild(btn);
+                    } else {
+                        const badge = document.createElement('span');
+                        badge.className = `ready-badge ${ready ? 'is-ready' : 'is-waiting'}`;
+                        badge.textContent = ready ? 'Ready' : 'Waiting';
+                        li.appendChild(badge);
+                    }
+                    // Team-mode bots can only ever be added by an admin (lobby:addBotToTeam is
+                    // admin-only, unlike the playersCanAddBots-gated lobby:addBot elsewhere) - so
+                    // removing one individually is admin-only here too.
+                    if (p.isBot && isAdmin) {
+                        const removeBtn = document.createElement('button');
+                        removeBtn.type = 'button';
+                        removeBtn.className = 'kick-btn';
+                        removeBtn.title = 'Remove this bot';
+                        removeBtn.dataset.removeBotId = p.userId;
+                        removeBtn.textContent = '✕';
+                        li.appendChild(removeBtn);
+                    }
+                    list.appendChild(li);
+                });
+                card.appendChild(list);
+
+                if (myCurrentTeamId !== teamId && members.length < TEAM_CAPACITY) {
+                    const joinBtn = document.createElement('button');
+                    joinBtn.type = 'button';
+                    joinBtn.className = 'team-join-btn';
+                    joinBtn.dataset.teamId = String(teamId);
+                    joinBtn.textContent = myCurrentTeamId ? `Move to team ${teamId}` : `Join team ${teamId}`;
+                    card.appendChild(joinBtn);
+                }
+                if (isAdmin && members.length < TEAM_CAPACITY) {
+                    const addBotBtn = document.createElement('button');
+                    addBotBtn.type = 'button';
+                    addBotBtn.className = 'team-add-bot-btn';
+                    addBotBtn.dataset.teamId = String(teamId);
+                    addBotBtn.textContent = '🤖 Add a bot';
+                    card.appendChild(addBotBtn);
+                }
+                gridEl.appendChild(card);
+            }
+            container.appendChild(gridEl);
+        }
+
+        document.getElementById('teamLobbyContainer').addEventListener('click', (event) => {
+            const removeBotBtn = event.target.closest('[data-remove-bot-id]');
+            if (removeBotBtn) {
+                removeBot(removeBotBtn.dataset.removeBotId);
+                return;
+            }
+            if (lobbyLocked) return;
+            const joinBtn = event.target.closest('.team-join-btn');
+            if (joinBtn) {
+                socket.emit('lobby:setTeam', { roomId, teamId: Number(joinBtn.dataset.teamId) });
+                return;
+            }
+            const addBotBtn = event.target.closest('.team-add-bot-btn');
+            if (addBotBtn) {
+                socket.emit('lobby:addBotToTeam', { roomId, teamId: Number(addBotBtn.dataset.teamId) });
+                return;
+            }
+            if (event.target.closest('.team-ready-btn')) toggleReady();
+        });
+
+        document.getElementById('teamChatForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const input = document.getElementById('teamChatInput');
+            const text = input.value.trim();
+            if (!text || !roomId) return;
+            socket.emit('lobby:chatMessage', { roomId, text });
+            input.value = '';
+        });
+
+        function renderPlayers(players) {
+            const isTeamRoom = currentRoomType === 'team';
+            // Lobby chat (server-side lobby:chatMessage has never been team-only - it just requires
+            // being a real player in room.waitingPlayers) - shown for 'team' AND 'percentage' rooms,
+            // both of which gather via the ready-check and benefit from players coordinating
+            // (e.g. a group of friends agreeing who's about to join before marking Gotowy).
+            const isPercentageRoom = currentRoomType === 'percentage';
+            document.getElementById('classicPlayerSection').style.display = isTeamRoom ? 'none' : 'block';
+            document.getElementById('teamPlayerSection').style.display = isTeamRoom ? 'block' : 'none';
+            document.getElementById('teamChatPanel').style.display = (isTeamRoom || isPercentageRoom) ? 'block' : 'none';
+            if (isTeamRoom) {
+                renderTeamLobby(players);
+                applyLobbyLockUI();
+                if (!lobbyLocked) {
+                    const allHaveTeam = players.length > 0 && players.every((p) => p.teamId != null);
+                    const distinctTeams = new Set(players.filter((p) => p.teamId != null).map((p) => p.teamId)).size;
+                    const readyCount = players.filter((p) => p.isBot || p.ready).length;
+                    if (!players.length) updateTimer('Waiting for players...', '#f59e0b');
+                    else if (!allHaveTeam) updateTimer('Players are choosing teams...', '#f59e0b');
+                    else if (distinctTeams < 2) updateTimer('At least 2 teams are needed to start', '#f59e0b');
+                    else updateTimer(`Gotowych: ${readyCount}/${players.length}`, readyCount === players.length ? '#10b981' : '#f59e0b');
+                }
+                return;
+            }
+
+            const listContainer = document.getElementById('playerListContainer');
+            listContainer.style.display = 'block';
+            listContainer.style.maxHeight = 'none';
+            listContainer.style.overflow = 'visible';
+            listContainer.innerHTML = '';
+            const count = players.length;
+            document.getElementById('slotsCount').innerText = `${count}`;
+            const readyMinNote = document.getElementById('readyMinPlayersNote');
+            if (readyMinNote) readyMinNote.style.display = (isPercentageRoom && count > 0 && count < 5) ? 'block' : 'none';
+
+            for (let i = 0; i < 10; i += 1) {
+                const slot = document.createElement('div');
+                slot.className = 'player-item';
+                slot.style.borderLeftColor = '#64748b';
+                slot.style.opacity = '1';
+                slot.style.backgroundColor = '#1f2937';
+
+                if (i < players.length) {
+                    const player = players[i];
+                    const name = player.username || player.name || `Player ${i + 1}`;
+                    const color = player.color || colorPalette[i % colorPalette.length];
+                    const isSelf = player.userId === playerId || name === playerNick;
+                    // Bots get their own dedicated remove button (see canRemoveBot below) instead of
+                    // this one, so admin never sees two overlapping "remove" buttons on the same row.
+                    const canKick = isAdmin && !isSelf && !player.isBot && player.userId;
+                    const isReady = !!player.isBot || !!player.ready;
+                    let readyMarkup;
+                    if (!isPercentageRoom) {
+                        readyMarkup = `<span class="status-ready">Ready</span>`;
+                    } else if (isSelf && !player.isBot) {
+                        readyMarkup = `<button type="button" class="ready-toggle-btn${isReady ? ' is-ready' : ''}" id="readyToggleBtn">${isReady ? '✓ Ready' : 'Ready'}</button>`;
+                    } else {
+                        readyMarkup = `<span class="ready-badge ${isReady ? 'is-ready' : 'is-waiting'}">${isReady ? 'Ready' : 'Waiting'}</span>`;
+                    }
+                    // Percentage rooms only: any real player can vote to remove another real player
+                    // who's blocking the ready-check (e.g. AFK, never clicks Gotowy) - needs
+                    // VOTE_KICK_THRESHOLD distinct votes (see server's lobby:voteKick) before the kick
+                    // actually happens, shown here as a running "X/5" counter on the button itself.
+                    const votes = player.kickVotes || [];
+                    const iVotedToKick = votes.some((v) => v === playerId);
+                    const canVoteKick = isPercentageRoom && !isSelf && !player.isBot && player.userId;
+                    const voteKickMarkup = canVoteKick
+                        ? `<button type="button" class="vote-kick-btn${iVotedToKick ? ' voted' : ''}" data-user-id="${player.userId}" ${iVotedToKick ? 'disabled' : ''} title="${iVotedToKick ? 'You have already voted to kick' : 'Vote to kick the player (min. ' + VOTE_KICK_THRESHOLD + ' votes)'}">🚫 ${votes.length}/${VOTE_KICK_THRESHOLD}</button>`
+                        : '';
+                    // Same permission as the "+ Dodaj bota" button itself (admin, or any player when
+                    // this room's playersCanAddBots is on) - lets whoever CAN add a bot also remove
+                    // one individually, instead of only an admin's general kick-any-player button.
+                    const canRemoveBot = player.isBot && (isAdmin || currentPlayersCanAddBots);
+                    const removeBotMarkup = canRemoveBot
+                        ? `<button type="button" class="kick-btn" data-remove-bot-id="${player.userId}" title="Remove this bot">✕</button>`
+                        : '';
+                    slot.style.borderLeftColor = color;
+                    slot.innerHTML = `
+                        <span class="player-name" style="color:${color};">${i + 1}. ${name}${isSelf ? ' (Ty)' : ''}</span>
+                        <span class="player-item-actions">
+                            ${readyMarkup}
+                            ${voteKickMarkup}
+                            ${removeBotMarkup}
+                            ${canKick ? `<button type="button" class="kick-btn" data-user-id="${player.userId}" title="Kick the player out of the room">✕</button>` : ''}
+                        </span>
+                    `;
+                } else {
+                    slot.style.borderLeftColor = '#6b7280';
+                    slot.style.opacity = '0.7';
+                    slot.innerHTML = `
+                        <span class="player-name" style="color:#9ca3af;">${i + 1}. [ Free slot ]</span>
+                    `;
+                }
+
+                listContainer.appendChild(slot);
+            }
+
+            applyLobbyLockUI();
+
+            // Once the countdown has actually started, its own 'countdown' event is the single
+            // source of truth for the timer text — a player-list update arriving mid-countdown
+            // (shouldn't normally happen, since joining/leaving/toggling are all blocked by then)
+            // must not stomp on it with a stale "waiting" message.
+            if (lobbyLocked) return;
+
+            if (isPercentageRoom) {
+                const readyCount = players.filter((p) => p.isBot || p.ready).length;
+                if (count < 5) {
+                    updateTimer(`Waiting for players... (${count}/5 minimum)`, '#f59e0b');
+                } else {
+                    updateTimer(`Gotowych: ${readyCount}/${count}`, readyCount === count ? '#10b981' : '#f59e0b');
+                }
+            } else if (count >= 10) {
+                updateTimer('Room full! Waiting for the game to start...', '#10b981');
+            } else {
+                stopCountdown();
+            }
+        }
+
+        function formatMinutes(totalSeconds) {
+            const minutes = Math.round((Number(totalSeconds) || 0) / 60);
+            return `${minutes} min`;
+        }
+
+        function formatModifier(value) {
+            const num = Number(value) || 0;
+            return num > 0 ? `+${num}` : `${num}`;
+        }
+
+        async function loadRoomSettings() {
+            const container = document.getElementById('roomSettingsList');
+            if (!roomId) {
+                container.innerHTML = '<div class="settings-row"><span class="settings-label">Missing room ID.</span></div>';
+                return;
+            }
+            try {
+                const response = await fetch(`/api/rooms/${roomId}`, { headers });
+                if (!response.ok) throw new Error('Could not load the room settings.');
+                const room = await response.json();
+                const settings = room.ustawienia || {};
+                currentRoomType = room.roomType || 'standard';
+                currentTeamCount = Math.min(10, Math.max(2, Number(room.teamCount) || 2));
+                currentPlayersCanAddBots = Boolean(room.playersCanAddBots);
+                isMiniTournamentRoom = !!room.isMiniTournament;
+                isTournamentRoom = !!room.isTournament;
+                setAdminControlsVisibility();
+                if (isMiniTournamentRoom) {
+                    showMatchmakingSection(true);
+                    renderMatchmakingBox();
+                }
+                const isPercentageRoom = currentRoomType === 'percentage';
+                const isTeamRoom = currentRoomType === 'team';
+                window.__roomMaxPlayers = room.maxGraczy || 10;
+                const fullRoomName = room.nazwaPokoju || roomName;
+                const rows = [
+                    ['Room name', fullRoomName],
+                    ['Game mode', isTeamRoom ? 'Team conquest — 50 main villages, allied support' : 'Conquest — building, recruiting and attacking'],
+                    ['Map', isTeamRoom ? `Team map (${currentTeamCount} teams, up to 5 players each)` : 'Shared world map'],
+                    ['Max players', `${room.maxGraczy || 10}`],
+                    ['Round length', formatMinutes(settings.dlugoscRundySekundy)],
+                    ...(isTeamRoom ? [
+                        ['Teams', `${currentTeamCount} teams in this room — players pick their own line-up (up to 5 players each)`],
+                        ['Round start', 'Automatically once everyone is ready (min. 2 teams) or manually by an admin']
+                    ] : isPercentageRoom ? [
+                        ['Round start', 'Automatic — once all players confirm they are ready (min. 5)']
+                    ] : [
+                        ['Economy modifier', formatModifier(settings.modyfikatorCzasuEkonomii)],
+                        ['Army modifier', formatModifier(settings.modyfikatorCzasuWojska)]
+                    ])
+                ];
+                container.innerHTML = rows.map(([label, value]) => `
+                    <div class="settings-row">
+                        <span class="settings-label">${label}</span>
+                        <span class="settings-value">${value}</span>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<div class="settings-row"><span class="settings-label">Error loading the room settings.</span></div>';
+            }
+        }
+
+        function formatNumber(value) {
+            return Number(value).toLocaleString('pl-PL');
+        }
+
+        function updateTimer(text, color = '#f59e0b') {
+            const timerDiv = document.getElementById('timerDisplay');
+            timerDiv.innerText = text;
+            timerDiv.style.color = color;
+        }
+
+        let addBotDisabled = false;
+
+        function setAdminControlsVisibility() {
+            // Team rooms are self-organized by real players only — the generic "Dodaj bota" fills an
+            // unassigned slot with no team, which would permanently block the ready-check; use the
+            // per-team "🤖 Dodaj bota" button on each team card instead (see renderTeamLobby).
+            document.getElementById('btnAddBot').style.display = ((isAdmin || currentPlayersCanAddBots) && currentRoomType !== 'team' && !isMiniTournamentRoom && !isTournamentRoom) ? 'block' : 'none';
+            // Percentage rooms start automatically via the ready-check flow only — team rooms ALSO
+            // let the admin force-start at any moment (server validates everyone already has a team).
+            // Mini-Tournament rooms never allow a manual/bot force-start — the server rejects both
+            // now too, this just avoids showing a button that would only ever produce an error toast.
+            document.getElementById('btnStartGame').style.display = (isAdmin && currentRoomType !== 'percentage' && !isMiniTournamentRoom) ? 'block' : 'none';
+        }
+
+        function dodajBota() {
+            if (!roomId) {
+                alert('Missing room ID.');
+                return;
+            }
+            const btn = document.getElementById('btnAddBot');
+            if (addBotDisabled || btn.disabled) {
+                return;
+            }
+            addBotDisabled = true;
+            btn.disabled = true;
+            setTimeout(() => {
+                addBotDisabled = false;
+                btn.disabled = false;
+            }, 500);
+            socket.emit('lobby:addBot', roomId);
+        }
+
+        function kickPlayer(targetUserId) {
+            if (!targetUserId || !roomId) return;
+            socket.emit('lobby:kick', { roomId, targetUserId });
+        }
+
+        function removeBot(targetUserId) {
+            if (!targetUserId || !roomId) return;
+            socket.emit('lobby:removeBot', { roomId, targetUserId });
+        }
+
+        function voteKickPlayer(targetUserId) {
+            if (!targetUserId || !roomId) return;
+            socket.emit('lobby:voteKick', { roomId, targetUserId });
+        }
+
+        function toggleReady() {
+            if (!roomId || lobbyLocked) return;
+            socket.emit('lobby:toggleReady', roomId);
+        }
+
+        document.getElementById('playerListContainer').addEventListener('click', (event) => {
+            const removeBotBtn = event.target.closest('[data-remove-bot-id]');
+            if (removeBotBtn) {
+                removeBot(removeBotBtn.dataset.removeBotId);
+                return;
+            }
+            const kickBtn = event.target.closest('.kick-btn');
+            if (kickBtn) {
+                kickPlayer(kickBtn.dataset.userId);
+                return;
+            }
+            const voteKickBtn = event.target.closest('.vote-kick-btn');
+            if (voteKickBtn && !voteKickBtn.disabled) {
+                voteKickPlayer(voteKickBtn.dataset.userId);
+                return;
+            }
+            const readyBtn = event.target.closest('.ready-toggle-btn');
+            if (readyBtn) {
+                toggleReady();
+            }
+        });
+
+        function rozpocznijGre() {
+            if (!roomId) {
+                alert('Missing room ID.');
+                return;
+            }
+            if (!isAdmin) {
+                alert('Only an administrator can start the game.');
+                return;
+            }
+            socket.emit('game:start', roomId);
+        }
+
+        function ensureRoomSettingsLoaded() {
+            if (!roomSettingsLoadedPromise) roomSettingsLoadedPromise = loadRoomSettings();
+            return roomSettingsLoadedPromise;
+        }
+
+        async function joinLobby() {
+            if (playerId && socket.connected && roomId) {
+                await ensureRoomSettingsLoaded();
+                if (isMiniTournamentRoom) {
+                    socket.emit('matchmaking:join', { id: playerId, roomId: roomId });
+                } else {
+                    socket.emit('lobby:join', { id: playerId, username: playerNick, roomId: roomId });
+                }
+            }
+        }
+
+        // --- Blind matchmaking UI (Mini-Tournament rooms) --------------------------------------------
+        function showMatchmakingSection(show) {
+            document.getElementById('matchmakingSection').style.display = show ? 'block' : 'none';
+            document.getElementById('classicPlayerSection').style.display = show ? 'none' : 'block';
+            document.getElementById('teamPlayerSection').style.display = 'none'; // mini-tournament rooms are always 'standard'
+        }
+
+        function renderMatchmakingBox() {
+            const box = document.getElementById('mmBox');
+            if (!box) return;
+            if (mmCountdownInterval) { clearInterval(mmCountdownInterval); mmCountdownInterval = null; }
+
+            if (mmPhase === 'searching') {
+                box.innerHTML = `
+                    <div class="mm-icon">🔍</div>
+                    <div class="mm-status-text">Looking for players...</div>
+                    <div class="mm-sub-text">Wait while the system matches ${window.__roomMaxPlayers || 10} players of a similar level. Opponents stay anonymous until the match starts.</div>
+                    <button type="button" class="mm-cancel-btn" id="mmCancelBtn">Cancel search</button>
+                `;
+                document.getElementById('mmCancelBtn').addEventListener('click', cancelMatchmakingSearch);
+                return;
+            }
+
+            if (mmPhase === 'matchFound') {
+                box.innerHTML = `
+                    <div class="mm-status-text">✅ Match Found!</div>
+                    <div class="mm-ring">
+                        <svg width="96" height="96">
+                            <circle class="mm-ring-bg" cx="48" cy="48" r="40"></circle>
+                            <circle class="mm-ring-fg" id="mmRingFg" cx="48" cy="48" r="40"></circle>
+                        </svg>
+                        <div class="mm-ring-label" id="mmRingLabel">15</div>
+                    </div>
+                    <div class="mm-sub-text">Accept to join the game. Opponents’ nicknames are revealed only once everyone has accepted.</div>
+                    <button type="button" class="mm-accept-btn" id="mmAcceptBtn" ${mmAlreadyAccepted ? 'disabled' : ''}>${mmAlreadyAccepted ? 'Waiting for the others...' : 'ACCEPT'}</button>
+                `;
+                const RADIUS = 40;
+                const CIRC = 2 * Math.PI * RADIUS;
+                const ringFg = document.getElementById('mmRingFg');
+                ringFg.style.strokeDasharray = `${CIRC} ${CIRC}`;
+                const acceptBtn = document.getElementById('mmAcceptBtn');
+                if (acceptBtn && !mmAlreadyAccepted) acceptBtn.addEventListener('click', acceptMatch);
+                const tick = () => {
+                    const remainingMs = Math.max(0, (mmDeadlineAt || 0) - Date.now());
+                    const remainingS = Math.ceil(remainingMs / 1000);
+                    const label = document.getElementById('mmRingLabel');
+                    if (label) label.textContent = String(remainingS);
+                    const fg = document.getElementById('mmRingFg');
+                    if (fg) fg.style.strokeDashoffset = String(CIRC * (1 - remainingMs / 15000));
+                    if (remainingMs <= 0 && mmCountdownInterval) { clearInterval(mmCountdownInterval); mmCountdownInterval = null; }
+                };
+                tick();
+                mmCountdownInterval = setInterval(tick, 200);
+                return;
+            }
+
+            if (mmPhase === 'removed') {
+                const reasonText = {
+                    not_accepted: 'No response in time. You can try again.',
+                    room_gone: 'The room players were being matched for no longer exists.',
+                    ticket_lost: 'There was a problem with your Mini-Tournament Ticket. Check your tickets and try again.'
+                }[mmRemovedReason] || 'No response in time. You can try again.';
+                box.innerHTML = `
+                    <div class="mm-icon">⚠️</div>
+                    <div class="mm-status-text">You have been removed from the queue</div>
+                    <div class="mm-sub-text">${reasonText}</div>
+                    <button type="button" class="mm-retry-btn" id="mmRetryBtn">Search again</button>
+                `;
+                document.getElementById('mmRetryBtn').addEventListener('click', startMatchmakingSearch);
+                return;
+            }
+
+            // idle
+            box.innerHTML = `
+                <div class="mm-icon">🎮</div>
+                <div class="mm-status-text">Ready to play</div>
+                <button type="button" class="mm-retry-btn" id="mmStartBtn">🔍 Find a Game</button>
+            `;
+            document.getElementById('mmStartBtn').addEventListener('click', startMatchmakingSearch);
+        }
+
+        // A player who gets removed for not accepting in time (or who cancels and wants back in) is
+        // NOT sitting in any server-side queue anymore — matchmaking:join is only a state-sync/rejoin
+        // event for someone already in the queue/pendingMatches/waitingPlayers, it never enqueues by
+        // itself (see matchmaking:join's server handler). The actual "join the queue" action is the
+        // same POST /api/rooms/:id/join every other entry point into Mini-Turniej matchmaking already
+        // goes through (see turnieje.html) — without it, clicking "Szukaj ponownie" just asked the
+        // server "what's my status?" and got told 'idle' right back, doing nothing.
+        async function startMatchmakingSearch() {
+            if (!roomId || !playerId) return;
+            try {
+                const res = await fetch(`/api/rooms/${roomId}/join`, { method: 'POST', headers });
+                if (!res.ok) {
+                    const d = await res.json().catch(() => ({}));
+                    alert(d.error || 'Could not start searching for a game.');
+                    return;
+                }
+                socket.emit('matchmaking:join', { id: playerId, roomId: roomId });
+            } catch (err) {
+                console.error(err);
+                alert('Could not start searching for a game — check your connection.');
+            }
+        }
+
+        function cancelMatchmakingSearch() {
+            fetch(`/api/rooms/${roomId}/leave`, { method: 'POST', headers })
+                .then(async (res) => {
+                    if (!res.ok) {
+                        const d = await res.json().catch(() => ({}));
+                        alert(d.error || 'Could not cancel the search.');
+                        return;
+                    }
+                    // Wyjscie z wyszukiwania = powrot na strone glowna (bez ekranu posredniego).
+                    window.location.href = '/index.html';
+                })
+                .catch((err) => {
+                    console.error(err);
+                    alert('Could not cancel the search — check your connection.');
+                });
+        }
+
+        function acceptMatch() {
+            if (!roomId || !mmMatchId) return;
+            mmAlreadyAccepted = true;
+            socket.emit('matchmaking:accept', { roomId, matchId: mmMatchId });
+            renderMatchmakingBox();
+        }
+
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/auth/me', { headers });
+                if (!response.ok) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('token');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                const profile = await response.json();
+                playerId = profile._id;
+                isAdmin = profile.role === 'ADMIN';
+                setAdminControlsVisibility();
+                const adminPanelLinkEl = document.getElementById('adminPanelLink');
+                if (adminPanelLinkEl) adminPanelLinkEl.style.display = isAdmin ? 'block' : 'none';
+                joinLobby();
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function startCountdown() {
+            if (countdownActive) return;
+            countdownActive = true;
+            countdownSeconds = 15;
+            updateTimer(`Room full! The game starts in ${countdownSeconds}s`, '#10b981');
+            countdownInterval = setInterval(() => {
+                countdownSeconds -= 1;
+                if (countdownSeconds <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownActive = false;
+                    updateTimer('Starting the battle...', '#22c55e');
+                    return;
+                }
+                updateTimer(`Room full! The game starts in ${countdownSeconds}s`, '#10b981');
+            }, 1000);
+        }
+
+        function stopCountdown() {
+            if (!countdownActive) return;
+            clearInterval(countdownInterval);
+            countdownActive = false;
+            updateTimer('Waiting for players...', '#f59e0b');
+        }
+
+        async function refreshLobby() {
+            if (!roomId) {
+                updateTimer('Missing room ID.', '#ef4444');
+                return;
+            }
+            try {
+                const response = await fetch(`/api/rooms/${roomId}`, { headers });
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Could not load the lobby state.');
+                }
+                const room = await response.json();
+                if ((room.waitingCount || 0) >= (room.maxGraczy || 10)) {
+                    startCountdown();
+                } else {
+                    stopCountdown();
+                }
+            } catch (error) {
+                console.error(error);
+                updateTimer('Error loading the lobby.', '#ef4444');
+            }
+        }
+
+
+        document.getElementById('btnLeaveLobby').addEventListener('click', async (event) => {
+            event.preventDefault();
+            if (lobbyLocked) {
+                alert('The round countdown has started — you can no longer leave the lobby.');
+                return;
+            }
+            if (!roomId) {
+                window.location.href = '/index.html';
+                return;
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownActive = false;
+            }
+            try {
+                const response = await fetch(`/api/rooms/${roomId}/leave`, {
+                    method: 'POST',
+                    headers
+                });
+                if (response.ok) {
+                    window.location.href = '/index.html';
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Could not leave the lobby.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Could not leave the lobby — check your connection and try again.');
+            }
+        });
+
+        loadProfile();
+        loadRoomSettings();
+        // refreshLobby(); // wyłączone, lista graczy jest zarządzana wyłącznie przez lobby:update_list i renderPlayers()
+        // setInterval(refreshLobby, 2500); // stary odświeżacz usunięty, aby nie nadpisywać listy graczy
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+    <script src="/page-scale.js"></script>
+</body>
+</html>

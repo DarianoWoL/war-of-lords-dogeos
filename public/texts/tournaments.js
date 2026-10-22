@@ -1,0 +1,28 @@
+// Tlumaczenia strony Turnieju Miesiecznego (tournaments.html) - tryb fraz, patrz public/i18n.js.
+window.WOL_AUTO_TEXTS = true;
+window.WOL_TEXTS = (window.WOL_TEXTS || []).concat([
+    ['War of Lords - Turnieje', 'War of Lords - Tournaments'],
+    ['Turnieje', 'Tournaments'],
+    ['Brak aktualnie otwartej edycji turnieju. Zajrzyj tu ponownie wkrótce.', 'No tournament edition is open right now. Check back soon.'],
+    ['Zakończony', 'Finished'],
+    ['Zostanie ogłoszone', 'To be announced'],
+    ['Zaloguj się, aby kupić bilet', 'Log in to buy a ticket'],
+    ['Wejdź do turnieju', 'Enter the tournament'],
+    ['Kup Bilet Turniejowy', 'Buy a Tournament Ticket'],
+    ['🏆 Nagrody DOGE', '🏆 DOGE prizes'],
+    ['1 miejsce', '1st place'],
+    ['2 miejsce', '2nd place'],
+    ['3 miejsce', '3rd place'],
+    ['4-10 miejsce', '4th-10th place'],
+    ['Dostępne bilety:', 'Tickets available:'],
+    ['Rundy Kwalifikacyjne', 'Qualification Rounds'],
+    ['Rundy Półfinałowe', 'Semi-final Rounds'],
+    ['Runda Finałowa', 'Final Round'],
+    ['Harmonogram', 'Schedule'],
+    ['Błąd ładowania danych turnieju. Spróbuj ponownie później.', 'Error loading the tournament data. Please try again later.'],
+    ['Zapisy otwarte', 'Registration open'],
+    ['W trakcie', 'In progress'],
+    ['📅 Harmonogram', '📅 Schedule'],
+    ['Czas trwania rundy: {0} min', 'Round length: {0} min'],
+    ['· Cena biletu:', '· Ticket price:'],
+]);

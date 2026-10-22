@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en" data-source-lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>War of Lords - Game rules</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+
+        .nav-menu {
+            background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat;
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .nav-menu a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #e8c766;
+        }
+
+        /* Baked-in default nav link layout, adopted site-wide from a player-arranged position
+           (see layout-editor.js) so every visitor sees the same arrangement by default. */
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { display: none !important; position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .rules-card {
+            width: 100%;
+            max-width: 1000px;
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96));
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 20px;
+            padding: 36px 40px;
+            box-sizing: border-box;
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 16px 45px rgba(0,0,0,0.4);
+            margin: 0 20px 30px;
+        }
+
+        .rules-card h1 {
+            margin: 0 0 8px;
+            color: #e8c766;
+            font-size: 32px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            text-align: center;
+        }
+
+        .rules-card > p.subtitle {
+            text-align: center;
+            color: #cbd5e1;
+            margin: 0 0 30px;
+        }
+
+        .rules-card section {
+            margin-bottom: 32px;
+        }
+
+        .rules-card h2 {
+            margin: 0 0 14px;
+            padding-bottom: 10px;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #e8c766;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .rules-card h3 {
+            margin: 20px 0 10px;
+            color: #f0d78c;
+            font-size: 16px;
+        }
+
+        .rules-card p,
+        .rules-card li {
+            color: #e2e8f0;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .rules-card ul,
+        .rules-card ol {
+            padding-left: 22px;
+            margin: 10px 0;
+        }
+
+        .rules-card strong {
+            color: #f8fafc;
+        }
+
+        .rules-table-wrap {
+            overflow-x: auto;
+            margin: 14px 0;
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+        }
+
+        table.rules-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 480px;
+        }
+
+        table.rules-table th {
+            background: rgba(212, 175, 55, 0.1);
+            color: #e8c766;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            font-size: 12px;
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            white-space: nowrap;
+        }
+
+        table.rules-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+            color: #e2e8f0;
+            white-space: nowrap;
+        }
+
+        table.rules-table tbody tr:hover td {
+            background: rgba(212, 175, 55, 0.06);
+        }
+
+        table.rules-table td.highlight {
+            color: #f0d78c;
+            font-weight: 700;
+        }
+
+        .rules-note {
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-top: 14px;
+        }
+
+        .rules-footer {
+            text-align: center;
+            color: #f0d78c;
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 640px) {
+            .rules-card {
+                padding: 24px 18px;
+            }
+            .rules-card h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/texts/zasady.js"></script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Home</a>
+        <a id="navRooms" href="pokoje.html">Battle Rooms</a>
+        <a id="navTournaments" href="turnieje.html">Tournaments</a>
+        <a id="navShop" href="live.html">Live Bets</a>
+        <a id="navRanking" href="ranking.html">Overall Ranking</a>
+        <a id="navProfile" href="profile.html">Profile</a>
+        <a id="navRules" href="zasady.html" class="active">Rules</a>
+    </div>
+
+    <div class="rules-card">
+        <h1>⚔️ Game rules and mechanics</h1>
+        <p class="subtitle">Everything you need to know to command effectively</p>
+
+        <section>
+            <h2>🎯 Goal of the game</h2>
+            <p>You play rounds on a shared map with other commanders (up to 10 players per room). You build your village, recruit troops, attack other players and conquer their villages. At the end of the round what counts are <strong>village points</strong> (the more developed the village, the more points) — the best players get a ranking change (Skill Points / MMR). Rounds are <strong>completely free</strong> — no entry fee and no prizes.</p>
+        </section>
+
+        <section>
+            <h2>🎮 Game modes</h2>
+            <p>In the <strong>Battle Rooms</strong> tab you choose one of two modes with the two large switches at the top of the page:</p>
+            <ul>
+                <li><strong>🧍 Solo mode</strong> (the default when you enter) — classic play, every player on their own. Described in the rest of this page: a shared map, main and auxiliary villages, individual points.</li>
+                <li><strong>👥 Team mode</strong> — players form teams and can support each other with troops. The rules for building, economy, population, units, combat, reconnaissance and conquest with the Lord are <strong>exactly the same</strong> as in solo mode — only the map and allied support differ. A full, separate description is in the “👥 Team mode” section below.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>🏰 Rooms and joining a game</h2>
+            <ul>
+                <li>All rooms are <strong>free</strong> — joining costs no entry fee.</li>
+                <li>When the room fills up, a <strong>10-second countdown</strong> starts, after which the round begins — every player gets a main village assigned by a fixed rule (in village-number order, in the order players joined the room).</li>
+                <li>If a room is full, the game automatically creates another parallel instance of the same room — you can always join.</li>
+                <li>For each room the administrator sets the player limit and the round length.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>🟢 Rooms with the Ready system</h2>
+            <p>Some rooms work differently — instead of waiting for a full line-up, they start automatically as soon as all present players confirm they are ready:</p>
+            <ul>
+                <li>Next to your nickname in the lobby player list there is a <strong>“Ready”</strong> button — click it when you want to declare you are ready to start.</li>
+                <li>When <strong>all</strong> present players are ready and there are <strong>at least 5</strong> of them, a 10-second countdown starts and the round begins automatically.</li>
+                <li>With fewer than 5 players the “Ready” button does not start anything — you wait for more people to join.</li>
+                <li>Once the countdown has started you <strong>cannot</strong> withdraw your readiness or leave the lobby — the line-up is locked.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>👥 Team mode</h2>
+            <p>A separate room type, chosen in the Battle Rooms with the <strong>“👥 Team mode”</strong> switch. The rules below <strong>replace</strong> the “Villages and map” section described later — all the rest of the mechanics (economy, buildings, units, combat, reconnaissance, Lord/conquest) works exactly as in solo mode.</p>
+
+            <h3>Map and villages</h3>
+            <ul>
+                <li>Its own map — <strong>50 main villages, no auxiliary villages</strong> (A/B) — divided into <strong>10 fixed regions</strong> of 5 neighbouring villages each.</li>
+                <li>When creating the room the administrator sets the <strong>number of teams (2-10)</strong>; the room uses as many map regions as chosen — the rest stays neutral in that round.</li>
+                <li>Players from the same team always start <strong>next to each other</strong> (in one map region) and share <strong>one common colour</strong>, visible both on the map and in the ranking.</li>
+                <li>There are no auxiliary villages in this mode — there is nothing to buy.</li>
+                <li>If there are fewer than 10 teams, villages in unused regions stay <strong>ownerless</strong> — <strong>any player can take one with a single Lord strike</strong> (there is no defence without an escort, so two attacks are not needed as when conquering an enemy). Such a village is marked on the map as “(Ownerless)”.</li>
+            </ul>
+
+            <h3>Joining and choosing a team</h3>
+            <ul>
+                <li>In the lobby you choose one of the available teams (<strong>maximum 5 players per team</strong>) — you can switch between teams any number of times until the round starts.</li>
+                <li>The lobby has its own <strong>shared chat</strong> — you can agree how many teams and how many players per team you want to play before anyone clicks “Ready”.</li>
+            </ul>
+
+            <h3>Round start</h3>
+            <ul>
+                <li>The round starts automatically when <strong>all present players</strong> click “Ready” — <strong>at least 2 occupied teams</strong> are enough, with no lower limit on the number of players.</li>
+                <li>An administrator can also start the round <strong>manually, at any time</strong> (provided every present player has already chosen a team) and can add a bot directly to a chosen team.</li>
+            </ul>
+
+            <h3>Allied support</h3>
+            <ul>
+                <li>Besides sending support to your own villages, in this mode you can send support <strong>to the village of any player in your team</strong> (the same travel time as an attack) — such a village is marked on the map as “(Your ally)”.</li>
+                <li><strong>Attacks between members of the same team are allowed</strong> — there is no “friendly fire” protection.</li>
+            </ul>
+
+            <h3>Team result</h3>
+            <ul>
+                <li>A team’s place is based on the <strong>sum of the points of all its players</strong> (in a tie, the team that reached that total first wins — the same mechanism as in the individual ranking).</li>
+                <li>Team rounds are free and pay out no prizes.</li>
+                <li><strong>Skill Points (MMR)</strong> still change <strong>individually</strong> for each player, exactly according to the table in the “Points, ranking and the end of the round” section below — your own points position among all players of the round counts just as in solo mode.</li>
+            </ul>
+
+            <h3>In-game ranking</h3>
+            <p>During a team game the ranking panel shows <strong>teams</strong>, not individual players — the total points (or total defeated units, after switching) of the whole team, with <strong>“(Yours)”</strong> next to the team you belong to.</p>
+        </section>
+
+        <section>
+            <h2>🗺️ Villages and map (solo mode)</h2>
+            <ul>
+                <li>Every player starts with <strong>1 main village</strong>.</li>
+                <li>Next to each main village there are <strong>2 auxiliary villages</strong> (A and B) — you can buy them for <strong>4000 gold</strong> if you already own the neighbouring main village (1 main + 2 auxiliary).</li>
+                <li>An auxiliary village <strong>cannot be conquered with a Lord</strong> until it is bought by the player who owns the neighbouring main village. Once bought, it <strong>automatically loses its auxiliary status</strong> and becomes a full village that can be upgraded and attacked.</li>
+                <li>Gold is <strong>shared per player</strong> — you can spend gold collected in one village on building/recruiting in another.</li>
+                <li>Population (the unit limit), however, is counted <strong>separately for each village</strong>.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>💰 Economy — gold</h2>
+            <p>You start with <strong>1845 gold</strong>. Gold is produced by the <strong>Gold Mine</strong> in each village, every second, depending on its level:</p>
+            <div class="rules-table-wrap">
+                <table class="rules-table">
+                    <thead><tr><th>Mine level</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th></tr></thead>
+                    <tbody><tr><td>Gold / sec.</td><td>5</td><td>8</td><td>12</td><td>15</td><td>18</td><td>22</td><td>25</td><td>28</td><td>32</td><td class="highlight">35</td></tr></tbody>
+                </table>
+            </div>
+            <p>The more villages with an upgraded mine, the faster your income.</p>
+        </section>
+
+        <section>
+            <h2>👥 Population</h2>
+            <ul>
+                <li>The unit limit in a village depends on the <strong>Tavern</strong> level: from <strong>50</strong> (level 1) up to <strong>4500</strong> (level 10) — growing roughly linearly between these levels.</li>
+                <li>Units in the barracks (garrison), in the recruitment queue, <strong>on their way to an attack/support</strong> and <strong>on their way back</strong> — all of them occupy the population of their home village until they return or die.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>🏗️ Buildings</h2>
+            <div class="rules-table-wrap">
+                <table class="rules-table">
+                    <thead><tr><th>Building</th><th>Base cost</th><th>Cost increase/level</th><th>Max level</th><th>Effect</th></tr></thead>
+                    <tbody>
+                        <tr><td>Town Hall</td><td>125</td><td>×1.28</td><td>10</td><td>Required at level <strong>10</strong> to unlock the Castle</td></tr>
+                        <tr><td>Barracks</td><td>200</td><td>×1.18</td><td>10</td><td>Higher level = <strong>faster recruitment</strong> (up to 2× faster at level 10)</td></tr>
+                        <tr><td>Gold Mine</td><td>95</td><td>×1.32</td><td>10</td><td>Increases gold income</td></tr>
+                        <tr><td>Tavern</td><td>180</td><td>×1.40</td><td>10</td><td>Increases the population limit</td></tr>
+                        <tr><td>Defensive Wall</td><td>320</td><td>×1.35</td><td>10</td><td class="highlight">+2% village defence per level (level 10 = +20%)</td></tr>
+                        <tr><td>Castle</td><td>500</td><td>×1.42</td><td>5</td><td>Required (level <strong>5</strong>) to recruit a Lord</td></tr>
+                        <tr><td>Garrison</td><td>—</td><td>—</td><td>1</td><td>Starting building, gives extra village points</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Build time grows in a similar way (base × multiplier per level), and the build queue in one village can hold <strong>at most 3 tasks at a time</strong>.</p>
+            <p>Every level of every building adds <strong>village points</strong> — the higher the level, the more points the next level gives (the top levels give clearly more than the lower ones).</p>
+        </section>
+
+        <section>
+            <h2>⚔️ Military units</h2>
+            <div class="rules-table-wrap">
+                <table class="rules-table">
+                    <thead><tr><th>Unit</th><th>Cost</th><th>Recruitment time</th><th>Attack</th><th>Defence vs infantry</th><th>Defence vs cavalry</th><th>Population</th><th>Travel time</th></tr></thead>
+                    <tbody>
+                        <tr><td>Spearman</td><td>20</td><td>4 s</td><td>15</td><td>35.7</td><td>51.0</td><td>1</td><td>75 s</td></tr>
+                        <tr><td>Shieldbearer</td><td>18</td><td>5 s</td><td>10</td><td>66.3</td><td>25.5</td><td>1</td><td>106 s</td></tr>
+                        <tr><td>Axeman</td><td>24</td><td>8 s</td><td>55</td><td>15.3</td><td>5.1</td><td>1</td><td>106 s</td></tr>
+                        <tr><td>Scout</td><td>32</td><td>5 s</td><td>0</td><td>10.2</td><td>10.2</td><td>2</td><td>55 s</td></tr>
+                        <tr><td>Cavalry</td><td>48</td><td>12 s</td><td class="highlight">180</td><td>61.2</td><td>40.8</td><td>3</td><td>65 s</td></tr>
+                        <tr><td>Ram</td><td>80</td><td>15 s</td><td>40</td><td>30.6</td><td>30.6</td><td>4</td><td>205 s</td></tr>
+                        <tr><td>Lord</td><td>1500</td><td>300 s</td><td>0</td><td>0</td><td>0</td><td>100</td><td>330 s</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <ul>
+                <li><strong>Cavalry and Scouts</strong> count as <strong>cavalry</strong> units in combat, the rest as <strong>infantry</strong>.</li>
+                <li>Recruitment time gets shorter as the Barracks level rises (down to -50% at level 10).</li>
+                <li>A <strong>Lord</strong> can be recruited only when the Castle is level 5+, only <strong>one at a time</strong> and only when you do not already have a Lord (in the garrison or in the queue).</li>
+                <li>Besides attacking, the <strong>Ram</strong> <strong>permanently damages the target’s Defensive Wall</strong> — see the “Rams and wall destruction” section below.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>🛡️ How combat works</h2>
+            <p>Combat is <strong>fully deterministic — there is no randomness</strong>:</p>
+            <ol>
+                <li>Attack strength = sum (number of units × attack value), separately for infantry and cavalry.</li>
+                <li>Defence strength = sum (number of defending units × their effective defence), where effective defence is a mix of “defence vs infantry” and “defence vs cavalry” in the proportion in which the attacker used both troop types.</li>
+                <li>Defence strength is multiplied by the wall bonus: <strong>+2% for each wall level</strong>.</li>
+                <li><strong>The side with the higher strength wins.</strong> In a tie the defender wins.</li>
+                <li><strong>The losing side loses ALL units involved.</strong> The winning side loses units in proportion to how close the fight was (the closer to a tie, the bigger the winner’s losses).</li>
+                <li>Support (reinforcements) sent to a village by another player <strong>defends together with the garrison</strong> of that village.</li>
+            </ol>
+            <p>Units that survive an attack return home (the same travel time in both directions) and only then free up the population they occupy.</p>
+            <div class="rules-note">The Game contains no element of chance — combat, reconnaissance, walls and conquest are resolved according to public formulas. Your starting village is assigned by a fixed rule (in village-number order, in the order players joined the room), and all starting villages are identical. Troop travel time depends only on the type of units sent, never on where a village lies on the map — troops march exactly as long from any village to any other. All players therefore have identical conditions. Bots (computer players, used only in free rooms) follow a computer algorithm; they never play in tournaments and rounds with bots do not count towards rankings with prizes (details: Terms of Service, §1a).</div>
+        </section>
+
+        <section>
+            <h2>🧨 Rams and wall destruction</h2>
+            <p>Rams sent in an attack, in addition to their attack strength, <strong>permanently lower the level of the target’s Defensive Wall</strong> (the wall does not rebuild itself — it has to be upgraded again). The damage is calculated like this:</p>
+            <ol>
+                <li><strong>Damage potential</strong> = number of rams sent ÷ 100 (100 or more rams = full potential, fewer = proportionally less).</li>
+                <li><strong>Actual damage</strong> = potential × the percentage of losses the defender suffered in that battle.</li>
+                <li>Since <strong>a victory always wipes out 100% of the defenders</strong>, every won battle with 100+ rams <strong>completely destroys the wall</strong> (down to level 0), regardless of the attacker’s own losses.</li>
+                <li>Even a <strong>lost</strong> battle damages the wall if it was close — the higher the percentage of losses inflicted on the defender despite losing, the greater the wall damage.</li>
+                <li>If the defender has an <strong>empty garrison</strong> (0 defenders), it counts as 100% defender losses — the wall still takes the full effect proportional to the number of rams (100+ rams = wall down to zero).</li>
+            </ol>
+            <div class="rules-note">Example: 100 rams in an attack that kills 88.6% of the defenders but is lost in the end → the wall drops proportionally (e.g. from level 10 to about level 1).</div>
+        </section>
+
+        <section>
+            <h2>🤝 Support (reinforcements)</h2>
+            <ul>
+                <li>You can send troops to <strong>another village of yours</strong> to strengthen its defence (the same travel time as an attack).</li>
+                <li>Troops sent away <strong>still count towards the population of the village they left</strong> — they take no space in the village they defend.</li>
+                <li>You can recall (withdraw) your support back home at any time.</li>
+                <li>A Lord <strong>cannot</strong> be sent as support.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>🔍 Reconnaissance</h2>
+            <ul>
+                <li>Reconnaissance is carried out only by <strong>Scouts</strong>, sent with the <strong>“Send recon”</strong> button (separate from a normal attack).</li>
+                <li>Reconnaissance succeeds if you sent <strong>more scouts than the opponent has defending</strong> — you then see their buildings and garrison, and some of your scouts (in proportion to the enemy’s defence) may die.</li>
+                <li>If the opponent has more (or the same number of) scouts defending — your whole recon party <strong>dies/is captured</strong>, with no information.</li>
+                <li>A Scout has <strong>0 attack strength</strong> and defends only against enemy reconnaissance — it does not add to the village defence against a normal attack (infantry/cavalry).</li>
+            </ul>
+            <div class="rules-note">
+                ⚠️ <strong>WARNING — do not confuse “Send recon” with “Send attack”:</strong> if you send Scouts with the <strong>normal attack</strong> button instead of the dedicated recon, they fight like normal troops — and having <strong>0 attack strength</strong>, they <strong>always lose and die completely</strong> if the defended village has even a minimal garrison — <strong>no matter how many scouts the opponent has there</strong>. You will not get any intelligence report either. For the reconnaissance to succeed and survive, you must use only the <strong>“Send recon”</strong> button.
+            </div>
+        </section>
+
+        <section>
+            <h2>👑 The Lord and conquering villages</h2>
+            <p>Conquering someone else’s village requires sending a <strong>Lord together with an escort of troops</strong>:</p>
+            <ol>
+                <li>The escort must <strong>completely crush the defender</strong> (a won battle = zero surviving defenders, including support).</li>
+                <li>If the village is fully cleared, <strong>the village loyalty drops by 50%</strong> (it starts at 100%).</li>
+                <li>When loyalty falls to 0% — <strong>the village changes owner</strong>, and its loyalty returns to 100% for the new player.</li>
+                <li>The Lord survives the battle only if the escort’s losses did not exceed 70% (or, when the Lord travels without an escort, only if the village was fully cleared). If the Lord dies, the defender gets extra points for defeating him.</li>
+            </ol>
+            <div class="rules-note">You usually need <strong>two successful, fully clearing attacks with a Lord</strong> to take a well-defended village (100% → 50% → 0%).</div>
+        </section>
+
+        <section>
+            <h2>🏆 Points, ranking and the end of the round</h2>
+            <ul>
+                <li><strong>Village points</strong> = the sum of points for the levels of all buildings in all your villages. They decide your position in the ranking <strong>during the round</strong>.</li>
+                <li>The in-game ranking (left panel) shows the current player order live, with an option to switch to the ranking of defeated units.</li>
+                <li><strong>After the round ends</strong> (a 5-second countdown, then the summary):
+                    <ul>
+                        <li>Rounds are free and pay out no prizes — only the ranking change (Skill Points / MMR) counts, see below.</li>
+                        <li>Every participant gets +1 to the <strong>rounds played</strong> counter in their profile; the winner (1st place in points) also gets +1 to <strong>rounds won</strong>.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Skill Points (MMR) change after each round</h3>
+            <p>Your position in the round (among real players, bots do not count) changes your overall ranking:</p>
+            <div class="rules-table-wrap">
+                <table class="rules-table">
+                    <thead><tr><th>Place</th><th>Skill Points change</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td class="highlight">+20</td></tr>
+                        <tr><td>2</td><td class="highlight">+15</td></tr>
+                        <tr><td>3</td><td class="highlight">+10</td></tr>
+                        <tr><td>4–7</td><td>0</td></tr>
+                        <tr><td>8</td><td>-5</td></tr>
+                        <tr><td>9</td><td>-10</td></tr>
+                        <tr><td>10</td><td>-15</td></tr>
+                        <tr><td>11+ (larger rooms)</td><td>-20</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>In addition: the player with the <strong>most units defeated as the attacker</strong> gets <strong>+5</strong> Skill Points — this adds up with the points for their place (e.g. last place + the Aggressor title = -15 + 5 = <strong>-10</strong>).</p>
+        </section>
+
+        <section>
+            <h2>🚪 Leaving a game</h2>
+            <ul>
+                <li>You can take part in only <strong>one active game at a time</strong> — until you finish or leave it, you cannot join any other room.</li>
+                <li>Leaving the lobby <strong>before the round starts</strong> costs nothing — rounds are free — but it cannot be done during the start countdown (see above).</li>
+                <li>If you want to quit a round <strong>already in progress</strong>, a <strong>“Leave the game”</strong> button appears on the home page and in the Battle Rooms (next to the green “Back to the battle”). This has consequences:</li>
+            </ul>
+            <div class="rules-note">
+                <ul style="margin: 0;">
+                    <li>Your villages <strong>still belong to you</strong> and can still be attacked by other players.</li>
+                    <li>Ongoing build and recruitment queues in your villages <strong>keep running</strong> until they finish or the village is taken by another player.</li>
+                    <li>Your nickname in that round’s ranking is <strong>crossed out</strong> — you no longer count for the prize podium (TOP1-3, Aggressor); the other players move up into your place.</li>
+                    <li>You get an immediate penalty of <strong>-20 Skill Points (MMR)</strong> in the global ranking, regardless of the round result.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>🚫 Fair play and consequences of cheating</h2>
+            <ul>
+                <li>The game continuously monitors cheating attempts, including creating and using <strong>multiple accounts (multi-accounting)</strong> by the same player.</li>
+                <li>Detection is automatic: if two or more accounts connect <strong>from the same IP address or the same device</strong> within the same round, the system treats it as a multi-account attempt.</li>
+                <li>Points and results earned in games <strong>stay in the game</strong> — they are not reversed retroactively, even if it later turns out that one of the participants broke the rules.</li>
+                <li>A player who is <strong>permanently banned</strong> loses all <strong>Skill Points (MMR)</strong> collected on the account.</li>
+                <li>In tournament rounds (Monthly Tournament, Mini-Tournament) a detected multi-account additionally means losing the ticket without a refund and a ban for the whole tournament — details in the <a href="zasady-turnieju.html">Tournament Rules</a> and the <a href="zasady-mini-turniej.html">Mini-Tournament Rules</a>.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>👤 Player profile and overall ranking</h2>
+            <ul>
+                <li>In the <strong>Profile</strong> tab you see: tournament tickets, Skill Points (MMR), rounds played and rounds won.</li>
+                <li>The <strong>Overall Ranking</strong> tab shows all players sorted by Skill Points, with the number of matches and wins — you can search for a player by name.</li>
+                <li>In the <strong>Shop</strong> tab you can buy tournament tickets with your DOGE balance (final price), and in the <strong>Wallet</strong> you can top up your balance and withdraw DOGE.</li>
+            </ul>
+        </section>
+
+        <p class="rules-footer">Good luck on the battlefield, Commander! ⚔️</p>
+    </div>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+    <script src="/page-scale.js"></script>
+    <script src="/wol-guest.js"></script>
+</body>
+</html>

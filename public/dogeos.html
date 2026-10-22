@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>War of Lords on DogeOS</title>
+<style>
+  :root { --gold:#e8c766; --bg:#0b1020; --card:rgba(10,16,33,.92); --line:rgba(212,175,55,.35); --muted:#94a3b8; --good:#34d399; --bad:#f87171; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#0b1020 url('/assets/background.png') center/cover fixed; color:#f8fafc; font-family:'Segoe UI',system-ui,sans-serif; }
+  .banner { background:#7c2d12; color:#ffedd5; text-align:center; padding:8px 12px; font-size:14px; font-weight:600; letter-spacing:.03em; }
+  header { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; padding:18px 24px 6px; max-width:1100px; margin:0 auto; }
+  h1 { margin:0; color:var(--gold); text-transform:uppercase; letter-spacing:.05em; font-size:26px; text-shadow:0 3px 8px rgba(0,0,0,.8); }
+  h1 small { display:block; font-size:13px; color:var(--muted); letter-spacing:.02em; text-transform:none; margin-top:4px; }
+  h2 { color:var(--gold); margin:0 0 12px; font-size:18px; text-transform:uppercase; letter-spacing:.03em; }
+  a { color:#7dd3fc; }
+  .back { color:var(--gold); text-decoration:none; font-weight:600; }
+  main { max-width:1100px; margin:0 auto; padding:10px 24px 60px; display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media (max-width:860px) { main { grid-template-columns:1fr; padding:10px 16px 50px; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:20px 22px; box-shadow:0 8px 24px rgba(0,0,0,.45); }
+  .wide { grid-column:1 / -1; }
+  .muted { color:var(--muted); font-size:14px; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:8px 0; }
+  .kv { display:grid; grid-template-columns:auto 1fr; gap:4px 14px; font-size:14px; margin:8px 0; }
+  .kv b { color:var(--muted); font-weight:500; }
+  .mono { font-family:Consolas,monospace; word-break:break-all; }
+  button { background:linear-gradient(#e8c766,#b8932f); color:#1a1405; border:0; border-radius:6px; padding:9px 16px; font-weight:700; cursor:pointer; font-size:14px; }
+  button.secondary { background:#1e293b; color:#e2e8f0; border:1px solid #334155; }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  input[type=text], input[type=number] { background:#0f172a; color:#f8fafc; border:1px solid #334155; border-radius:6px; padding:8px 10px; font-size:14px; }
+  .status { margin-top:10px; padding:9px 12px; border-radius:6px; font-size:14px; display:none; }
+  .status.show { display:block; }
+  .status.info { background:#1e3a5f; } .status.ok { background:#064e3b; } .status.err { background:#7f1d1d; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:99px; font-size:12px; font-weight:700; }
+  .tag.open { background:#064e3b; color:#6ee7b7; } .tag.closed { background:#713f12; color:#fde68a; } .tag.resolved { background:#1e3a5f; color:#93c5fd; } .tag.cancelled { background:#3f3f46; color:#d4d4d8; }
+  .market { border:1px solid #1f2a44; border-radius:8px; padding:14px; margin:12px 0; background:rgba(15,23,42,.6); }
+  .market h3 { margin:0 0 6px; font-size:16px; }
+  .outcome { display:flex; align-items:center; gap:10px; padding:7px 0; border-top:1px solid #1f2a44; flex-wrap:wrap; }
+  .outcome .name { flex:1 1 120px; font-weight:600; }
+  .outcome .odds { color:var(--muted); font-size:13px; min-width:130px; }
+  .outcome input { width:84px; }
+  .win { color:var(--good); font-weight:700; }
+  table { width:100%; border-collapse:collapse; font-size:14px; } td, th { text-align:left; padding:5px 6px; border-bottom:1px solid #1f2a44; }
+  .wallets button { display:flex; align-items:center; gap:8px; } .wallets img { width:20px; height:20px; }
+  .hidden { display:none !important; }
+</style>
+</head>
+<body>
+<div class="banner">DogeOS TESTNET — test DOGE only, no real value. This is a hackathon demo of War of Lords.</div>
+<header>
+  <h1>War of Lords <span style="color:#fff">×</span> DogeOS<small>Pay tournament entry, win prizes and bet on rounds — on-chain, in testnet DOGE.</small></h1>
+  <a class="back" href="/">&larr; Back to the game</a>
+</header>
+
+<main>
+  <section class="card" id="walletCard">
+    <h2>1 · Wallet</h2>
+    <div id="notLogged" class="hidden muted"><a href="/login.html" style="display:inline-block;padding:12px 22px;border-radius:8px;background:linear-gradient(#e8c766,#b8932f);color:#1a1405;font-weight:800;text-decoration:none">Connect wallet</a> to play and use the DogeOS features.</div>
+    <div id="walletBox">
+      <div id="walletList" class="row wallets"></div>
+      <div id="noWallet" class="muted hidden">No browser wallet found. Install your DogeOS wallet (e.g. MyDoge or an EVM wallet such as MetaMask) and reload this page.</div>
+      <div class="kv hidden" id="walletInfo">
+        <b>Wallet</b><span class="mono" id="wAddr"></span>
+        <b>Network</b><span id="wNet"></span>
+        <b>Balance</b><span id="wBal"></span>
+        <b>Game account</b><span id="wLinked"></span>
+      </div>
+      <div class="row">
+        <button id="btnSwitch" class="hidden">Switch to DogeOS Testnet</button>
+        <button id="btnLink" class="hidden">Link wallet to my account</button>
+      </div>
+    </div>
+    <div class="status" id="walletStatus"></div>
+  </section>
+
+  <section class="card" id="ticketCard">
+    <h2>2 · Tournament tickets</h2>
+    <p class="muted">The entry fee is paid straight from your wallet into the tournament contract. The game server checks the rules first (one Monthly ticket per month, tournament open) and signs a one-time voucher — the contract refuses payments without it.</p>
+    <div class="kv"><b>Monthly tickets</b><span id="tkMonthly">-</span><b>Mini-Tournament ticket</b><span id="tkMini">-</span></div>
+    <div class="row">
+      <button id="buyMonthly">Buy Monthly Tournament ticket</button>
+      <button id="buyMini" class="secondary">Buy Mini-Tournament ticket</button>
+    </div>
+    <div class="status" id="ticketStatus"></div>
+  </section>
+
+  <section class="card" id="prizeCard">
+    <h2>3 · Prizes</h2>
+    <p class="muted">Winners of Mini-Tournaments are credited by the contract and withdraw their prize themselves. Players without a linked wallet get the prize on their game balance instead.</p>
+    <div class="kv"><b>Claimable now</b><span id="pzClaim" class="win">-</span><b>Total won</b><span id="pzTotal">-</span><b>Rounds won (on-chain)</b><span id="pzWins">-</span></div>
+    <div class="row"><button id="btnClaim">Claim prize</button></div>
+    <div class="status" id="prizeStatus"></div>
+  </section>
+
+  <section class="card" id="statsCard">
+    <h2>Contract &amp; season</h2>
+    <div class="kv">
+      <b>Contract</b><span class="mono" id="stContract">-</span>
+      <b>Prize pool</b><span id="stPool">-</span>
+      <b>Season treasury</b><span id="stTreasury">-</span>
+      <b>Season</b><span id="stSeason">-</span>
+    </div>
+    <p class="muted">10% of every ticket and 5% of every betting pool go to the season treasury; at the end of the season it is rolled into the prize pool for the next tournaments.</p>
+    <table id="stBoard"><thead><tr><th>#</th><th>Top winners</th><th>Rounds</th><th>Won (DOGE)</th></tr></thead><tbody></tbody></table>
+  </section>
+
+</main>
+
+<script src="/vendor/ethers.umd.min.js"></script>
+<script src="/wol-connect.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const token = () => localStorage.getItem('authToken') || localStorage.getItem('token');
+  const ABI = [
+    'function buyTicket(uint8 kind, uint256 price, uint256 nonce, uint256 deadline, bytes sig) payable',
+    'function placeBet(bytes32 marketId, bytes32 outcome, uint256 amount, uint256 nonce, uint256 deadline, bytes sig) payable',
+    'function collectBet(bytes32 marketId, bytes32 outcome)',
+    'function claim()'
+  ];
+  let cfg = null, me = null, eth = null, account = null, discovered = [];
+
+  const api = async (method, path, body) => {
+    const r = await fetch(path, { method, headers: { 'content-type': 'application/json', ...(token() ? { authorization: 'Bearer ' + token() } : {}) }, body: body ? JSON.stringify(body) : undefined });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
+    return j;
+  };
+  const say = (id, kind, html) => { const el = $(id); el.className = 'status show ' + kind; el.innerHTML = html; };
+  const txLink = (h) => `<a target="_blank" rel="noopener" href="${cfg.network.explorer}/tx/${h}">${h.slice(0, 10)}…</a>`;
+  const short = (a) => a ? a.slice(0, 6) + '…' + a.slice(-4) : '-';
+  const fmt = (v, d = 4) => { const n = Number(v); return Number.isFinite(n) ? n.toLocaleString('en-US', { maximumFractionDigits: d }) : String(v); };
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const errText = (e) => esc(e.shortMessage || (e.info && e.info.error && e.info.error.message) || e.reason || e.message || String(e)).slice(0, 300);
+
+  // ---------------------------------------------------------------- wallet discovery (EIP-6963 + window.ethereum)
+  function discoverWallets() {
+    window.addEventListener('eip6963:announceProvider', (ev) => {
+      if (!discovered.find((d) => d.info.uuid === ev.detail.info.uuid)) { discovered.push(ev.detail); renderWalletList(); }
+    });
+    window.dispatchEvent(new Event('eip6963:requestProvider'));
+    setTimeout(() => { renderWalletList(); autoReconnect(); }, 600);
+  }
+  // Po odswiezeniu strony wracamy do portfela, ktory juz zezwolil na polaczenie (bez okienka).
+  async function autoReconnect() {
+    if (account) return;
+    const provider = discovered.length ? discovered[0].provider : window.ethereum;
+    if (!provider) return;
+    try {
+      const accounts = await provider.request({ method: 'eth_accounts' });
+      if (accounts && accounts.length && localStorage.getItem('wolWalletConnected') === '1') await connect(provider);
+    } catch (e) { /* ignore */ }
+  }
+  function renderWalletList() {
+    if (account) return;
+    const list = $('walletList');
+    if (cfg && cfg.clientId) { // DogeOS Connect Kit: jedno okno (X / e-mail / portfel)
+      list.innerHTML = '';
+      const b = document.createElement('button');
+      b.textContent = 'Connect wallet';
+      b.onclick = connectKit;
+      list.appendChild(b);
+      $('noWallet').classList.add('hidden');
+      return;
+    }
+    const items = discovered.length ? discovered.map((d) => ({ name: d.info.name, icon: d.info.icon, provider: d.provider }))
+      : (window.ethereum ? [{ name: window.ethereum.isMetaMask ? 'Browser wallet (MetaMask-compatible)' : 'Browser wallet', provider: window.ethereum }] : []);
+    list.innerHTML = '';
+    items.forEach((it) => {
+      const b = document.createElement('button');
+      b.innerHTML = (it.icon ? `<img src="${it.icon}" alt="">` : '') + 'Connect ' + esc(it.name);
+      b.onclick = () => connect(it.provider);
+      list.appendChild(b);
+    });
+    $('noWallet').classList.toggle('hidden', items.length > 0);
+  }
+
+  let kind = 'injected';
+  async function connectKit() {
+    try {
+      const w = await WolConnect.connect();
+      kind = w.kind; eth = w.provider(); account = w.address;
+      try { localStorage.setItem('wolWalletConnected', '1'); } catch (e) { /* ignore */ }
+      $('walletList').innerHTML = '';
+      await refreshWallet();
+    } catch (e) { say('walletStatus', 'err', errText(e)); }
+  }
+
+  async function connect(provider) {
+    try {
+      eth = provider;
+      const accounts = await eth.request({ method: 'eth_requestAccounts' });
+      account = accounts[0];
+      try { localStorage.setItem('wolWalletConnected', '1'); } catch (e) { /* ignore */ }
+      eth.on && eth.on('accountsChanged', () => location.reload());
+      eth.on && eth.on('chainChanged', () => refreshWallet());
+      $('walletList').innerHTML = '';
+      await refreshWallet();
+    } catch (e) { say('walletStatus', 'err', errText(e)); }
+  }
+
+  async function ensureNetwork() {
+    if (kind === 'dogeos-sdk') return; // portfel z DogeOS Connect Kit dziala od razu w sieci DogeOS
+    const hex = '0x' + cfg.network.chainId.toString(16);
+    try { await eth.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: hex }] }); }
+    catch (e) {
+      if (e.code === 4902 || /Unrecognized chain|not added|unknown chain/i.test(e.message || '')) {
+        await eth.request({ method: 'wallet_addEthereumChain', params: [{ chainId: hex, chainName: cfg.network.name, nativeCurrency: cfg.network.currency, rpcUrls: [cfg.network.rpcUrl], blockExplorerUrls: [cfg.network.explorer] }] });
+      } else throw e;
+    }
+  }
+
+  async function refreshWallet() {
+    if (!eth || !account) return;
+    const provider = new ethers.BrowserProvider(eth);
+    const net = await provider.getNetwork();
+    const right = Number(net.chainId) === cfg.network.chainId;
+    $('walletInfo').classList.remove('hidden');
+    $('wAddr').textContent = account;
+    $('wNet').innerHTML = right ? `<span class="win">${esc(cfg.network.name)}</span>` : `<span style="color:var(--bad)">Wrong network (chain ${net.chainId})</span>`;
+    $('wBal').textContent = right ? fmt(ethers.formatEther(await provider.getBalance(account))) + ' DOGE' : '-';
+    $('btnSwitch').classList.toggle('hidden', right);
+    me = await api('GET', '/api/chain/me');
+    const linked = me.walletAddress && me.walletAddress.toLowerCase() === account.toLowerCase();
+    $('wLinked').innerHTML = linked ? `<span class="win">Linked as ${esc(me.username)}</span>` : (me.walletAddress ? `Account is linked to another wallet (${short(me.walletAddress)})` : 'Not linked yet');
+    $('btnLink').classList.toggle('hidden', !!linked);
+    renderMe();
+  }
+
+  $('btnSwitch').onclick = async () => { try { await ensureNetwork(); await refreshWallet(); } catch (e) { say('walletStatus', 'err', errText(e)); } };
+  $('btnLink').onclick = async () => {
+    try {
+      say('walletStatus', 'info', 'Sign the message in your wallet (free, no transaction)…');
+      const { message } = await api('POST', '/api/chain/wallet/challenge', { address: account });
+      const signature = await (await new ethers.BrowserProvider(eth).getSigner()).signMessage(message);
+      await api('POST', '/api/chain/wallet/link', { signature });
+      say('walletStatus', 'ok', 'Wallet linked to your account.');
+      await refreshWallet();
+    } catch (e) { say('walletStatus', 'err', errText(e)); }
+  };
+
+  // ---------------------------------------------------------------- generic wallet transaction
+  async function contractTx(statusId, label, fn) {
+    if (!eth || !account) throw new Error('Connect your wallet first.');
+    await ensureNetwork();
+    const signer = await new ethers.BrowserProvider(eth).getSigner();
+    const arena = new ethers.Contract(cfg.contract, ABI, signer);
+    say(statusId, 'info', `${label}: confirm the transaction in your wallet…`);
+    const tx = await fn(arena);
+    say(statusId, 'info', `${label}: waiting for confirmation… ${txLink(tx.hash)}`);
+    await tx.wait();
+    return tx.hash;
+  }
+  const needLinked = () => { if (!me || !me.walletAddress || me.walletAddress.toLowerCase() !== (account || '').toLowerCase()) throw new Error('Link this wallet to your account first (step 1).'); };
+
+  // ---------------------------------------------------------------- tickets
+  async function buyTicket(kind) {
+    try {
+      needLinked();
+      const v = await api('POST', '/api/chain/tickets/voucher', { kind });
+      const hash = await contractTx('ticketStatus', 'Ticket payment', (c) => c.buyTicket(v.kind, v.price, v.nonce, v.deadline, v.sig, { value: v.price }));
+      say('ticketStatus', 'info', `Paid ${fmt(v.priceDoge)} DOGE (${txLink(hash)}). Waiting for the game server to see the payment…`);
+      const before = kind === 'monthly' ? me.tournamentTickets : (me.hasMiniTicket ? 1 : 0);
+      for (let i = 0; i < 30; i++) {
+        await new Promise((r) => setTimeout(r, 2000));
+        me = await api('GET', '/api/chain/me');
+        const now = kind === 'monthly' ? me.tournamentTickets : (me.hasMiniTicket ? 1 : 0);
+        if (now > before) { renderMe(); say('ticketStatus', 'ok', `Ticket granted! Payment ${txLink(hash)}.`); return refreshWallet(); }
+      }
+      say('ticketStatus', 'info', `Payment confirmed (${txLink(hash)}); the ticket will appear in a moment.`);
+    } catch (e) { say('ticketStatus', 'err', errText(e)); }
+  }
+  $('buyMonthly').onclick = () => buyTicket('monthly');
+  $('buyMini').onclick = () => buyTicket('mini');
+
+  $('btnClaim').onclick = async () => {
+    try {
+      needLinked();
+      const hash = await contractTx('prizeStatus', 'Claim', (c) => c.claim());
+      say('prizeStatus', 'ok', `Prize sent to your wallet ${txLink(hash)}.`);
+      await refreshWallet();
+    } catch (e) { say('prizeStatus', 'err', errText(e)); }
+  };
+
+  function renderMe() {
+    if (!me) return;
+    $('tkMonthly').textContent = me.tournamentTickets;
+    $('tkMini').textContent = me.hasMiniTicket ? '1 (unused)' : 'none';
+    $('pzClaim').textContent = me.claimable !== undefined ? fmt(me.claimable) + ' DOGE' : '-';
+    $('pzTotal').textContent = me.totalWon !== undefined ? fmt(me.totalWon) + ' DOGE' : '-';
+    $('pzWins').textContent = me.wins !== undefined ? me.wins : '-';
+    $('btnClaim').disabled = !(Number(me.claimable) > 0);
+  }
+
+  // ---------------------------------------------------------------- stats
+  async function loadStats() {
+    try {
+      const s = await api('GET', '/api/chain/stats');
+      $('stContract').innerHTML = `<a target="_blank" rel="noopener" href="${cfg.network.explorer}/address/${s.contract}">${s.contract}</a>`;
+      $('stPool').textContent = fmt(s.prizePool) + ' DOGE';
+      $('stTreasury').textContent = fmt(s.treasury) + ' DOGE';
+      $('stSeason').textContent = s.season;
+      const body = $('stBoard').querySelector('tbody');
+      body.innerHTML = s.leaderboard.length ? s.leaderboard.map((r, i) => `<tr><td>${i + 1}</td><td>${esc(r.username)}</td><td>${r.wins}</td><td>${fmt(r.won)}</td></tr>`).join('') : '<tr><td colspan="4" class="muted">No on-chain prizes yet.</td></tr>';
+    } catch (e) { /* ignore */ }
+  }
+
+  // ---------------------------------------------------------------- start
+  (async () => {
+    try { cfg = await api('GET', '/api/chain/config'); } catch (e) { document.body.insertAdjacentHTML('beforeend', '<p style="padding:30px">DogeOS integration unavailable.</p>'); return; }
+    if (!cfg.enabled) { $('walletBox').innerHTML = '<p class="muted">The DogeOS integration is not enabled on this server.</p>'; return; }
+    if (!token()) { $('notLogged').classList.remove('hidden'); $('walletBox').classList.add('hidden'); return; }
+    discoverWallets();
+    try { me = await api('GET', '/api/chain/me'); renderMe(); } catch (e) { $('notLogged').classList.remove('hidden'); return; }
+    loadStats();
+    setInterval(loadStats, 20000);
+  })();
+})();
+</script>
+<script src="/wol-guest.js"></script>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" data-source-lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>War of Lords - Tournament Rules</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+
+        .nav-menu {
+            background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat;
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .nav-menu a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #e8c766;
+        }
+
+        /* Baked-in default nav link layout, adopted site-wide from a player-arranged position
+           (see layout-editor.js) so every visitor sees the same arrangement by default. */
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { display: none !important; position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .rules-card {
+            width: 100%;
+            max-width: 1000px;
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96));
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 20px;
+            padding: 36px 40px;
+            box-sizing: border-box;
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 16px 45px rgba(0,0,0,0.4);
+            margin: 0 20px 30px;
+        }
+
+        .rules-card h1 {
+            margin: 0 0 8px;
+            color: #e8c766;
+            font-size: 32px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            text-align: center;
+        }
+
+        .rules-card > p.subtitle {
+            text-align: center;
+            color: #cbd5e1;
+            margin: 0 0 30px;
+        }
+
+        .rules-card section {
+            margin-bottom: 32px;
+        }
+
+        .rules-card h2 {
+            margin: 0 0 14px;
+            padding-bottom: 10px;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #e8c766;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .rules-card h3 {
+            margin: 20px 0 10px;
+            color: #f0d78c;
+            font-size: 16px;
+        }
+
+        .rules-card p,
+        .rules-card li {
+            color: #e2e8f0;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .rules-card ul,
+        .rules-card ol {
+            padding-left: 22px;
+            margin: 10px 0;
+        }
+
+        .rules-card strong {
+            color: #f8fafc;
+        }
+
+        .rules-card a {
+            color: #e8c766;
+        }
+
+        .rules-table-wrap {
+            overflow-x: auto;
+            margin: 14px 0;
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+        }
+
+        table.rules-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 480px;
+        }
+
+        table.rules-table th {
+            background: rgba(212, 175, 55, 0.1);
+            color: #e8c766;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            font-size: 12px;
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            white-space: nowrap;
+        }
+
+        table.rules-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+            color: #e2e8f0;
+            white-space: nowrap;
+        }
+
+        table.rules-table tbody tr:hover td {
+            background: rgba(212, 175, 55, 0.06);
+        }
+
+        table.rules-table td.highlight {
+            color: #f0d78c;
+            font-weight: 700;
+        }
+
+        .rules-note {
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-top: 14px;
+        }
+
+        .rules-footer {
+            text-align: center;
+            color: #f0d78c;
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 640px) {
+            .rules-card {
+                padding: 24px 18px;
+            }
+            .rules-card h1 {
+                font-size: 24px;
+            }
+        }
+        #adminPanelLink { position: absolute; left: 234.44px; top: 41.22px; width: 295.89px; height: 60px; margin: 0; box-sizing: border-box; }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/texts/zasady-turnieju.js"></script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Home</a>
+        <a id="navRooms" href="pokoje.html">Battle Rooms</a>
+        <a id="navTournaments" href="turnieje.html">Tournaments</a>
+        <a id="navShop" href="live.html">Live Bets</a>
+        <a id="navRanking" href="ranking.html">Overall Ranking</a>
+        <a id="navProfile" href="profile.html">Profile</a>
+        <a id="navRules" href="zasady.html">Rules</a>
+    </div>
+
+    <div id="adminPanelLink" style="display:none;">
+        <a href="admin.html" style="display:inline-block; background:#f59e0b; color:#111827; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">👑 ADMIN PANEL</a>
+    </div>
+
+    <div class="rules-card">
+        <h1>🏆 Tournament Rules</h1>
+        <p class="subtitle">Format, scoring and the path to qualification in the Monthly Tournament</p>
+
+        <section>
+            <h2>🎫 Registration and tournament tickets</h2>
+            <ul>
+                <li>Taking part in the qualification rounds requires a <strong>Tournament Ticket</strong>, bought in the <strong>Shop</strong> tab with your DOGE balance (final price, shown in the Shop before you buy).</li>
+                <li>A player can buy <strong>at most 1 ticket per calendar month</strong> — the limit resets on the 1st of the next month.</li>
+                <li>One Tournament Ticket gives access to <strong>all 4 qualification rounds</strong> of the tournament — it is not used up after a single round, only after the last of the four has been played.</li>
+                <li>The monthly pool of available tickets is limited — its current state is visible live in the Service (including on this page and in the Shop) before you buy.</li>
+            </ul>
+            <div class="rules-note">The full terms of purchase, payment, withdrawal from the contract and complaints for Tournament Tickets are set out in the <a href="regulamin.html">Terms of Service</a> (§5–§6).</div>
+        </section>
+
+        <section>
+            <h2>🗓️ Qualification stage</h2>
+            <p>Once the administrators set the start date, the tournament goes through <strong>4 qualification rounds</strong> spread over 2 days, in rooms of <strong>10 players</strong>:</p>
+            <div class="rules-table-wrap">
+                <table class="rules-table">
+                    <thead><tr><th>Stage</th><th>When</th></tr></thead>
+                    <tbody>
+                        <tr><td>Round 1</td><td>Day 1</td></tr>
+                        <tr><td>Break</td><td>30 minutes</td></tr>
+                        <tr><td>Round 2</td><td>Day 1</td></tr>
+                        <tr><td>Overnight break</td><td>until day 2</td></tr>
+                        <tr><td>Round 3</td><td>Day 2</td></tr>
+                        <tr><td>Break</td><td>30 minutes</td></tr>
+                        <tr><td>Round 4</td><td>Day 2</td></tr>
+                        <tr><td>Break to calculate the results</td><td class="highlight">2 hours</td></tr>
+                        <tr><td>Results and semi-finalists announced</td><td>—</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Each qualification round is a regular game under the same rules as in the Battle Rooms (building your village, troops, combat, conquest with the Lord) — the full description of the mechanics is in the <a href="zasady.html">Game rules and mechanics</a>. The length of a single round is set by the administrators when planning the tournament.</p>
+            <p>Room line-ups are set without any draw, by a public formula based on the order of registration for the edition (the order of buying the ticket): the participant with sequence number i (counted from 0) plays in round k in room (q + (k − 1) · s) mod R, where q = i div 10, s = i mod 10 and R = the number of rooms. Round 1 groups consecutive tens of registrations; in rounds 2–4 players from the same ten move to different rooms, so you meet different opponents. Every room always has exactly 10 players.</p>
+        </section>
+
+        <section>
+            <h2>🧮 Scoring — Tournament Points (TP)</h2>
+            <p>After each round the 10-player room is scored in <strong>3 separate categories</strong>, each counted on the same place scale:</p>
+            <div class="rules-table-wrap">
+                <table class="rules-table">
+                    <thead><tr><th>Place</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th></tr></thead>
+                    <tbody><tr><td>Points</td><td class="highlight">100</td><td>92</td><td>84</td><td>76</td><td>68</td><td>60</td><td>52</td><td>44</td><td>36</td><td>30</td></tr></tbody>
+                </table>
+            </div>
+            <ul>
+                <li><strong>Overall Position</strong> — place in the round by village points (as in a regular game).</li>
+                <li><strong>Aggressor Position</strong> — place by the number of units defeated in attack.</li>
+                <li><strong>Defeated Units Position</strong> — place by the total number of enemy units defeated (attack + defence).</li>
+            </ul>
+            <p>The points from these three categories add up to the round’s <strong>Tournament Points (TP)</strong> (from 90 to 300 pts), and the sum of TP from all 4 rounds gives <strong>Total_TP</strong> (maximum 1200 pts) — this decides your place in the qualification ranking.</p>
+                <p>Players with an equal result in a category share the same place and receive the same number of points (e.g. two players tied for 2nd place both get the points for 2nd place, and the next player is 4th). No criterion outside the game, such as the account identifier, decides the order.</p>
+            <div class="rules-note">Ties in the qualification ranking are decided in turn by: higher Total_TP → more units defeated in total over the 4 rounds → earlier ticket purchase date.</div>
+        </section>
+
+        <section>
+            <h2>🎖️ Qualifying for the semi-final</h2>
+            <ul>
+                <li>The <strong>Top 35</strong> players in the qualification ranking (by Total_TP) advance to the semi-final.</li>
+                <li>The <strong>Top 5</strong> players of the monthly <strong>Free Server Ranking</strong> (the sum of Tournament Points earned since the 1st of the month in regular, free Battle Rooms, counted the same way as in the qualification rounds; only rounds played with at least 8 real players and without bots count) get <strong>direct entry to the semi-final</strong> — without buying a ticket and without playing the qualification rounds.</li>
+                <li>This ranking “closes” exactly when the qualification rounds of a given tournament edition end — only then is the final Top 5 determined. From that moment the ranking counter resets and starts collecting again until the end of the calendar month — <strong>the Top 5 of those remaining days of the month receive a separate DOGE prize on each of their balances</strong> (a prize, not another semi-final place — the semi-final places are already filled by then). If no tournament takes place at all in a given month, the same DOGE prize goes to the Top 5 counted over the whole calendar month.</li>
+                <li>In total <strong>40 players</strong> reach the semi-final. Current rankings are shown live in the <strong>Tournaments</strong> tab.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>🏟️ Semi-final and final</h2>
+            <ul>
+                <li>The 40 semi-finalists play in <strong>4 fixed semi-final rooms</strong> (Semi-final 1–4), 10 players in each.</li>
+                <li>The Final line-up is based on the results of these 4 semi-final rounds:
+                    <ul>
+                        <li><strong>The top 2 players from each semi-final room</strong> by village points ranking (4 rooms × 2 players = 8 players),</li>
+                        <li><strong>1 player</strong> from the semi-final aggressor ranking (the most units defeated in attack among all semi-finalists),</li>
+                        <li><strong>1 player</strong> from the semi-final defender ranking (the most units defeated in defence among all semi-finalists).</li>
+                    </ul>
+                    Together this gives <strong>10 players</strong>, who play in the Final (1 room).
+                </li>
+                <li>In each of these three selections (top 2 by points, aggressor, defender) a possible tie is decided in turn by the player’s other statistics from the same semi-final round: village points → total units defeated → defeated in attack → defeated in defence (skipping the category that was already the main selection criterion), and finally — who reached their result earlier in the round. The order of signing up for the tournament or the account ID never decides qualification.</li>
+                <li>In the Final the result counts just as in a regular round — the player’s <strong>village points</strong> decide. A possible tie for a place in the Final (including the places with a DOGE prize) is decided by the same cascade as above: total units defeated → defeated in attack → defeated in defence → reaching the result earlier. Every place in the Final can thus be explained clearly and fully with concrete game statistics — never by chance or by the order of sign-ups.</li>
+                <li>The start dates of the semi-finals and the final are announced by the administrators in the <strong>Tournaments</strong> tab.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>🏆 Prizes</h2>
+            <p>Every edition of the Monthly Tournament has a pre-set, guaranteed DOGE prize pool for each of the 10 places in the Final, announced by the administrators before registration opens — you will see the exact breakdown in the <strong>Tournaments</strong> tab before you buy a ticket. Prizes are paid automatically to the player’s DOGE balance after the Final, in the full gross amount (100%) — the Service does not withhold any tax.</p>
+            <div class="rules-note">The Organiser is a private individual not running a business and does not act as an income tax remitter — the winner settles the winnings in their own annual tax return (in Poland: PIT, art. 20(1) of the PIT Act). You can withdraw your accumulated DOGE balance to your DOGE address in the <a href="portfel.html">Wallet</a> at any time — details in the <a href="regulamin.html">Terms of Service</a> (§5b).</div>
+        </section>
+
+        <section>
+            <h2>🚫 Fair play</h2>
+            <p>The same fair play rules apply in the tournament as in the regular game — including the ban on using multiple accounts (multi-accounting).</p>
+            <ul>
+                <li>The system <strong>automatically and continuously detects</strong> attempts to play from <strong>two or more accounts from the same IP address</strong> (and from the same device) within the same tournament round.</li>
+                <li>Detecting such an attempt results in an <strong>immediate block of all linked accounts for the whole tournament</strong> (not just that round) and <strong>the loss of the Tournament Ticket with no right to a refund</strong>.</li>
+                <li>This is an additional, tournament-specific consequence — independently of it, the general rules and consequences for multi-accounting described in the <a href="regulamin.html">Terms of Service</a> and in the “Fair play and consequences of cheating” section of the <a href="zasady.html">Game rules and mechanics</a> also apply (including a possible permanent ban across the whole service and the loss of accumulated Skill Points).</li>
+            </ul>
+            <div class="rules-note">Trying to get around this protection by logging into a second account from a different IP address (e.g. from another network/another device outside your home) is equally forbidden and treated as a breach of fair play — if it is established by other means, the consequences are the same as with automatic detection.</div>
+        </section>
+
+        <p class="rules-footer">Good luck in the Monthly Tournament, Commander! 🏆</p>
+    </div>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+    <script src="/page-scale.js"></script>
+    <script src="/wol-guest.js"></script>
+</body>
+</html>

@@ -1,0 +1,2495 @@
+<!DOCTYPE html>
+<html lang="en" data-source-lang="en" data-source-lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="google" content="notranslate">
+    <!-- 2026-10-02 v2: REVERTED the auto-scaling experiment (#layoutGridScaleWrapper /
+         layout-grid-scale.js) - explicit feedback that it looked like neither the real desktop
+         layout nor a proper mobile one. Back to the simpler, explicitly requested approach: the
+         page ALWAYS renders at the real desktop width (was previously an opt-in "Wersja
+         przeglądarkowa" toggle, now just permanent/unconditional - the toggle button and its
+         localStorage flag are gone), and the player pinches/pans on their phone themselves,
+         exactly like visiting any other non-mobile-optimized site in a mobile browser. -->
+    <meta name="viewport" content="width=1280" />
+    <title data-i18n="game.pageTitle">War of Lords - Game panel</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #e2e8f0;
+            background: #030712;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: radial-gradient(circle at top left, rgba(212, 175, 55, 0.14), transparent 28%),
+                        radial-gradient(circle at bottom right, rgba(212, 175, 55, 0.10), transparent 28%),
+                        url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .page-shell {
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 18px;
+            /* zoom (not transform) so @media breakpoints still evaluate against the effective
+               (post-zoom) size — grows every in-game element (panels, tables, buttons) 10% above
+               their normal size, without shrinking/growing the page as a whole like body zoom did. */
+            zoom: 110%;
+        }
+        /* #topBar's children below are positioned with fixed pixel offsets, hand-tuned via the old
+           drag/resize layout editor against #topBar's own natural (unscaled) width of 1404px (the
+           .page-shell content width at its 1440px max-width) — see topBarScaleWrapper.js. Below
+           that width (any narrower desktop window, and every mobile screen), #topBarScaleWrapper
+           uniformly shrinks this whole element via transform:scale() so the ribbon graphic and every
+           child stay glued to their same relative spot on it, instead of the children's absolute
+           pixel offsets spilling outside an #topBar that has shrunk to fit a narrower screen while
+           they stayed put at their full-width coordinates. */
+        #topBarScaleWrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 18px;
+            /* Hidden until topbar-scale.js computes and applies the correct scale on first load —
+               avoids a brief flash of the unscaled (potentially overflowing/scattered) desktop
+               layout on a narrow screen before JS runs. */
+            visibility: hidden;
+        }
+        #topBar {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 0 14px;
+            /* pasek gorny.png is a compact 1505x122 banner with no empty header/footer space of its
+               own — the old min-height:70px + padding-bottom:77px (157px total) stretched it about
+               38% taller than its native proportions (background-size:100% 100% force-fits to
+               whatever box height is set), which is what pushed every child up near the top of a
+               box that was much taller than the graphic was ever drawn for, instead of centered on
+               it. aspect-ratio locks the box to the image's own native ratio at any width, so it's
+               never stretched and the children below (re-centered to match) land back on the
+               banner's actual icon row. */
+            aspect-ratio: 1505 / 122;
+            background-image: url('/pasek gorny.png');
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: none;
+            border-radius: 0;
+            transform-origin: top left;
+        }
+        /* Permanently fixed positions (player-arranged via the old drag/resize layout editor,
+           then baked in as static CSS once they were happy with the placement, and re-centered
+           after the aspect-ratio fix above shrunk #topBar's own height back to the image's native
+           proportions). */
+        #topBarTreasuryPanel {
+            position: absolute;
+            left: 100.666px;
+            top: 30.25px;
+            width: 196.875px;
+            height: 53.3333px;
+            box-sizing: border-box;
+            margin: 0;
+        }
+        #topBarRoundTimer {
+            position: absolute;
+            left: 323.444px;
+            top: 40.4px;
+            width: 100px;
+            box-sizing: border-box;
+            margin: 0;
+        }
+        #topBarCenterTitle {
+            position: absolute;
+            /* Widened by ~34px (and re-centered via `left`) to make room for the player-color
+               swatch added 2026-10-02 WITHOUT shrinking the village-name box's own fixed 8ch width —
+               same midpoint as the original hand-tuned 672.333px/309.549px so it still lines up with
+               the banner artwork underneath. */
+            left: 655.333px;
+            top: 41.36px;
+            width: 343.549px;
+            height: 31.1111px;
+            box-sizing: border-box;
+            margin: 0;
+        }
+        #topBarPlayerPanel {
+            position: absolute;
+            left: 1041px;
+            top: 31.05px;
+            width: 321.18px;
+            height: 51.7188px;
+            box-sizing: border-box;
+            margin: 0;
+        }
+        #exitGameBtn {
+            margin-top: 3px;
+            position: relative;
+            left: 15px;
+        }
+        #topBar .panel {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: nowrap;
+        }
+        #topBar .panel strong {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        #topBarPlayerPanel > strong,
+        #topBarPlayerPanel > #populationAmount {
+            position: relative;
+            top: -5px;
+        }
+        #topBarTreasuryPanel {
+            position: relative;
+            top: -12px;
+        }
+        #topBarTreasuryPanel > strong {
+            position: relative;
+            top: -20px;
+        }
+        #topBarPlayerPanel > .timer-pill {
+            position: relative;
+            top: -7px;
+        }
+        #topBar .panel span {
+            font-size: 13px;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+        #topBar .panel small {
+            font-size: 10px;
+            color: #94a3b8;
+        }
+        #topBar .timer-pill {
+            min-width: 92px;
+            padding: 6px 8px;
+            border-radius: 999px;
+            background: transparent;
+            border: none;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+        #topBar .timer-pill strong {
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #d4af37;
+        }
+        #topBar .timer-pill span {
+            font-size: 12px;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+        #topBar .center-title {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* 2026-10-02, player feedback: tightened from 10px - arrows looked too far from the
+               name text (most names are much shorter than the 180px name box below, so centered
+               text left visible empty space between it and the arrows on both sides). */
+            gap: 4px;
+            text-align: center;
+            min-width: 0;
+        }
+        /* 2026-10-02, player feedback: moved .my-color-swatch here (stacked above the name) instead
+           of beside it - frees up the horizontal space it used to share with .village-name, so the
+           name box below can be noticeably wider without growing #topBarCenterTitle any further. */
+        .village-name-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            flex: 0 0 auto;
+        }
+        #topBar .village-name {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            color: #e8c766;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            /* 2026-10-02, player feedback ("tylko kilka liter i kropki"): widened from the original
+               8ch (which truncated most real village names) now that the color swatch moved above
+               instead of sharing this row's width - see .village-name-stack above. Tightened again
+               the same day from an initial 180px ("przyciski za szeroko") down to 120px, still
+               comfortably fits most real names without truncating while sitting closer to the
+               arrows. Still a FIXED width (not auto/max-content) on purpose, so the prev/next
+               arrows on either side of #topBarCenterTitle never shift depending on how long the
+               current name happens to be. */
+            width: 120px;
+            flex: 0 0 auto;
+            text-align: center;
+        }
+        .village-nav-arrow {
+            flex: 0 0 auto;
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border-radius: 50%;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            background: rgba(212, 175, 55, 0.12);
+            color: #f0d78c;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.15s ease, transform 0.15s ease;
+        }
+        .village-nav-arrow:hover {
+            background: rgba(212, 175, 55, 0.26);
+            transform: translateY(-1px);
+        }
+        .village-nav-arrow:active {
+            transform: translateY(0);
+        }
+        .village-nav-arrow:disabled {
+            opacity: 0.3;
+            cursor: default;
+            transform: none;
+        }
+        .upgrade-village-switcher {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .upgrade-village-switcher .village-name {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            color: #e8c766;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            /* Same fixed 8-character box as the top bar's copy — see that rule's comment. */
+            width: 8ch;
+            flex: 0 0 auto;
+            text-align: center;
+        }
+        /* Sits next to the Zamknij button at the bottom of the modal (see .modal-footer-row) —
+           moved off the top where it read as confusingly close to the village switcher. */
+        .modal-footer-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .village-rename-block {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .village-rename-block .village-rename-label {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .village-rename-block input {
+            width: 90px;
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            background: rgba(8, 15, 29, 0.6);
+            color: #f8fafc;
+            font-size: 13px;
+            text-align: center;
+        }
+        .village-rename-block button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            background: rgba(212, 175, 55, 0.2);
+            color: #f0d78c;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .village-rename-block button:hover {
+            background: rgba(212, 175, 55, 0.32);
+        }
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 240px 1fr 240px;
+            gap: 10px;
+            align-items: stretch;
+            min-height: calc(100vh - 120px);
+        }
+        #sidebarLeft,
+        #sidebarRight {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+        .panel-card {
+            background-image: url('/ramka.png');
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: none;
+            border-radius: 0;
+            padding: 12px;
+            min-height: 90px;
+        }
+        #sidebarLeft > .panel-card,
+        #sidebarRight > .panel-card {
+            max-height: none;
+            overflow: visible;
+        }
+        .ranking-card {
+            margin-top: 16px;
+        }
+        #centerPanel .image-card {
+            position: relative;
+            width: 100%;
+            /* mapa.png is 1035x742px. Locking the container to that exact ratio (instead of a
+               fixed 650px height on a fluid width) means "background-size: cover" never has to
+               crop unevenly on a narrower window — the pin left/top PERCENTAGES were calibrated
+               against this image, so they only land in the right spot when the container's shape
+               matches the image's own shape at every window size, not just the one it happened to
+               be measured on. max-height keeps it at the original ~650px on wide screens (the
+               page-shell's own 1440px cap already limits it to about that anyway). */
+            aspect-ratio: 1035 / 742;
+            max-height: 650px;
+            border-radius: 22px;
+            overflow: hidden;
+            background: linear-gradient(180deg, rgba(8, 15, 29, 0.94), rgba(10, 18, 35, 0.98));
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .panel-card h2 {
+            margin: 0 0 10px;
+            padding-bottom: 8px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #e8c766;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        /* Sized for the ORIGINAL 5-button Menu list (Przegląd wioski/Rozbudowa/Mapa/Lista wiosek/
+           Raporty) so removing "Przegląd wioski" doesn't shrink the tile — the remaining 4 buttons
+           just sit at the top (.button-list's default flex-start) with the freed space below them,
+           instead of the whole panel-card getting visibly shorter. */
+        #menuPanelCard {
+            min-height: 272px;
+        }
+        .button-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .button-list button {
+            width: 100%;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 0;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #e2e8f0;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .button-list button:hover {
+            color: #f0d78c;
+            transform: translateY(-1px);
+        }
+        .button-list button.active {
+            color: #fff8e1;
+            transform: translateY(-1px);
+        }
+        .exit-button {
+            margin-top: 8px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 0;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #ef4444;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            position: relative;
+            top: -10px;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .exit-button:hover {
+            color: #fca5a5;
+            transform: translateY(-1px);
+        }
+        .report-button {
+            margin-top: 8px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 0;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #e8c766;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .report-button:hover {
+            color: #f0d78c;
+        }
+        .report-button.has-new-report {
+            animation: reportButtonBlink 1s ease-in-out infinite;
+        }
+        .report-button.has-new-report:hover {
+            animation-play-state: paused;
+        }
+        @keyframes reportButtonBlink {
+            0%, 100% { box-shadow: 0 0 0 rgba(248, 113, 113, 0); }
+            50% { box-shadow: 0 0 10px rgba(248, 113, 113, 0.55); }
+        }
+        .report-item {
+            padding: 0;
+            border-radius: 12px;
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .report-item.report-win {
+            border-color: rgba(74, 222, 128, 0.28);
+        }
+        .report-item.report-loss {
+            border-color: rgba(248, 113, 113, 0.28);
+        }
+        .report-summary {
+            padding: 10px 12px;
+            cursor: pointer;
+            list-style: none;
+        }
+        .report-summary::-webkit-details-marker {
+            display: none;
+        }
+        .report-summary::after {
+            content: '▾ rozwiń';
+            display: block;
+            margin-top: 6px;
+            font-size: 10px;
+            color: #f0d78c;
+            text-align: right;
+        }
+        .report-item[open] .report-summary::after {
+            content: '▴ zwiń';
+        }
+        .report-item[open] .report-summary {
+            border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+        }
+        .report-details {
+            padding: 10px 12px 12px;
+        }
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .report-item.report-win .report-header strong {
+            color: #4ade80;
+        }
+        .report-item.report-loss .report-header strong {
+            color: #f87171;
+        }
+        .report-time {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        .report-sides {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .report-side {
+            flex: 1;
+            min-width: 0;
+        }
+        .report-side-role {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #94a3b8;
+        }
+        .report-side-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #f8fafc;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .report-side-village {
+            font-size: 11px;
+            color: #cbd5e1;
+        }
+        .report-side-arrow {
+            font-size: 16px;
+            color: #d4af37;
+            font-weight: 700;
+        }
+        .report-tables {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .report-table-block {
+            flex: 1;
+            min-width: 150px;
+        }
+        .report-table-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #f0d78c;
+            margin-bottom: 4px;
+        }
+        .report-mini-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .report-mini-table th,
+        .report-mini-table td {
+            padding: 4px 6px;
+            text-align: left;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+            color: #e2e8f0;
+        }
+        .report-mini-table th {
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 11px;
+        }
+        .report-loss-cell {
+            color: #f87171;
+            font-weight: 700;
+        }
+        .report-footer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 14px;
+            font-size: 11px;
+            color: #cbd5e1;
+        }
+        .report-footer strong {
+            color: #f8fafc;
+        }
+        .report-recon-note {
+            margin: 0;
+            font-size: 12px;
+            color: #cbd5e1;
+        }
+        .report-lord-loyalty {
+            margin: 0 0 10px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fbbf24;
+        }
+        .report-empty {
+            color: #94a3b8;
+            font-size: 13px;
+            padding: 6px 0;
+        }
+        .active-attacks-panel {
+            padding: 12px;
+            border-radius: 12px;
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.92), rgba(10, 16, 33, 0.94));
+            border: 1px solid rgba(212, 175, 55, 0.32);
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1);
+        }
+        .active-attacks-panel h3 {
+            margin: 0 0 10px;
+            font-size: 15px;
+            color: #f8fafc;
+        }
+        .active-attacks-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .active-attacks-column-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 6px;
+            padding-left: 2px;
+        }
+        .active-attacks-column.outgoing .active-attacks-column-title {
+            color: #7dd3fc;
+        }
+        .active-attacks-column.incoming .active-attacks-column-title {
+            color: #fca5a5;
+        }
+        .active-attacks-column-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 240px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        @media (max-width: 480px) {
+            .active-attacks-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+        .active-attack-item {
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: rgba(30, 41, 59, 0.86);
+            border: 1px solid rgba(148, 163, 184, 0.14);
+        }
+        .active-attack-item.outgoing {
+            border-color: rgba(56, 189, 248, 0.24);
+        }
+        .active-attack-item.incoming {
+            border-color: rgba(248, 113, 113, 0.24);
+        }
+        .active-attack-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .active-attack-header strong {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            min-width: 0;
+        }
+        .active-attack-meta {
+            font-size: 12px;
+            color: #cbd5e1;
+            margin-top: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .active-attack-cancel {
+            margin-top: 6px;
+            padding: 4px 10px;
+            border: none;
+            border-radius: 0;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #ef4444;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .active-attack-cancel:hover {
+            color: #fca5a5;
+        }
+        .active-attack-time {
+            font-size: 12px;
+            font-weight: 700;
+            color: #38bdf8;
+        }
+        .active-attack-empty {
+            color: #94a3b8;
+            font-size: 13px;
+            padding: 4px 0;
+        }
+        #roundResultModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.84);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            z-index: 1000;
+        }
+        #roundResultModal.active {
+            display: flex;
+        }
+        .round-ending-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.92);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            z-index: 1100;
+        }
+        .round-ending-overlay.active {
+            display: flex;
+        }
+        .round-ending-label {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f8fafc;
+            letter-spacing: 0.02em;
+        }
+        .round-ending-countdown {
+            font-size: 140px;
+            font-weight: 800;
+            line-height: 1;
+            color: #e8c766;
+            text-shadow: 0 0 60px rgba(212, 175, 55, 0.55);
+            animation: roundEndingPulse 1s ease-in-out infinite;
+        }
+        @keyframes roundEndingPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+        .round-ending-sublabel {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        /* Draggable in-round team chat (team mode only) - position:fixed with left/top set in JS
+           (see makeTeamChatDraggable in game.js) so the player can drop it anywhere on screen; the
+           chosen spot is remembered in localStorage across reloads. Sits above the game panels but
+           below the round-result/round-ending overlays (z-index 1000+ above). */
+        .team-chat-window {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            max-width: calc(100vw - 24px);
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.97), rgba(10, 16, 33, 0.98));
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 14px;
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 16px 45px rgba(0, 0, 0, 0.45);
+            z-index: 500;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .team-chat-window.visible {
+            display: flex;
+        }
+        .team-chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: rgba(212, 175, 55, 0.12);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            cursor: move;
+            user-select: none;
+        }
+        .team-chat-header span {
+            color: #e8c766;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .team-chat-minimize {
+            background: transparent;
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            border-radius: 6px;
+            color: #f0d78c;
+            width: 24px;
+            height: 24px;
+            line-height: 1;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .team-chat-minimize:hover {
+            background: rgba(212, 175, 55, 0.15);
+        }
+        .team-chat-body {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 12px 12px;
+        }
+        .team-chat-window.minimized .team-chat-body {
+            display: none;
+        }
+        #teamChatMessages {
+            background-color: #0f172a;
+            border: 1px solid #262626;
+            border-radius: 8px;
+            padding: 8px;
+            height: 180px;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            font-size: 12.5px;
+        }
+        .team-chat-row { padding: 2px 0; word-break: break-word; }
+        .team-chat-time { color: #64748b; margin-right: 4px; }
+        .team-chat-user { color: #e8c766; font-weight: bold; margin-right: 4px; }
+        .team-chat-text { color: #e2e8f0; }
+        .team-chat-form {
+            display: flex;
+            gap: 6px;
+        }
+        .team-chat-form input {
+            flex: 1;
+            min-width: 0;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 8px;
+            color: #f8fafc;
+            font-size: 12.5px;
+        }
+        .team-chat-form button {
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #e8c766;
+            border: none;
+            border-radius: 0;
+            padding: 8px 12px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12.5px;
+            transition: color 0.2s;
+        }
+        .team-chat-form button:hover {
+            color: #f0d78c;
+        }
+        .round-result-card {
+            width: min(920px, 100%);
+            max-height: 90vh;
+            overflow: auto;
+            background: linear-gradient(180deg, rgba(10, 16, 33, 0.55), rgba(8, 12, 26, 0.78)), url('/tlokoniec.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 1px solid rgba(212, 175, 55, 0.45);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 24px 70px rgba(0, 0, 0, 0.35);
+        }
+        .round-result-card h2 {
+            margin: 0 0 6px;
+            color: #f8fafc;
+            font-size: 24px;
+        }
+        .round-result-card p {
+            margin: 0 0 20px;
+            color: #94a3b8;
+        }
+        .round-result-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+        .round-result-panel {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 16px;
+            padding: 14px;
+        }
+        .round-result-panel h3 {
+            margin: 0 0 10px;
+            color: #e8c766;
+            font-size: 16px;
+        }
+        /* Team standings are the headline result of a team round - visually the most prominent
+           row, sitting above the individual TOP3 tables, not just another grid tile. Points and
+           team-aggressor sit side by side, mirroring the individual points/aggressor grid below. */
+        .round-result-teams-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        #prizeResultsRow {
+            grid-template-columns: 1fr;
+        }
+        #prizeResultsRow .round-result-panel {
+            border-color: rgba(212, 175, 55, 0.4);
+            background: rgba(212, 175, 55, 0.08);
+        }
+        .round-result-teams-panel {
+            background: linear-gradient(180deg, rgba(212, 175, 55, 0.16), rgba(30, 41, 59, 0.7));
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0 0 24px rgba(212, 175, 55, 0.12);
+        }
+        .round-result-teams-panel h3 {
+            font-size: 16px;
+            text-align: center;
+        }
+        .round-result-teams-panel .round-result-table td:first-child,
+        .round-result-teams-panel .round-result-table th:first-child {
+            width: 32px;
+        }
+        .round-result-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .round-result-table th,
+        .round-result-table td {
+            padding: 8px 6px;
+            text-align: left;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+        }
+        .round-result-table th {
+            color: #94a3b8;
+            font-weight: 700;
+        }
+        .round-result-table td:last-child {
+            text-align: right;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+        .round-result-close {
+            margin-top: 18px;
+            border: none;
+            border-radius: 0;
+            padding: 10px 12px;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #e8c766;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .round-result-close:hover {
+            color: #f0d78c;
+        }
+        .ranking-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .ranking-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .ranking-mode-toggle {
+            border: none;
+            border-radius: 0;
+            padding: 6px 10px;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #f0d78c;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .ranking-mode-toggle:hover {
+            color: #fde68a;
+        }
+        .ranking-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .ranking-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: transparent;
+            border: 1px solid rgba(212, 175, 55, 0.14);
+            font-size: 12px;
+        }
+        /* Rank+name is the only flexible part of the row — without min-width:0 a flex item can
+           never shrink below its text's natural width, so a long username pushed the whole row
+           (and the .ranking-kills-cols block next to it) past the panel's edge in "pokonane" mode.
+           Covers both the plain player row (span is a direct <li> child) and the team row (same
+           span one level deeper, inside .ranking-team-header). */
+        .ranking-list li > span:first-child,
+        .ranking-team-header > span:first-child {
+            flex: 1 1 auto;
+            min-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .ranking-list li .player-name {
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: bottom;
+        }
+        /* The Atak/Obrona/Razem columns must never shrink — they're fixed-width to line up with
+           .ranking-kills-header above them (see that rule's comment). */
+        .ranking-list li .ranking-kills-cols {
+            flex-shrink: 0;
+        }
+        .ranking-list li strong {
+            color: #e8c766;
+        }
+        /* Column labels (Atak / Obrona / Razem) shown above the list only in "pokonane" mode - see
+           updateRanking() in game.js, which toggles the .active class and fills each row's
+           .ranking-kills-cols with values aligned to these same fixed-width columns. */
+        .ranking-kills-header {
+            display: none;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 0 10px 4px;
+            font-size: 10px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .ranking-kills-header.active {
+            display: flex;
+        }
+        .ranking-kills-header span,
+        .ranking-kills-cols span {
+            width: 34px;
+            text-align: right;
+        }
+        /* Extra breathing room before the "Razem" (total) column so it reads as a separate summary
+           value rather than a third item in the same Atak/Obrona group. */
+        .ranking-kills-header span:last-child,
+        .ranking-kills-cols span:last-child {
+            margin-left: 12px;
+        }
+        .ranking-kills-cols {
+            display: flex;
+            gap: 8px;
+        }
+        .ranking-team-row {
+            flex-direction: column;
+            align-items: stretch;
+            cursor: pointer;
+            gap: 8px;
+        }
+        .ranking-team-row:hover {
+            border-color: rgba(212, 175, 55, 0.4);
+            background: rgba(30, 41, 59, 0.95);
+        }
+        .ranking-team-header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 24px;
+        }
+        /* Stacked name-then-stats rows instead of a wide table - a 4-column table doesn't fit the
+           narrow sidebar (long usernames + 3 numbers got clipped on-screen), but a name line
+           followed by a smaller stats line wraps naturally at any sidebar width. */
+        .team-members-list {
+            border-top: 1px solid rgba(212, 175, 55, 0.16);
+            padding-top: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+        .team-member-name {
+            color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+        .team-member-stats {
+            color: #94a3b8;
+            font-size: 10.5px;
+            margin-top: 1px;
+        }
+        .team-member-row.left .team-member-name,
+        .team-member-row.left .team-member-stats {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+        #centerPanel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        #centerPanel .image-card {
+            position: relative;
+            border-radius: 22px;
+            overflow: hidden;
+            background: linear-gradient(180deg, rgba(8, 15, 29, 0.94), rgba(10, 18, 35, 0.98));
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #centerPanel .image-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(56, 189, 248, 0.08), transparent 34%);
+            pointer-events: none;
+        }
+        #villageImage {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 20px;
+            letter-spacing: 0.01em;
+            padding: 22px;
+            text-align: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-image: url('/wioska.png');
+        }
+        #villageImage.map-mode {
+            display: block;
+            padding: 0;
+            color: transparent;
+            font-size: 0;
+            background-color: rgba(8, 15, 29, 0.12);
+            background-image: url('./mapa.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-blend-mode: overlay;
+        }
+        #villageImage.map-mode #mapCanvas {
+            background: transparent;
+        }
+        /* Team mode (roomType 'team', 50 main villages / 10 regions) — always uses this dedicated
+           image, never mapa.png (the classic 30-village map, completely unaffected by this rule). */
+        #villageImage.map-mode.map-team {
+            background-image: url('./mapa druzyna.png');
+        }
+        /* The shared #imageCard box is otherwise locked to mapa.png's own ratio (1035/742, see the
+           comment above on the first #centerPanel .image-card rule) — without this override,
+           "background-size: cover" would crop "mapa druzyna.png" (1448x1086, a different ratio) to
+           fit that mismatched shape, shifting the visible image just enough that the village
+           markers (positioned by % against the FULL uncropped image) would drift off their castles.
+           Higher specificity (two classes) than the earlier .image-card rules, so this always wins
+           regardless of source order.
+           max-height MUST also be cleared here, not just aspect-ratio — the base rule's
+           `max-height: 650px` was tuned for the CLASSIC ratio, and since width stays 100% (a hard
+           value, not auto), the browser doesn't shrink width to compensate when height gets
+           clamped: it just breaks the aspect-ratio back toward whatever max-height forces, which is
+           exactly why the markers were still drifting after only overriding aspect-ratio. Clearing
+           it lets aspect-ratio alone size the box (from width, which is already page-capped), so
+           this ratio is honored at every viewport width — the box ends up ~4-5% taller than the
+           classic map's fixed 650px at the widest screens (1448/1086 is a "flatter" image than
+           1035/742), which is expected, not a bug. */
+        #imageCard.map-team-active {
+            aspect-ratio: 1448 / 1086;
+            max-height: none;
+        }
+        #mapCanvas {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), inset 0 0 60px rgba(0,0,0,0.36);
+            border-radius: 22px;
+            overflow: hidden;
+        }
+        #mapNodesLayer {
+            position: absolute;
+            inset: 0;
+        }
+        #mapCanvas::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 64px 64px;
+            opacity: 0.28;
+            pointer-events: none;
+        }
+        .map-node {
+            position: absolute;
+            width: 54px;
+            height: 54px;
+            padding: 0;
+            border: 2px solid rgba(148, 163, 184, 0.18);
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.34);
+            color: #e2e8f0;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            white-space: nowrap;
+            text-align: center;
+            line-height: 1;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+        .map-node:active {
+            transform: translate(-50%, -50%) scale(1.02);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+        }
+        .map-node.main {
+            background: rgba(56, 189, 248, 0.12);
+            border-color: rgba(56, 189, 248, 0.25);
+        }
+        .map-node.sub {
+            background: rgba(100, 116, 139, 0.5);
+            border-color: rgba(148, 163, 184, 0.15);
+            font-size: 12px;
+        }
+        /* 2026-10-02, player request: village name shown ABOVE the circle (not inside it - the
+           circle is too small, see .map-node-mine/.map-node-other comment below) - positioned
+           relative to .map-node (position:absolute, the nearest positioned ancestor), so this sits
+           just above it regardless of .map-node's own centering transform. overflow isn't clipped
+           anywhere on .map-node, so this is free to extend past the circle's own box. */
+        .map-node-label {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 3px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            color: #f8fafc;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.95), 0 0 4px rgba(0,0,0,0.95);
+            pointer-events: none;
+        }
+        @media (max-width: 700px) {
+            .map-node-label {
+                font-size: 8px;
+                margin-bottom: 2px;
+            }
+        }
+        /* 2026-10-02, player color intensity feedback: border WIDTH and glow live here (as CSS, not
+           inline styles set from game.js) specifically so the @media (max-width: 700px) rule below
+           can shrink them back down on small screens — an earlier version set these inline, which
+           has higher specificity than any @media rule and so could never be overridden, leaving a
+           desktop-sized 4px border + glow stuck on a 27px mobile circle (looked like a broken
+           smeared blob once several were next to each other). Only the dynamic per-owner border
+           *color* stays inline (game.js), since that can't be a static CSS class. */
+        .map-node-mine {
+            border-width: 4px;
+            box-shadow: 0 0 10px 1px var(--mine-glow, transparent);
+        }
+        .map-node-other {
+            border-width: 2px;
+        }
+        @media (max-width: 700px) {
+            .map-node {
+                width: 27px;
+                height: 27px;
+                border-width: 1px;
+                font-size: 8px;
+            }
+            .map-node.sub {
+                font-size: 6px;
+            }
+            .map-node-mine {
+                border-width: 2px;
+                box-shadow: 0 0 4px 0 var(--mine-glow, transparent);
+            }
+            .map-node-other {
+                border-width: 1px;
+            }
+            /* Same reasoning as .map-node-mine above — a 24px pulse ring is fine around a 54px
+               desktop circle but swamps a 27px mobile one (and its neighbors) if left unscaled. */
+            .map-node.map-node-active {
+                --pulse-ring-spread: 10px;
+            }
+        }
+        .map-node.map-node-active {
+            animation: villageActivePulse 1.6s ease-out infinite;
+            z-index: 5;
+        }
+        /* 2026-10-02, player UX feedback ("pulsowanie żeby było lepiej widoczne"): wider ring
+           (16px -> 24px), higher peak opacity (set in game.js, 0.55 -> 0.9), and a subtle scale
+           pop on top of the existing box-shadow ring — translate(-50%,-50%) must stay in every
+           step since that's what keeps this node centered on its map x/y position. */
+        @keyframes villageActivePulse {
+            0% { box-shadow: 0 0 0 0 var(--pulse-color-strong, rgba(56, 189, 248, 0.9)); transform: translate(-50%, -50%) scale(1); }
+            40% { transform: translate(-50%, -50%) scale(1.1); }
+            70% { box-shadow: 0 0 0 var(--pulse-ring-spread, 24px) var(--pulse-color-soft, rgba(56, 189, 248, 0)); transform: translate(-50%, -50%) scale(1); }
+            100% { box-shadow: 0 0 0 0 var(--pulse-color-soft, rgba(56, 189, 248, 0)); transform: translate(-50%, -50%) scale(1); }
+        }
+        .map-tooltip {
+            position: absolute;
+            z-index: 10;
+            min-width: 180px;
+            max-width: 220px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: rgba(15, 23, 42, 0.94);
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            color: #e2e8f0;
+            font-size: 13px;
+            line-height: 1.4;
+            pointer-events: none;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+        }
+        .map-action-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 60;
+            width: min(320px, calc(100vw - 24px));
+            max-height: min(82vh, 560px);
+            overflow-y: auto;
+            padding: 14px;
+            border-radius: 18px;
+            background: rgba(8, 15, 29, 0.98);
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            color: #e2e8f0;
+            box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+        }
+        .map-action-panel h4 {
+            margin: 0 0 10px;
+            font-size: 15px;
+            color: #38bdf8;
+        }
+        .map-action-panel p {
+            margin: 0 0 12px;
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+        .map-action-panel .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .map-action-panel button {
+            flex: 1 1 48%;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .map-action-panel button:hover {
+            transform: translateY(-1px);
+        }
+        .map-action-panel button.attack,
+        .map-action-panel button.confirm {
+            background: #ef4444;
+            color: #fff;
+        }
+        .map-action-panel button.cancel,
+        .map-action-panel button.select {
+            background: #475569;
+            color: #fff;
+        }
+        .map-action-panel .attack-unit-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .map-action-panel .attack-unit-row {
+            display: grid;
+            grid-template-columns: 1.2fr 0.7fr 0.7fr;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: rgba(30, 41, 59, 0.8);
+            color: #e2e8f0;
+            font-size: 12px;
+        }
+        .map-action-panel .attack-unit-row span {
+            display: block;
+        }
+        .map-action-panel .attack-unit-row input {
+            margin: 0;
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.9);
+            color: #f8fafc;
+            -moz-appearance: textfield;
+        }
+        .map-action-panel .attack-unit-row input::-webkit-outer-spin-button,
+        .map-action-panel .attack-unit-row input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .map-action-panel .attack-preview {
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background: rgba(56, 189, 248, 0.12);
+            color: #bae6fd;
+            font-size: 12px;
+        }
+        .map-action-panel .attack-arrival-info {
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.24);
+            color: #fde68a;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        .map-action-panel .attack-count-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background: rgba(30, 41, 59, 0.8);
+            color: #e2e8f0;
+            font-size: 12px;
+        }
+        .map-action-panel .attack-count-row input {
+            width: 72px;
+            padding: 6px 8px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.9);
+            color: #f8fafc;
+        }
+        .map-action-panel button.support {
+            background: #10b981;
+            color: #fff;
+        }
+        /* 2026-10-02, player UX feedback: "Wyślij atak"/"Wyślij zwiad" with zero available units
+           (or the send button with zero units selected) looked exactly like a working button and
+           silently did nothing (an alert() on click was easy to miss/dismiss without reading) —
+           first instinct was to refresh the page. Now visibly inert before you even click. */
+        .map-action-panel button:disabled {
+            background: #475569 !important;
+            color: #94a3b8 !important;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .map-action-panel button:disabled:hover {
+            transform: none;
+        }
+        #centerPanel .image-caption {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+        #centerPanel .image-caption span {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.12);
+        }
+        .right-panel .recruitment-table,
+        .right-panel .garrison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .recruitment-panel {
+            padding: 6.3px 7px;
+            min-height: auto;
+        }
+        .recruitment-panel h2 {
+            font-size: 11.7px;
+            margin-bottom: 5.4px;
+        }
+        .right-panel .recruitment-table th,
+        .right-panel .recruitment-table td,
+        .right-panel .garrison-table th,
+        .right-panel .garrison-table td {
+            color: #e2e8f0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+        }
+        .right-panel .recruitment-table th,
+        .right-panel .recruitment-table td {
+            padding: 2.7px 4px;
+            font-size: 9px;
+        }
+        .right-panel .recruitment-table th,
+        .right-panel .garrison-table th {
+            text-align: left;
+            font-weight: 700;
+            color: #94a3b8;
+        }
+        .garrison-panel {
+            padding: 16px 16px 56px;
+        }
+        .garrison-panel h2 {
+            font-size: 13.55px;
+            margin-bottom: 8.4px;
+        }
+        .right-panel .garrison-table th,
+        .right-panel .garrison-table td {
+            padding: 7px 8px;
+            font-size: 11.01px;
+        }
+        .reinforcements-section {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(148, 163, 184, 0.24);
+        }
+        .reinforcements-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+        .reinforcements-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        .reinforcements-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 11px;
+            color: #e2e8f0;
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.22);
+            border-radius: 8px;
+            padding: 5px 8px;
+        }
+        .reinforcements-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .recall-support-button {
+            flex: 0 0 auto;
+            padding: 4px 8px;
+            border: none;
+            border-radius: 0;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #f59e0b;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+        .recall-support-button:hover {
+            color: #fbbf24;
+        }
+        .lord-recruit-section {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(148, 163, 184, 0.24);
+        }
+        .lord-recruit-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 11px;
+            color: #e2e8f0;
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.22);
+            border-radius: 8px;
+            padding: 5px 8px;
+        }
+        .lord-recruit-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .lord-recruit-cancel {
+            flex: 0 0 auto;
+            padding: 4px 8px;
+            border: none;
+            border-radius: 0;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #f59e0b;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+        .lord-recruit-cancel:hover {
+            color: #fbbf24;
+        }
+        .right-panel .recruitment-table input {
+            width: 32px;
+            padding: 1.8px 3px;
+            border-radius: 6px;
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            background: rgba(15, 23, 42, 0.8);
+            color: #e2e8f0;
+            font-size: 9px;
+            -moz-appearance: textfield;
+        }
+        .right-panel .recruitment-table input::-webkit-outer-spin-button,
+        .right-panel .recruitment-table input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .unit-name {
+            font-size: 11.7px;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+        .unit-meta {
+            font-size: 9.9px;
+            color: #94a3b8;
+            margin-top: 1.8px;
+        }
+        /* Same size as .unit-meta (never bigger than .unit-name, per the explicit request) so this
+           extra line doesn't grow the row height and throw off the recruitment table's compactness.
+           Clickable — fills the quantity input with this exact number (see the recruitTableBody
+           click handler in game.js). */
+        .unit-max-hint {
+            font-size: 9.9px;
+            color: #94a3b8;
+            margin-bottom: 2px;
+            cursor: pointer;
+            width: fit-content;
+            /* 2026-10-02, player UX feedback: "dowiedziałem się o tym przypadkiem... UI nie
+               wskazuje że to klikalne" — a dotted underline is always visible now, not only on
+               hover (hover never happens on touch devices anyway), so the affordance is
+               discoverable without accidentally finding it. */
+            text-decoration: underline dotted;
+            text-underline-offset: 2px;
+        }
+        .unit-max-hint:hover {
+            color: #e8c766;
+            text-decoration: underline;
+        }
+        /* 2026-10-02, player UX feedback: "nie wiem nawet która wioska jest moja... nie jest dla
+           mnie oczywiste który kolor jest mój" — owned villages are already outlined on the map in
+           the player's own color, but nothing ever showed the player WHICH color that is. This
+           small swatch in the header is a constant, always-visible reference: "this exact color =
+           you" on the map, no hovering or memorizing required. */
+        .my-color-swatch {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid rgba(248, 250, 252, 0.85);
+            box-shadow: 0 0 4px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+        }
+        .upgrade-button {
+            padding: 6px 8px;
+            border-radius: 0;
+            border: none;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #22c55e;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .right-panel .recruit-button {
+            padding: 5.4px 8px;
+            border-radius: 0;
+            border: none;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #22c55e;
+            font-size: 10.8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .right-panel .recruit-button:hover,
+        .upgrade-button.can-afford:hover {
+            color: #6ee7b7;
+        }
+        /* 2026-10-02, player UX feedback: a disabled recruit-button (0 units typed, or Lord locked)
+           previously kept the exact same green text/button graphic as an active one — looked
+           clickable, did nothing, first instinct was "page is broken" rather than "nothing to do
+           here". Mirrors .upgrade-button:disabled below. */
+        .right-panel .recruit-button:disabled {
+            background-image: none;
+            background-color: #475569;
+            color: #cbd5e1;
+            cursor: not-allowed;
+        }
+        .upgrade-button.cannot-afford,
+        .upgrade-button:disabled {
+            background-image: none;
+            background-color: #475569;
+            color: #cbd5e1;
+            cursor: not-allowed;
+        }
+        .upgrade-button.can-afford {
+            color: #22c55e;
+        }
+        .right-panel .section {
+            margin-bottom: 18px;
+        }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-backdrop.active {
+            display: flex;
+        }
+        .modal-content {
+            width: min(760px, calc(100vw - 36px));
+            background: linear-gradient(180deg, rgba(16, 25, 45, 0.98), rgba(8, 15, 29, 0.99));
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 18px 80px rgba(0,0,0,0.45);
+        }
+        .modal-content h3 {
+            margin: 0 0 14px;
+            color: #e8c766;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 17px;
+        }
+        .table-scroll {
+            overflow-x: auto;
+        }
+        #upgradeTable {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        #upgradeTable th,
+        #upgradeTable td {
+            padding: 8px 10px;
+            text-align: left;
+            white-space: nowrap;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+        }
+        #upgradeTable th {
+            color: #94a3b8;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-weight: 700;
+        }
+        #upgradeTable td {
+            color: #e2e8f0;
+        }
+        @media (max-width: 480px) {
+            #upgradeTable th,
+            #upgradeTable td {
+                padding: 6px 5px;
+                font-size: 11px;
+            }
+            #upgradeTable th {
+                font-size: 9.5px;
+            }
+            .upgrade-button {
+                padding: 5px 6px;
+                font-size: 10.5px;
+                white-space: normal;
+                max-width: 80px;
+            }
+        }
+        .reports-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .reports-header h3 {
+            margin: 0 0 14px;
+        }
+        .reports-mode-toggle {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+        .reports-mode-btn {
+            border: none;
+            border-radius: 0;
+            padding: 6px 14px;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #f0d78c;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.15s ease;
+        }
+        .reports-mode-btn:hover {
+            color: #fde68a;
+        }
+        .reports-mode-btn.active {
+            color: #fff8e1;
+        }
+        /* Reports window sized to match the map box (#centerPanel .image-card: aspect-ratio
+           1035/742 capped at max-height 650px -> ~907x650 at that cap) instead of the shared
+           .modal-content default, so it reads as a comparably substantial window rather than a
+           small popup - stays this size regardless of how many reports there are, scrolling the
+           list internally. */
+        #reportsModal .modal-content {
+            width: min(907px, calc(100vw - 36px));
+            height: min(650px, calc(100vh - 60px));
+            display: flex;
+            flex-direction: column;
+        }
+        #reportsModal .build-queue-panel {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        #reportsModal #reportsList {
+            flex: 1;
+            min-height: 0;
+            max-height: none;
+            /* .build-queue-list is `display: grid` with implicit auto-sized rows, which is fine for
+               the OTHER modals reusing that class (their .queue-item rows have no overflow set) but
+               breaks specifically here: .report-item sets `overflow: hidden` (needed to clip the
+               collapsed <details> content), and per the CSS Grid/Flexbox spec an item with any
+               overflow other than visible gets an automatic minimum size of 0 for track-sizing
+               purposes. With 20+ reports whose combined natural height (~130px each) far exceeds
+               this now-much-taller container, the `auto` row tracks collapsed to near-nothing
+               instead of each sizing to its own report's real height - every .report-item rendered
+               as a squashed sliver. Switching to plain block flow sidesteps grid row-sizing
+               entirely: each report just stacks at its own natural height (its existing
+               margin-bottom acts as the row gap), and the container scrolls normally past whatever
+               doesn't fit - exactly what a variable-height scrollable list needs. */
+            display: block;
+            overflow-y: auto;
+        }
+        .modal-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+        .modal-content th,
+        .modal-content td {
+            padding: 10px 12px;
+            color: #e2e8f0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+            font-size: 14px;
+        }
+        .build-queue-panel {
+            margin-bottom: 18px;
+            padding: 12px;
+            border-radius: 16px;
+            background: rgba(15, 23, 42, 0.92);
+            border: 1px solid rgba(212, 175, 55, 0.28);
+        }
+        .recruitment-queue-panel {
+            width: min(220px, 100%);
+            margin-left: auto;
+        }
+        .build-queue-panel h4 {
+            margin: 0 0 10px;
+            color: #e8c766;
+            font-size: 15px;
+        }
+        .build-queue-list {
+            display: grid;
+            gap: 10px;
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .queue-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 14px;
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+        .queue-item.current {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.2);
+        }
+        .queue-item-details {
+            flex: 1;
+            min-width: 0;
+        }
+        .queue-item strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #e2e8f0;
+        }
+        .queue-item div {
+            color: #cbd5e1;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.14);
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #b8901f, #f0d78c);
+        }
+        .queue-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+        .queue-time,
+        .queue-subtime {
+            min-width: 70px;
+            text-align: right;
+            color: #d4af37;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        .queue-subtime {
+            color: #94a3b8;
+            font-weight: 500;
+            font-size: 12px;
+        }
+        .queue-cancel {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 0;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #ef4444;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .village-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            color: #e2e8f0;
+            font-size: 13px;
+        }
+        .village-card button {
+            padding: 6px 10px;
+            border-radius: 0;
+            border: none;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #22c55e;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .village-card button:hover {
+            color: #6ee7b7;
+        }
+        .village-card-points,
+        .village-card-garrison {
+            font-size: 11.5px;
+            color: #94a3b8;
+            margin-top: 3px;
+        }
+        .village-card-points {
+            color: #fbbf24;
+        }
+        .queue-cancel:hover {
+            color: #f87171;
+        }
+        /* The upgrade modal is centered via .modal-backdrop's flexbox (align-items: center). Every
+           time a build-queue entry appears/disappears, #buildQueueList's height used to change,
+           which shifted the WHOLE modal up/down to stay centered on its new height — this is the
+           "panel rozbudowy przesuwa się w górę" jump. Reserving room for the full 3-item queue
+           up front (the max allowed) means the container's height never changes whether it holds
+           0, 1, 2 or 3 items, so the modal stops moving at all. Scoped to #buildQueueList only —
+           the recruitment queue modal reuses the same .queue-item/.build-queue-list classes and is
+           untouched. Poziom/Koszt/Czas budowy now sit in one row (.queue-item-meta, flex-wrap) via
+           game.js instead of stacked lines, so the panel itself is even more compact; the text
+           inside is sized 20% larger than the previous compact pass to stay legible at that
+           smaller panel size.
+        */
+        #buildQueueList.build-queue-list {
+            /* Measured live (real 3-item queue rendered in a browser) at 208.5px — the old 174px
+               value here had gone stale after a later padding/sizing pass, so the panel still grew
+               visibly the moment a 3rd item was queued, exactly the bug this rule was meant to
+               prevent in the first place. */
+            min-height: 210px;
+            align-content: start;
+        }
+        #buildQueueList .queue-item {
+            padding: 6px;
+            gap: 6px;
+        }
+        #buildQueueList .queue-item strong {
+            margin-bottom: 2px;
+            font-size: 13px;
+        }
+        #buildQueueList .queue-item-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 10px;
+        }
+        #buildQueueList .queue-item-meta div {
+            font-size: 11px;
+            white-space: nowrap;
+        }
+        #buildQueueList .queue-waiting {
+            font-size: 11px;
+        }
+        #buildQueueList .progress-bar {
+            height: 5px;
+            margin-top: 4px;
+        }
+        #buildQueueList .queue-actions {
+            gap: 3px;
+        }
+        #buildQueueList .queue-time {
+            font-size: 11px;
+            min-width: 54px;
+        }
+        #buildQueueList .queue-cancel {
+            padding: 3px 6px;
+            font-size: 11px;
+        }
+        .queue-empty {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+        .modal-content .close-btn {
+            display: inline-flex;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 0;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #ef4444;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .modal-content .close-btn:hover {
+            color: #fca5a5;
+        }
+        @media (max-width: 1180px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+            .layout-grid > * {
+                width: 100%;
+                min-width: 0;
+            }
+        }
+        /* The side panels used to assume a tall (27"-monitor-sized) browser window: on a laptop
+           with a shorter viewport, the same fixed paddings/gaps no longer fit inside
+           calc(100vh - 120px), so #sidebarLeft/#sidebarRight fell back to their overflow-y:auto
+           scrollbar. Rather than accept that scrollbar, this tightens vertical spacing (padding,
+           gaps, list-row height) so the same content fits in less height — the layout adapts to
+           the actual window size instead of clipping into a scrollable box. Colors, fonts and
+           structure are untouched; only the amount of breathing room shrinks. */
+        @media (max-height: 950px) {
+            .page-shell {
+                padding: 10px;
+            }
+            #topBarScaleWrapper {
+                margin-bottom: 8px;
+            }
+            .layout-grid {
+                gap: 8px;
+                min-height: calc(100vh - 80px);
+            }
+            #sidebarLeft,
+            #sidebarRight {
+                gap: 5px;
+                max-height: calc(100vh - 80px);
+            }
+            .panel-card {
+                padding: 8px;
+            }
+            .panel-card h2 {
+                margin: 0 0 6px;
+                font-size: 13px;
+            }
+            #menuPanelCard {
+                min-height: 209px;
+            }
+            .ranking-card {
+                margin-top: 8px;
+            }
+            .ranking-header {
+                margin-bottom: 6px;
+            }
+            .ranking-list {
+                gap: 3px;
+            }
+            .ranking-list li {
+                padding: 5px 8px;
+                font-size: 11px;
+            }
+            .button-list {
+                gap: 5px;
+            }
+            .button-list button {
+                padding: 7px 10px;
+                font-size: 12px;
+            }
+            .exit-button,
+            .report-button {
+                margin-top: 5px;
+                padding: 6px 10px;
+            }
+            /* Right sidebar: .right-panel .section already adds its own 18px margin-bottom on
+               TOP of the sidebar's flex gap, and each recruitment row stacks two lines of text
+               (.unit-name + .unit-meta) — both add up fast across 7 unit rows and were the real
+               reason this column still needed to scroll even after the first compaction pass. */
+            .right-panel .section {
+                margin-bottom: 8px;
+            }
+            .recruitment-panel {
+                padding: 5px 6px;
+            }
+            .recruitment-panel h2 {
+                margin-bottom: 3px;
+            }
+            .right-panel .recruitment-table th,
+            .right-panel .recruitment-table td {
+                padding: 1.5px 3px;
+            }
+            .unit-name {
+                font-size: 10.5px;
+            }
+            .unit-meta {
+                margin-top: 0;
+                font-size: 9px;
+            }
+            .unit-max-hint {
+                font-size: 9px;
+            }
+            .right-panel .recruit-button {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+            .garrison-panel {
+                padding: 8px 8px 48px;
+            }
+            .garrison-panel h2 {
+                margin-bottom: 4px;
+            }
+            .right-panel .garrison-table th,
+            .right-panel .garrison-table td {
+                padding: 3px 5px;
+            }
+        }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/game-locales.js"></script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+    <script>
+        window.alert = function () {};
+        window.confirm = function () { return true; };
+    </script>
+    <div class="page-shell">
+        <div id="topBarScaleWrapper">
+        <div id="topBar">
+            <div class="panel" id="topBarTreasuryPanel">
+                <strong data-i18n="game.treasury">Treasury</strong>
+                <span id="goldAmount">0</span>
+                <small id="goldProduction">+0 z� / sek.</small>
+            </div>
+            <div class="timer-pill" id="topBarRoundTimer">
+                <strong data-i18n="game.roundEnds">Round ends in</strong>
+                <span id="roundTimerDisplay">--:--:--</span>
+            </div>
+            <div class="center-title" id="topBarCenterTitle">
+                <button type="button" class="village-nav-arrow" id="villagePrevBtn" aria-label="Previous village" data-i18n-attr="aria-label:game.prevVillage">‹</button>
+                <div class="village-name-stack">
+                    <span id="myColorSwatch" class="my-color-swatch" title="Your colour on the map" data-i18n-attr="title:game.yourColor"></span>
+                    <div class="village-name" id="villageTitle">Village</div>
+                </div>
+                <button type="button" class="village-nav-arrow" id="villageNextBtn" aria-label="Next village" data-i18n-attr="aria-label:game.nextVillage">›</button>
+            </div>
+            <div class="panel topbar-player-panel" id="topBarPlayerPanel" style="align-items: flex-end; text-align: right;">
+                <div class="timer-pill">
+                    <strong data-i18n="game.currentTime">Current time</strong>
+                    <span id="realTimeDisplay">--:--:--</span>
+                </div>
+                <strong data-i18n="game.population">Population</strong>
+                <span id="populationAmount">0</span>
+                <button type="button" class="exit-button" id="exitGameBtn" onclick="window.location.href='index.html'" data-i18n="game.exitGame">Leave game</button>
+            </div>
+        </div>
+        </div>
+        <div id="roundResultModal" role="dialog" aria-modal="true" aria-labelledby="roundResultTitle">
+            <div class="round-result-card">
+                <h2 id="roundResultTitle" data-i18n="game.results.title">Round finished</h2>
+                <p data-i18n="game.results.subtitle">Final summary of the game.</p>
+                <div class="round-result-teams-row" id="prizeResultsRow" style="display:none;">
+                    <div class="round-result-panel round-result-teams-panel">
+                        <h3 data-i18n="game.results.vpln">💰 DOGE rewards</h3>
+                        <table class="round-result-table" id="prizeResultsTable">
+                            <thead>
+                                <tr><th data-i18n="game.results.place">Place</th><th data-i18n="game.results.player">Player</th><th data-i18n="game.results.reward">Reward</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="round-result-teams-row" id="teamResultsRow" style="display:none;">
+                    <div class="round-result-panel round-result-teams-panel">
+                        <h3 data-i18n="game.results.topTeams">🏆 Top 3 Teams</h3>
+                        <table class="round-result-table" id="teamResultsTable">
+                            <thead>
+                                <tr><th>#</th><th data-i18n="game.results.team">Team</th><th data-i18n="game.results.points">Points</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="round-result-panel round-result-teams-panel">
+                        <h3 data-i18n="game.results.topAggressor">⚔️ Top 3 Aggressors (teams)</h3>
+                        <table class="round-result-table" id="teamAggressorResultsTable">
+                            <thead>
+                                <tr><th>#</th><th data-i18n="game.results.team">Team</th><th data-i18n="game.results.defeated">Defeated</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="round-result-grid">
+                    <div class="round-result-panel">
+                        <h3 data-i18n="game.results.topPoints">Top 3 by points</h3>
+                        <table class="round-result-table" id="pointsResultsTable">
+                            <thead>
+                                <tr><th>#</th><th data-i18n="game.results.player">Player</th><th data-i18n="game.results.points">Points</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="round-result-panel">
+                        <h3 data-i18n="game.results.topKills">Top 3 by units defeated</h3>
+                        <table class="round-result-table" id="killsResultsTable">
+                            <thead>
+                                <tr><th>#</th><th data-i18n="game.results.player">Player</th><th data-i18n="game.results.defeated">Defeated</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <button type="button" class="round-result-close" id="closeRoundResultModal" data-i18n="game.results.backToMenu">Back to menu</button>
+            </div>
+        </div>
+
+        <div id="roundEndingOverlay" class="round-ending-overlay">
+            <div class="round-ending-label" data-i18n="game.results.ending">The round is ending...</div>
+            <div class="round-ending-countdown" id="roundEndingCountdown">5</div>
+            <div class="round-ending-sublabel" id="roundEndingSublabel" data-i18n="game.results.counting">The server is counting the round results</div>
+        </div>
+
+        <!-- Team-mode-only in-round chat: private to your own team, draggable anywhere on screen
+             (see makeTeamChatDraggable in game.js). Hidden entirely outside team mode. -->
+        <div id="teamChatWindow" class="team-chat-window">
+            <div class="team-chat-header" id="teamChatHeader">
+                <span data-i18n="game.chat.title">💬 Team chat</span>
+                <button type="button" id="teamChatMinimizeBtn" class="team-chat-minimize" title="Collapse/expand" data-i18n-attr="title:game.chat.toggle">—</button>
+            </div>
+            <div class="team-chat-body">
+                <div id="teamChatMessages"></div>
+                <form id="teamChatForm" class="team-chat-form">
+                    <input type="text" id="teamChatInput" maxlength="300" placeholder="Write to your team..." autocomplete="off" data-i18n-attr="placeholder:game.chat.placeholder"/>
+                    <button type="submit" data-i18n="common.send">Send</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="layout-grid">
+            <div id="sidebarLeft">
+                <div class="panel-card" id="menuPanelCard">
+                    <h2 data-i18n="game.menu.title">Menu</h2>
+                    <div class="button-list">
+                        <button id="btnUpgrade" data-i18n="game.menu.upgrade">Buildings</button>
+                        <button id="btnMap" class="active" data-i18n="game.menu.map">Map</button>
+                        <button id="btnVillages" data-i18n="game.villages.title">Village list</button>
+                        <button type="button" class="report-button" id="showReportsBtn" data-i18n="game.menu.reports">Reports</button>
+                    </div>
+                </div>
+                <div class="panel-card ranking-card">
+                    <div class="ranking-header">
+                        <h2 id="rankingPanelTitle">Player ranking</h2>
+                        <button type="button" class="ranking-mode-toggle" id="rankingModeToggle">Show defeated</button>
+                    </div>
+                    <div class="ranking-kills-header" id="rankingKillsHeader">
+                        <span title="Defeated as attacker" data-i18n-attr="title:game.ranking.attackTitle" data-i18n="game.ranking.attack">Attack</span>
+                        <span title="Defeated as defender" data-i18n-attr="title:game.ranking.defenseTitle" data-i18n="game.ranking.defense">Defence</span>
+                        <span title="Attack + Defence" data-i18n-attr="title:game.ranking.totalTitle" data-i18n="game.ranking.total">Total</span>
+                    </div>
+                    <ol class="ranking-list" id="rankingList"></ol>
+                </div>
+            </div>
+            <div id="centerPanel">
+                <div class="image-card" id="imageCard">
+                    <div id="villageImage" class="image-placeholder map-mode">
+                        <div id="mapCanvas">
+                            <div id="mapNodesLayer"></div>
+                            <div id="mapTooltip" class="map-tooltip" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="active-attacks-panel">
+                    <h3 data-i18n="game.moves.title">Troop movements</h3>
+                    <div id="activeAttacksList" class="active-attacks-list"></div>
+                </div>
+            </div>
+            <div id="sidebarRight" class="right-panel">
+                <div class="panel-card section recruitment-panel">
+                    <h2 data-i18n="game.recruit.title">Unit recruitment</h2>
+                    <table class="recruitment-table" id="recruitTable">
+                        <thead>
+                            <tr><th data-i18n="game.recruit.unit">Unit</th><th data-i18n="game.recruit.amount">Amount</th><th></th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <button class="recruit-button show-queue-btn" id="showRecruitQueueBtn" data-i18n="game.recruit.showQueue">Show recruitment queue</button>
+                </div>
+                <div class="panel-card section garrison-panel">
+                    <h2 data-i18n="game.garrison.title">Garrison</h2>
+                    <table class="garrison-table" id="garrisonTable">
+                        <thead>
+                            <tr><th data-i18n="game.recruit.unit">Unit</th><th data-i18n="game.garrison.travelTime">Travel time</th><th data-i18n="game.garrison.status">Status</th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div id="lordRecruitSection" class="lord-recruit-section" style="display:none;">
+                        <div id="lordRecruitItem" class="lord-recruit-item"></div>
+                    </div>
+                    <div id="reinforcementsSection" class="reinforcements-section" style="display:none;">
+                        <div class="reinforcements-title" data-i18n="game.garrison.support">Support in this village</div>
+                        <div id="reinforcementsList" class="reinforcements-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2026-10-02, mobile bug fix: moved here from deep inside .page-shell > #mapCanvas. This
+         panel is already pure position:fixed (centered via top/left:50% + translate(-50%,-50%)
+         above), meant to be anchored to the real viewport regardless of where it sits in the DOM
+         — but .page-shell has `zoom: 110%` (see its own rule), and `zoom` creates a NEW containing
+         block for fixed-position descendants in most browsers, the same way `transform` does. On
+         desktop that's invisible (the page is only ~one viewport tall, so "centered in page-shell"
+         happens to roughly equal "centered in viewport"), but on mobile .layout-grid stacks the map
+         and both sidebars vertically, making page-shell's content several screens tall — so the
+         panel centered itself in the middle of ALL that stacked content instead of the visible
+         screen, landing far below the fold ("pod mapą, na dole strony"). Moving it to be a sibling
+         of .page-shell (same as #upgradeModal/#reportsModal below, which never had this bug for
+         exactly that reason) gives it the real viewport as its containing block again. -->
+    <div id="mapActionPanel" class="map-action-panel" style="display: none;"></div>
+
+    <div class="modal-backdrop" id="upgradeModal">
+        <div class="modal-content">
+            <h3 data-i18n="game.upgrade.title">Building upgrades</h3>
+            <div class="upgrade-village-switcher">
+                <button type="button" class="village-nav-arrow" id="upgradeModalVillagePrevBtn" aria-label="Previous village" data-i18n-attr="aria-label:game.prevVillage">‹</button>
+                <div class="village-name" id="upgradeModalVillageName">Village</div>
+                <button type="button" class="village-nav-arrow" id="upgradeModalVillageNextBtn" aria-label="Next village" data-i18n-attr="aria-label:game.nextVillage">›</button>
+            </div>
+            <div class="upgrade-summary">
+                <span id="villagePointsDisplay">Village points: 0 / 6553</span>
+            </div>
+            <div class="table-scroll">
+                <table id="upgradeTable">
+                    <thead>
+                        <tr><th data-i18n="game.upgrade.building">Building</th><th data-i18n="game.upgrade.level">Level</th><th data-i18n="game.upgrade.cost">Cost</th><th data-i18n="game.upgrade.time">Time</th><th data-i18n="game.upgrade.action">Action</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="build-queue-panel">
+                <h4 data-i18n="game.upgrade.queue">Build queue (max 3)</h4>
+                <div id="buildQueueList" class="build-queue-list"></div>
+            </div>
+            <div class="modal-footer-row">
+                <button class="close-btn" id="closeUpgradeModal" data-i18n="common.close">Close</button>
+                <div class="village-rename-block">
+                    <span class="village-rename-label" data-i18n="game.upgrade.rename">Rename village:</span>
+                    <input type="text" id="villageRenameInput" maxlength="8" placeholder="max 8 characters" data-i18n-attr="placeholder:game.upgrade.renamePh"/>
+                    <button type="button" id="villageRenameBtn" data-i18n="common.save">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop" id="recruitQueueModal">
+        <div class="modal-content">
+            <h3 data-i18n="game.recruit.queueTitle">Recruitment queue</h3>
+            <div class="build-queue-panel">
+                <div id="recruitmentQueueList" class="build-queue-list"></div>
+            </div>
+            <button class="close-btn" id="closeRecruitQueueModal" data-i18n="common.close">Close</button>
+        </div>
+    </div>
+    <div class="modal-backdrop" id="villageListModal">
+        <div class="modal-content">
+            <h3 data-i18n="game.villages.title">Village list</h3>
+            <div class="build-queue-panel">
+                <div id="villageListContainer" class="build-queue-list"></div>
+            </div>
+            <button class="close-btn" id="closeVillageListModal" data-i18n="common.close">Close</button>
+        </div>
+    </div>
+    <div class="modal-backdrop" id="reportsModal">
+        <div class="modal-content">
+            <div class="reports-header">
+                <h3 data-i18n="game.reports.title">Battle reports</h3>
+                <div class="reports-mode-toggle">
+                    <button type="button" class="reports-mode-btn active" id="reportsModeAttackBtn" data-mode="attack" data-i18n="game.ranking.attack">Attack</button>
+                    <button type="button" class="reports-mode-btn" id="reportsModeDefenseBtn" data-mode="defense" data-i18n="game.ranking.defense">Defence</button>
+                </div>
+            </div>
+            <div class="build-queue-panel">
+                <div id="reportsList" class="build-queue-list"></div>
+            </div>
+            <button class="close-btn" id="closeReportsModal" data-i18n="common.close">Close</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="/fingerprint.js"></script>
+    <script src="/gameEngine.js"></script>
+    <script src="/game.js"></script>
+    <script src="/topbar-scale.js"></script>
+    <script src="/site-footer.js"></script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>War of Lords - Limity Sprzedaży Biletów</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;
+            background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif;
+            margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; padding-bottom: 60px;
+        }
+        .nav-menu { background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat; width: 100%; padding: 15px 0; text-align: center; margin-bottom: 30px; }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 16px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .shell { width: 100%; max-width: 1100px; padding: 0 20px 40px; box-sizing: border-box; }
+        .back-link { display: inline-block; margin-bottom: 18px; color: #94a3b8; text-decoration: none; font-size: 14px; }
+        .back-link:hover { color: #e8c766; }
+        .page-header { text-align: center; margin-bottom: 24px; }
+        .page-header h1 { margin: 0; font-size: 30px; color: #e8c766; letter-spacing: 1px; text-transform: uppercase; }
+        .page-header p { margin: 10px auto 0; max-width: 820px; color: #cbd5e1; font-size: 15px; line-height: 1.6; }
+        .panel-alert { background: rgba(248, 113, 113, 0.15); border: 1px solid #f87171; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; color: #f8fafc; }
+        .panel-card { background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96)); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 18px; padding: 20px; margin-bottom: 18px; }
+        .panel-card h2 { margin: 0 0 4px; color: #e8c766; font-size: 18px; text-transform: uppercase; letter-spacing: 0.03em; }
+        .panel-card .subtext { color: #cbd5e1; font-size: 13px; line-height: 1.5; margin: 0 0 14px; }
+
+        .field-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; }
+        .field { display: flex; flex-direction: column; gap: 4px; }
+        .field label { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.03em; }
+        .field input { padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.28); background: #0f172a; color: #f8fafc; font-size: 14px; width: 160px; }
+        .field input:disabled { opacity: 0.5; cursor: not-allowed; }
+        .field .readonly-value { padding: 10px 12px; color: #cbd5e1; font-size: 14px; }
+        .btn { border: none; border-radius: 10px; cursor: pointer; font-weight: bold; padding: 11px 18px; font-size: 14px; background: #1e293b; color: #f8fafc; border: 1px solid rgba(212, 175, 55, 0.28); }
+        .btn:hover { background: #334155; }
+        .btn-gold { background: linear-gradient(180deg, #e8c766, #b8901f); color: #1c1408; border-color: transparent; }
+        .btn-gold:hover { filter: brightness(1.05); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .lock-note { font-size: 12px; color: #fbbf24; margin-top: 8px; }
+        .empty-note { color: #94a3b8; font-size: 14px; }
+
+        .summary-box { border-radius: 14px; padding: 16px 20px; margin-top: 4px; }
+        .summary-box.ok { background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.35); }
+        .summary-box.warn { background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.35); }
+        .summary-box.over { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.4); }
+        .summary-box .big { font-size: 22px; font-weight: bold; color: #f8fafc; margin: 4px 0; }
+        .summary-box .row { font-size: 13px; color: #cbd5e1; margin: 2px 0; }
+        .legal-note { font-size: 12px; color: #94a3b8; line-height: 1.6; margin-top: 14px; }
+    </style>
+</head>
+<body>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="/index.html">Główna</a>
+        <a id="navRooms" href="/pokoje.html">Pokoje Bitewne</a>
+        <a id="navTournaments" href="/turnieje.html">Turnieje</a>
+        <a id="navShop" href="/sklep.html">Sklep</a>
+        <a id="navRanking" href="/ranking.html">Ranking Ogólny</a>
+        <a id="navProfile" href="/profile.html">Profil</a>
+        <a id="navRules" href="/zasady.html">Zasady</a>
+        <a id="navAdmin" href="/admin.html" class="active">Panel Admina</a>
+    </div>
+
+    <div class="shell">
+        <a class="back-link" href="/admin.html">&larr; Wróć do Panelu Admina</a>
+        <div class="page-header">
+            <h1>🎫 Limity Sprzedaży Biletów</h1>
+            <p>Jedno miejsce do ustawienia obu miesięcznych pul biletów (Turniej Miesięczny i Mini-Turnieje) oraz podglądu łącznego przychodu względem limitu działalności nierejestrowanej.</p>
+        </div>
+
+        <div id="adminWarning" class="panel-alert" style="display:none;"></div>
+
+        <div class="panel-card">
+            <h2>Bilety Turniejowe (Turniej Miesięczny)</h2>
+            <p class="subtext" id="monthlyStatusText">Wczytywanie...</p>
+            <div id="monthlyEditor" style="display:none;">
+                <div class="field-row">
+                    <div class="field">
+                        <label for="monthlyPoolInput">Pula biletów (wielokrotność 10)</label>
+                        <input type="number" id="monthlyPoolInput" step="10" min="10">
+                    </div>
+                    <div class="field">
+                        <label>Cena biletu</label>
+                        <div class="readonly-value" id="monthlyPriceText">—</div>
+                    </div>
+                    <button type="button" class="btn btn-gold" id="saveMonthlyPoolBtn" onclick="saveMonthlyPool()">Zapisz pulę</button>
+                </div>
+                <p class="lock-note" id="monthlyLockNote" style="display:none;">⚠️ Ta edycja ma już sprzedane bilety — zmiana puli w dół poniżej liczby sprzedanych biletów nie jest zalecana.</p>
+                <div class="field-row" style="margin-top:14px;">
+                    <div class="field">
+                        <label>Sprzedaż nowych biletów</label>
+                        <div class="readonly-value" id="salesPauseStatus">—</div>
+                    </div>
+                    <button type="button" class="btn" id="toggleSalesPauseBtn" onclick="toggleSalesPause()">Wstrzymaj / wznów</button>
+                </div>
+                <p class="subtext" style="margin-top:6px;">Wstrzymanie blokuje TYLKO nowe zakupy — pula, cena, terminy i już kupione bilety zostają bez zmian. To odpowiednik ustawienia puli na 0, ale bez łamania minimalnej struktury pokoi (wielokrotność 10).</p>
+            </div>
+            <p class="legal-note">Cenę biletu, terminy i nagrody edytuje się w pełnym panelu <a href="/admin/turniej-miesieczny" style="color:#e8c766;">Turniej Miesięczny</a> (zablokowane po sprzedaniu pierwszego biletu danej edycji).</p>
+        </div>
+
+        <div class="panel-card">
+            <h2>Bilety do Mini-Turnieju</h2>
+            <p class="subtext">Globalne ustawienie — obowiązuje od razu, niezależne od konkretnej edycji.</p>
+            <div class="field-row">
+                <div class="field">
+                    <label for="miniPoolInput">Miesięczna pula biletów</label>
+                    <input type="number" id="miniPoolInput" min="0" step="1">
+                </div>
+                <div class="field">
+                    <label for="miniPriceInput">Cena biletu (zł)</label>
+                    <input type="number" id="miniPriceInput" min="0" step="0.01">
+                </div>
+                <button type="button" class="btn btn-gold" onclick="saveMiniSettings()">Zapisz</button>
+            </div>
+        </div>
+
+        <div class="panel-card">
+            <h2>Podsumowanie względem limitu działalności nierejestrowanej</h2>
+            <p class="subtext">Szacunek na podstawie obu ustawionych pul i cen — pilnuj, żeby suma nie przekraczała limitu w żadnym rolującym kwartale (3 kolejne miesiące), nie tylko w pojedynczym miesiącu.</p>
+            <div class="summary-box" id="summaryBox">
+                <div class="row">Turniej Miesięczny: <span id="summaryMonthly">—</span></div>
+                <div class="row">Mini-Turnieje: <span id="summaryMini">—</span></div>
+                <div class="row">Razem / miesiąc: <span id="summaryMonthTotal">—</span></div>
+                <div class="big">Razem / kwartał (×3): <span id="summaryQuarterTotal">—</span></div>
+                <div class="row" id="summaryVerdict">—</div>
+            </div>
+            <p class="legal-note">Limit działalności nierejestrowanej od 1 stycznia 2026 r.: <strong>10 813,50 zł na rolujący kwartał</strong> (225% aktualnej płacy minimalnej). Po przekroczeniu rejestracja działalności gospodarczej (CEIDG) staje się obowiązkowa — potwierdź ostateczną interpretację u księgowego.</p>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (!token) { window.location.href = '/login.html'; }
+        const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        const QUARTERLY_LIMIT_PLN = 10813.50;
+
+        function showAdminError(message) {
+            const warning = document.getElementById('adminWarning');
+            warning.style.display = 'block';
+            warning.innerText = message;
+        }
+
+        let monthlyPoolSize = 0;
+        let monthlyPriceZl = 0;
+        let monthlyMonthKey = null;
+        let miniPoolSize = 0;
+        let miniPriceZl = 0;
+
+        function formatZl(value) {
+            return `${Number(value || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} zł`;
+        }
+
+        function updateSummary() {
+            const monthlyRevenue = monthlyPoolSize * monthlyPriceZl;
+            const miniRevenue = miniPoolSize * miniPriceZl;
+            const monthTotal = monthlyRevenue + miniRevenue;
+            const quarterTotal = monthTotal * 3;
+
+            document.getElementById('summaryMonthly').textContent = `${monthlyPoolSize} bilet(ów) × ${formatZl(monthlyPriceZl)} = ${formatZl(monthlyRevenue)}`;
+            document.getElementById('summaryMini').textContent = `${miniPoolSize} bilet(ów) × ${formatZl(miniPriceZl)} = ${formatZl(miniRevenue)}`;
+            document.getElementById('summaryMonthTotal').textContent = formatZl(monthTotal);
+            document.getElementById('summaryQuarterTotal').textContent = formatZl(quarterTotal);
+
+            const box = document.getElementById('summaryBox');
+            const verdict = document.getElementById('summaryVerdict');
+            const ratio = quarterTotal / QUARTERLY_LIMIT_PLN;
+            box.classList.remove('ok', 'warn', 'over');
+            if (ratio >= 1) {
+                box.classList.add('over');
+                verdict.textContent = `⛔ Przekracza limit kwartalny (${formatZl(QUARTERLY_LIMIT_PLN)}) o ${formatZl(quarterTotal - QUARTERLY_LIMIT_PLN)} — rejestracja działalności może być wymagana.`;
+            } else if (ratio >= 0.85) {
+                box.classList.add('warn');
+                verdict.textContent = `⚠️ Blisko limitu kwartalnego (${formatZl(QUARTERLY_LIMIT_PLN)}) — mały margines bezpieczeństwa (${formatZl(QUARTERLY_LIMIT_PLN - quarterTotal)}).`;
+            } else {
+                box.classList.add('ok');
+                verdict.textContent = `✅ Bezpiecznie pod limitem kwartalnym (${formatZl(QUARTERLY_LIMIT_PLN)}) — margines ${formatZl(QUARTERLY_LIMIT_PLN - quarterTotal)}.`;
+            }
+        }
+
+        async function loadMonthly() {
+            try {
+                const res = await fetch('/api/admin/tournament/participants', { headers });
+                const data = await res.json();
+                if (!data.tournament && !data.monthKey) {
+                    document.getElementById('monthlyStatusText').textContent = 'Brak aktualnie zaplanowanej edycji — utwórz ją w pełnym panelu Turniej Miesięczny, żeby ustawić tu pulę.';
+                    document.getElementById('monthlyEditor').style.display = 'none';
+                    monthlyPoolSize = 0; monthlyPriceZl = 0;
+                    updateSummary();
+                    return;
+                }
+                monthlyMonthKey = data.monthKey;
+                monthlyPoolSize = data.maxParticipants || 0;
+                monthlyPriceZl = data.ticketPricePLN || 10;
+                const soldCount = (data.participants || []).length;
+                document.getElementById('monthlyStatusText').textContent = `Edycja: ${data.monthKey} (${data.simplifiedStatus || data.status}) — ${soldCount} biletów już sprzedanych.`;
+                document.getElementById('monthlyEditor').style.display = 'block';
+                document.getElementById('monthlyPoolInput').value = monthlyPoolSize;
+                document.getElementById('monthlyPriceText').textContent = formatZl(monthlyPriceZl);
+                document.getElementById('monthlyLockNote').style.display = soldCount > 0 ? 'block' : 'none';
+                const paused = !!data.salesPausedByAdmin;
+                document.getElementById('salesPauseStatus').textContent = paused ? '⛔ Wstrzymana' : '✅ Aktywna';
+                document.getElementById('toggleSalesPauseBtn').textContent = paused ? 'Wznów sprzedaż' : 'Wstrzymaj sprzedaż';
+                updateSummary();
+            } catch (err) {
+                showAdminError(`Nie udało się wczytać danych Turnieju Miesięcznego: ${err.message}`);
+            }
+        }
+
+        async function toggleSalesPause() {
+            if (!monthlyMonthKey) return;
+            const currentlyPaused = document.getElementById('salesPauseStatus').textContent.includes('Wstrzymana');
+            try {
+                const res = await fetch('/api/admin/tournament/sales-pause', {
+                    method: 'PUT', headers, body: JSON.stringify({ monthKey: monthlyMonthKey, paused: !currentlyPaused })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+                loadMonthly();
+            } catch (err) {
+                showAdminError(`Nie udało się zmienić statusu sprzedaży: ${err.message}`);
+            }
+        }
+
+        async function saveMonthlyPool() {
+            if (!monthlyMonthKey) return;
+            const value = Number(document.getElementById('monthlyPoolInput').value);
+            if (!Number.isInteger(value) || value <= 0 || value % 10 !== 0) {
+                alert('Pula musi być dodatnią wielokrotnością 10.');
+                return;
+            }
+            try {
+                const res = await fetch('/api/admin/tournament/schedule', {
+                    method: 'POST', headers, body: JSON.stringify({ monthKey: monthlyMonthKey, maxParticipants: value })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+                alert('Zapisano pulę biletów turniejowych.');
+                loadMonthly();
+            } catch (err) {
+                showAdminError(`Nie udało się zapisać puli: ${err.message}`);
+            }
+        }
+
+        async function loadMini() {
+            try {
+                const res = await fetch('/api/settings/mini-tournament-ticket-price');
+                const data = await res.json();
+                miniPoolSize = data.poolSize || 0;
+                miniPriceZl = data.priceZl || 0;
+                document.getElementById('miniPoolInput').value = miniPoolSize;
+                document.getElementById('miniPriceInput').value = miniPriceZl;
+                updateSummary();
+            } catch (err) {
+                showAdminError(`Nie udało się wczytać ustawień Mini-Turniejów: ${err.message}`);
+            }
+        }
+
+        async function saveMiniSettings() {
+            const poolSize = Number(document.getElementById('miniPoolInput').value);
+            const priceZl = Number(document.getElementById('miniPriceInput').value);
+            if (!Number.isFinite(poolSize) || poolSize < 0) { alert('Podaj poprawną pulę.'); return; }
+            if (!Number.isFinite(priceZl) || priceZl < 0) { alert('Podaj poprawną cenę.'); return; }
+            try {
+                const res = await fetch('/api/admin/settings/mini-tournament-ticket-price', {
+                    method: 'PUT', headers, body: JSON.stringify({ poolSize, priceZl })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+                alert('Zapisano ustawienia Mini-Turniejów.');
+                loadMini();
+            } catch (err) {
+                showAdminError(`Nie udało się zapisać: ${err.message}`);
+            }
+        }
+
+        loadMonthly();
+        loadMini();
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/page-scale.js"></script>
+</body>
+</html>

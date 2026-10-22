@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en" data-source-lang="en" data-source-lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="wallet.pageTitle">War of Lords - DOGE Wallet</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+
+        .nav-menu { background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat; width: 100%; padding: 15px 0; text-align: center; margin-bottom: 40px; }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 20px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { display: none !important; position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        h1 { color: #e8c766; margin: 10px 0 5px; text-shadow: 0 4px 8px rgba(0,0,0,0.8); text-transform: uppercase; letter-spacing: 0.04em; }
+        h2 { color: #e8c766; margin: 0 0 12px; font-size: 20px; text-transform: uppercase; letter-spacing: 0.03em; }
+        p { line-height: 1.5; }
+
+        .wallet { width: 100%; max-width: 1100px; padding: 0 20px; box-sizing: border-box; }
+        .card {
+            background: rgba(10, 16, 33, 0.88);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            border-radius: 10px;
+            padding: 22px 26px;
+            margin-bottom: 22px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+        }
+        .balance-card { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+        .balance-label { color: #94a3b8; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .balance-value { font-size: 40px; font-weight: bold; color: #34d399; margin: 4px 0; }
+        .muted { color: #94a3b8; font-size: 14px; }
+        .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+        @media (max-width: 860px) { .columns { grid-template-columns: 1fr; } }
+
+        .address-box { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin: 14px 0; }
+        .qr { background: #fff; padding: 8px; border-radius: 6px; width: 164px; height: 164px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; }
+        .qr img, .qr svg { width: 148px; height: 148px; display: block; }
+        .address-text { font-family: Consolas, monospace; font-size: 15px; word-break: break-all; color: #f0d78c; background: rgba(0,0,0,0.35); padding: 8px 10px; border-radius: 6px; }
+        .address-col { flex: 1; min-width: 220px; }
+
+        label.field { display: block; margin: 12px 0 4px; color: #cbd5e1; font-size: 14px; }
+        input[type=text], input[type=number] {
+            width: 100%; box-sizing: border-box; padding: 9px 11px; border-radius: 6px;
+            border: 1px solid rgba(212,175,55,0.4); background: rgba(15,23,42,0.9); color: #f8fafc; font-size: 15px;
+        }
+        input.invalid { border-color: #f87171; }
+        .check { display: flex; gap: 8px; align-items: flex-start; margin: 10px 0; font-size: 14px; color: #cbd5e1; }
+        .check input { margin-top: 3px; }
+        button.action {
+            background-image: url('/przycisk.png'); background-size: 100% 100%; background-color: transparent;
+            color: #e8c766; border: none; padding: 12px 25px; font-size: 14px; font-weight: bold; cursor: pointer;
+            text-transform: uppercase; margin-top: 12px; min-width: 220px;
+        }
+        button.action:hover { color: #fff3c4; }
+        button.action:disabled { opacity: 0.5; cursor: not-allowed; }
+        button.small { background: transparent; border: 1px solid rgba(232,199,102,0.5); color: #e8c766; border-radius: 6px; padding: 5px 12px; cursor: pointer; margin-top: 8px; }
+        .status { margin-top: 10px; font-size: 14px; min-height: 20px; }
+        .status.error { color: #f87171; }
+        .status.ok { color: #34d399; }
+        .notice { background: rgba(248,113,113,0.12); border: 1px solid #f87171; border-radius: 6px; padding: 10px 12px; color: #fecaca; }
+        a.link { color: #e8c766; }
+
+        table.history { width: 100%; border-collapse: collapse; font-size: 14px; }
+        table.history th { text-align: left; color: #94a3b8; font-weight: 600; border-bottom: 1px solid rgba(212,175,55,0.3); padding: 6px; }
+        table.history td { padding: 7px 6px; border-bottom: 1px solid rgba(148,163,184,0.15); vertical-align: top; }
+        .amount-in { color: #34d399; font-weight: bold; }
+        .amount-out { color: #fbbf24; font-weight: bold; }
+        .st-pending { color: #fbbf24; }
+        .st-completed { color: #34d399; }
+        .st-failed { color: #f87171; }
+        .mono { font-family: Consolas, monospace; font-size: 12px; color: #94a3b8; word-break: break-all; }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/i18n.js"></script>
+    <script src="/vendor/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="nav-menu">
+        <a id="navHome" href="index.html">Home</a>
+        <a id="navRooms" href="pokoje.html">Battle Rooms</a>
+        <a id="navTournaments" href="turnieje.html">Tournaments</a>
+        <a id="navShop" href="live.html" class="active">Live Bets</a>
+        <a id="navRanking" href="ranking.html">Overall Ranking</a>
+        <a id="navProfile" href="profile.html">Profile</a>
+        <a id="navRules" href="zasady.html">Rules</a>
+    </div>
+
+    <h1 data-i18n="wallet.title">🪙 DOGE Wallet</h1>
+
+    <div class="wallet">
+        <div class="card balance-card">
+            <div>
+                <div class="balance-label" data-i18n="wallet.balance">Your balance</div>
+                <div class="balance-value" id="walletBalance">—</div>
+                <div class="muted" data-i18n="wallet.virtualNote">Virtual game balance — prizes, purchases, deposits and withdrawals.</div>
+            </div>
+            <a class="link" href="sklep-bilety.html" data-i18n="wallet.toShop">Go to shop</a>
+        </div>
+
+        <div class="columns">
+            <!-- WPLATA -->
+            <div class="card">
+                <h2 data-i18n="wallet.depositTitle">⬇️ Deposit DOGE</h2>
+                <p class="muted" data-i18n="wallet.depositIntro">Send DOGE to the game wallet address below. Then paste the transaction hash (TXID) and the amount — your balance is credited once the transaction is verified on-chain.</p>
+                <div id="depositUnavailable" class="notice" style="display:none;" data-i18n="wallet.depositUnavailable">Deposits are temporarily unavailable — the game wallet address has not been set yet.</div>
+                <div id="depositBox" style="display:none;">
+                    <div class="address-box">
+                        <div class="qr" id="depositQr" role="img" data-i18n-attr="aria-label:wallet.qrAlt" aria-label="QR code of the game wallet address"></div>
+                        <div class="address-col">
+                            <div class="muted" data-i18n="wallet.depositAddress">Game wallet address (Dogecoin network only)</div>
+                            <div class="address-text" id="depositAddress"></div>
+                            <button type="button" class="small" id="copyAddressBtn" data-i18n="wallet.copy">Copy address</button>
+                        </div>
+                    </div>
+                    <label class="field" for="depositTxHash" data-i18n="wallet.txHash">Transaction hash (TXID)</label>
+                    <input type="text" id="depositTxHash" maxlength="64" autocomplete="off" spellcheck="false" data-i18n-attr="placeholder:wallet.txHashPh" placeholder="64 characters 0-9, a-f">
+                    <label class="field" for="depositAmount" data-i18n="wallet.amount">Amount (DOGE)</label>
+                    <input type="number" id="depositAmount" min="0.01" step="0.01">
+                    <button type="button" class="action" id="depositBtn" data-i18n="wallet.reportDeposit">Report deposit</button>
+                    <div class="status" id="depositStatus"></div>
+                </div>
+            </div>
+
+            <!-- WYPLATA -->
+            <div class="card">
+                <h2 data-i18n="wallet.withdrawTitle">⬆️ Withdraw DOGE</h2>
+                <p class="muted" data-i18n-html="wallet.withdrawIntro">Withdraw your balance to your private Dogecoin address. The amount is reserved from your balance right away; the withdrawal is sent <strong>on-chain after verification</strong> by the administrator.</p>
+                <p class="muted" id="minWithdrawalText"></p>
+                <label class="field" for="withdrawAddress" data-i18n="wallet.address">Your DOGE address (starts with D)</label>
+                <input type="text" id="withdrawAddress" maxlength="34" autocomplete="off" spellcheck="false" placeholder="D...">
+                <label class="field" for="withdrawAmount" data-i18n="wallet.amount">Amount (DOGE)</label>
+                <input type="number" id="withdrawAmount" min="0.01" step="0.01">
+                <label class="check"><input type="radio" name="withdrawAge" value="ADULT"> <span data-i18n="wallet.ageAdult">I declare that I am of legal age.</span></label>
+                <label class="check"><input type="radio" name="withdrawAge" value="GUARDIAN_CONSENT"> <span data-i18n="wallet.ageGuardian">I am the legal guardian of an underage User and consent to this withdrawal to the given address.</span></label>
+                <label class="check"><input type="checkbox" id="withdrawTaxAck"> <span data-i18n="wallet.taxAck">I understand the withdrawal is paid in full (gross) and I settle this income in my own tax return myself.</span></label>
+                <button type="button" class="action" id="withdrawBtn" data-i18n="wallet.withdrawBtn">Request withdrawal</button>
+                <div class="status" id="withdrawStatus"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 data-i18n="wallet.history">Transaction history</h2>
+            <div id="historyBox" class="muted" data-i18n="common.loading">Loading...</div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (!token) window.location.href = '/login.html';
+        const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        // Wstepne sprawdzenie w przegladarce: "D" + 33 znaki base58 (bez 0, O, I, l).
+        // Serwer dodatkowo sprawdza sume kontrolna adresu.
+        const DOGE_ADDRESS_RE = /^D[1-9A-HJ-NP-Za-km-z]{33}$/;
+        const TX_HASH_RE = /^[0-9a-fA-F]{64}$/;
+        const EXPLORER_TX = 'https://blockchair.com/dogecoin/transaction/';
+
+        let wallet = null;
+
+        function fmt(n) {
+            const locale = i18n.getLang() === 'en' ? 'en-GB' : 'pl-PL';
+            return Number(n || 0).toLocaleString(locale, { maximumFractionDigits: 2 });
+        }
+
+        function setStatus(id, text, isError) {
+            const el = document.getElementById(id);
+            el.textContent = text || '';
+            el.className = 'status' + (text ? (isError ? ' error' : ' ok') : '');
+        }
+
+        function renderQr(address) {
+            const box = document.getElementById('depositQr');
+            box.textContent = '';
+            if (!address || typeof qrcode !== 'function') return;
+            const qr = qrcode(0, 'M');
+            qr.addData('dogecoin:' + address);
+            qr.make();
+            box.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+        }
+
+        function render() {
+            if (!wallet) return;
+            document.getElementById('walletBalance').textContent = i18n.t('wallet.balanceValue', { n: fmt(wallet.dogeBalance) });
+            document.getElementById('minWithdrawalText').textContent = i18n.t('wallet.minWithdrawal', { n: fmt(wallet.minWithdrawal) });
+            const hasDeposit = !!wallet.depositAddress;
+            document.getElementById('depositBox').style.display = hasDeposit ? 'block' : 'none';
+            document.getElementById('depositUnavailable').style.display = hasDeposit ? 'none' : 'block';
+            if (hasDeposit && document.getElementById('depositAddress').textContent !== wallet.depositAddress) {
+                document.getElementById('depositAddress').textContent = wallet.depositAddress;
+                renderQr(wallet.depositAddress);
+            }
+            const addressInput = document.getElementById('withdrawAddress');
+            if (!addressInput.value && wallet.dogeAddress) addressInput.value = wallet.dogeAddress;
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const box = document.getElementById('historyBox');
+            const list = wallet.transactions || [];
+            box.removeAttribute('data-i18n');
+            if (!list.length) {
+                box.textContent = i18n.t('wallet.noHistory');
+                return;
+            }
+            const locale = i18n.getLang() === 'en' ? 'en-GB' : 'pl-PL';
+            const table = document.createElement('table');
+            table.className = 'history';
+            const tbody = document.createElement('tbody');
+            table.appendChild(tbody);
+            for (const tx of list) {
+                const tr = document.createElement('tr');
+                const isDeposit = tx.type === 'deposit';
+                const cells = [document.createElement('td'), document.createElement('td'), document.createElement('td'), document.createElement('td')];
+                cells[0].textContent = new Date(tx.createdAt).toLocaleString(locale);
+                cells[1].textContent = i18n.t(isDeposit ? 'wallet.deposit' : 'wallet.withdrawal');
+                const amount = document.createElement('span');
+                amount.className = isDeposit ? 'amount-in' : 'amount-out';
+                amount.textContent = (isDeposit ? '+' : '−') + i18n.t('wallet.balanceValue', { n: fmt(tx.amount) });
+                cells[2].appendChild(amount);
+                if (!isDeposit && tx.address) {
+                    const to = document.createElement('div');
+                    to.className = 'mono';
+                    to.textContent = i18n.t('wallet.to', { address: tx.address });
+                    cells[2].appendChild(to);
+                }
+                const status = document.createElement('span');
+                status.className = 'st-' + tx.status;
+                status.textContent = i18n.t('wallet.' + tx.status);
+                cells[3].appendChild(status);
+                if (tx.txHash) {
+                    const a = document.createElement('a');
+                    a.className = 'link';
+                    a.href = EXPLORER_TX + encodeURIComponent(tx.txHash);
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                    a.textContent = i18n.t('wallet.viewTx');
+                    cells[3].appendChild(document.createElement('br'));
+                    cells[3].appendChild(a);
+                }
+                if (tx.status === 'failed' && tx.adminNote) {
+                    const note = document.createElement('div');
+                    note.className = 'muted';
+                    note.textContent = i18n.t('wallet.note', { text: tx.adminNote });
+                    cells[3].appendChild(note);
+                }
+                cells.forEach((c) => tr.appendChild(c));
+                tbody.appendChild(tr);
+            }
+            box.textContent = '';
+            box.appendChild(table);
+        }
+
+        async function loadWallet() {
+            try {
+                const res = await fetch('/api/doge/wallet', { headers });
+                if (res.status === 401) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('token');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || i18n.t('common.error'));
+                wallet = data;
+                render();
+            } catch (err) {
+                document.getElementById('historyBox').textContent = i18n.t('common.networkError') + err.message;
+            }
+        }
+
+        document.getElementById('copyAddressBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('copyAddressBtn');
+            try {
+                await navigator.clipboard.writeText(wallet.depositAddress);
+                btn.textContent = i18n.t('wallet.copied');
+                setTimeout(() => { btn.textContent = i18n.t('wallet.copy'); }, 2000);
+            } catch (e) { /* brak dostepu do schowka - adres mozna zaznaczyc recznie */ }
+        });
+
+        document.getElementById('depositBtn').addEventListener('click', async () => {
+            const hashInput = document.getElementById('depositTxHash');
+            const txHash = hashInput.value.trim();
+            const amount = Number(document.getElementById('depositAmount').value);
+            hashInput.classList.toggle('invalid', !TX_HASH_RE.test(txHash));
+            if (!TX_HASH_RE.test(txHash)) return setStatus('depositStatus', i18n.t('wallet.badHash'), true);
+            if (!(amount > 0)) return setStatus('depositStatus', i18n.t('wallet.badAmount'), true);
+            const btn = document.getElementById('depositBtn');
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/doge/deposit', { method: 'POST', headers, body: JSON.stringify({ txHash, amount }) });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || i18n.t('common.error'));
+                hashInput.value = '';
+                document.getElementById('depositAmount').value = '';
+                setStatus('depositStatus', i18n.t('wallet.depositReported'), false);
+                loadWallet();
+            } catch (err) {
+                setStatus('depositStatus', err.message, true);
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        document.getElementById('withdrawAddress').addEventListener('input', (e) => {
+            const v = e.target.value.trim();
+            e.target.classList.toggle('invalid', v.length > 0 && !DOGE_ADDRESS_RE.test(v));
+        });
+
+        document.getElementById('withdrawBtn').addEventListener('click', async () => {
+            const address = document.getElementById('withdrawAddress').value.trim();
+            const amount = Math.round(Number(document.getElementById('withdrawAmount').value) * 100) / 100;
+            const ageEl = document.querySelector('input[name="withdrawAge"]:checked');
+            const taxAccepted = document.getElementById('withdrawTaxAck').checked;
+            if (!DOGE_ADDRESS_RE.test(address)) return setStatus('withdrawStatus', i18n.t('wallet.badAddress'), true);
+            if (!(amount > 0)) return setStatus('withdrawStatus', i18n.t('wallet.badAmount'), true);
+            if (wallet && amount < wallet.minWithdrawal) return setStatus('withdrawStatus', i18n.t('wallet.belowMin', { n: fmt(wallet.minWithdrawal) }), true);
+            if (wallet && amount > wallet.dogeBalance) return setStatus('withdrawStatus', i18n.t('wallet.notEnough', { n: fmt(wallet.dogeBalance) }), true);
+            if (!ageEl) return setStatus('withdrawStatus', i18n.t('wallet.ageRequired'), true);
+            if (!taxAccepted) return setStatus('withdrawStatus', i18n.t('wallet.taxRequired'), true);
+            const btn = document.getElementById('withdrawBtn');
+            btn.disabled = true;
+            try {
+                const res = await fetch('/api/doge/withdraw', {
+                    method: 'POST', headers,
+                    body: JSON.stringify({ address, amount, ageConfirmationType: ageEl.value, taxResponsibilityAccepted: true })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || i18n.t('common.error'));
+                document.getElementById('withdrawAmount').value = '';
+                document.getElementById('withdrawTaxAck').checked = false;
+                document.querySelectorAll('input[name="withdrawAge"]').forEach((el) => { el.checked = false; });
+                setStatus('withdrawStatus', i18n.t('wallet.withdrawRequested'), false);
+                loadWallet();
+            } catch (err) {
+                setStatus('withdrawStatus', err.message, true);
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        document.addEventListener('wol:langchange', () => {
+            setStatus('depositStatus', '');
+            setStatus('withdrawStatus', '');
+            render();
+        });
+
+        loadWallet();
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+    <script src="/page-scale.js"></script>
+</body>
+</html>

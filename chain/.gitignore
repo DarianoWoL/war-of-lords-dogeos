@@ -1,0 +1,8 @@
+node_modules/
+cache/
+artifacts/
+.env.chain
+deployments/localhost.json
+screenshots/
+screenshots/
+demo-fans.json

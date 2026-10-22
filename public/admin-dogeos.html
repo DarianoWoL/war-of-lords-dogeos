@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pl" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>War of Lords - DogeOS (admin)</title>
+<style>
+  :root { --gold:#e8c766; --card:rgba(10,16,33,.92); --line:rgba(212,175,55,.35); --muted:#94a3b8; --good:#34d399; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#0b1020 url('/assets/background.png') center/cover fixed; color:#f8fafc; font-family:'Segoe UI',system-ui,sans-serif; }
+  header { max-width:900px; margin:0 auto; padding:22px 24px 6px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+  h1 { margin:0; color:var(--gold); text-transform:uppercase; letter-spacing:.05em; font-size:26px; }
+  h1 small { display:block; color:var(--muted); font-size:13px; text-transform:none; letter-spacing:0; margin-top:4px; }
+  h2 { color:var(--gold); margin:0 0 10px; font-size:17px; text-transform:uppercase; }
+  a { color:#7dd3fc; } .back { color:var(--gold); text-decoration:none; font-weight:600; }
+  main { max-width:900px; margin:0 auto; padding:10px 24px 60px; display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  @media (max-width:760px) { main { grid-template-columns:1fr; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px 22px; box-shadow:0 8px 24px rgba(0,0,0,.45); }
+  .wide { grid-column:1 / -1; }
+  .muted { color:var(--muted); font-size:14px; line-height:1.5; }
+  .kv { display:grid; grid-template-columns:auto 1fr; gap:6px 14px; font-size:14px; margin:8px 0; }
+  .kv b { color:var(--muted); font-weight:500; } .mono { font-family:Consolas,monospace; word-break:break-all; font-size:13px; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:10px 0 4px; }
+  input[type=text] { background:#0f172a; color:#f8fafc; border:1px solid #334155; border-radius:6px; padding:10px 12px; font-size:16px; width:130px; }
+  button { background:linear-gradient(#e8c766,#b8932f); color:#1a1405; border:0; border-radius:8px; padding:10px 18px; font-weight:800; cursor:pointer; font-size:15px; }
+  button.secondary { background:#1e293b; color:#e2e8f0; border:1px solid #334155; }
+  .status { margin-top:10px; padding:9px 12px; border-radius:6px; font-size:14px; display:none; } .status.show { display:block; } .status.ok { background:#064e3b; } .status.err { background:#7f1d1d; }
+</style>
+</head>
+<body>
+<header>
+  <h1>DogeOS (testnet)<small>Pula nagród, skarbiec i konto serwera w kontrakcie gry.</small></h1>
+  <a class="back" href="/admin.html">&larr; Panel administratora</a>
+</header>
+<main>
+  <section class="card wide">
+    <h2>Stan</h2>
+    <div class="kv">
+      <b>Kontrakt</b><span class="mono" id="stContract">-</span>
+      <b>Pula nagród</b><span id="stPool">-</span>
+      <b>Skarbiec sezonu</b><span id="stTreasury">-</span>
+      <b>Sezon</b><span id="stSeason">-</span>
+      <b>Konto serwera (gaz)</b><span id="stOracle">-</span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Wpłać do puli nagród</h2>
+    <p class="muted">Wpisz ilość DOGE i kliknij. Gra sama połączy portfel i pobierze tyle z Twojego portfela. Bez kopiowania adresów.</p>
+    <div class="row"><input type="text" id="poolAmount" value="100" inputmode="decimal"><span class="muted">DOGE</span><button id="poolBtn">Wpłać z mojego portfela</button></div>
+    <div class="status" id="poolStatus"></div>
+  </section>
+
+  <section class="card">
+    <h2>Doładuj konto serwera (gaz)</h2>
+    <p class="muted">Serwer płaci prowizje sieci za zapisywanie wyników i otwieranie zakładów. Wystarczy kilka DOGE.</p>
+    <div class="row"><input type="text" id="gasAmount" value="5" inputmode="decimal"><span class="muted">DOGE</span><button id="gasBtn">Wyślij z mojego portfela</button></div>
+    <div class="status" id="gasStatus"></div>
+  </section>
+
+  <section class="card wide">
+    <h2>Sezon</h2>
+    <p class="muted">Przenosi skarbiec (prowizje z biletów i zakładów) do puli nagród i zaczyna kolejny sezon.</p>
+    <div class="row"><button class="secondary" id="rollBtn">Przenieś skarbiec do puli</button></div>
+    <div class="status" id="rollStatus"></div>
+  </section>
+</main>
+
+<script src="/wol-connect.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const token = () => localStorage.getItem('authToken') || localStorage.getItem('token');
+  const fmt = (v) => Number(v).toLocaleString('pl-PL', { maximumFractionDigits: 4 });
+  const say = (id, kind, text) => { const el = $(id); el.className = 'status show ' + kind; el.textContent = text; };
+
+  async function load() {
+    try {
+      const s = await WolConnect.api('GET', '/api/chain/stats');
+      $('stContract').textContent = s.contract;
+      $('stPool').textContent = fmt(s.prizePool) + ' DOGE';
+      $('stTreasury').textContent = fmt(s.treasury) + ' DOGE';
+      $('stSeason').textContent = s.season;
+      $('stOracle').innerHTML = fmt(s.oracleBalance) + ' DOGE <span class="mono">(' + s.oracle + ')</span>';
+    } catch (e) { /* ignore */ }
+  }
+
+  $('poolBtn').onclick = async () => { if (!token()) return location.href = '/login.html'; if (await WolConnect.fundPool($('poolAmount').value)) { say('poolStatus', 'ok', 'Pula nagród zasilona.'); load(); } };
+  $('gasBtn').onclick = async () => { if (!token()) return location.href = '/login.html'; if (await WolConnect.topUpServer($('gasAmount').value)) { say('gasStatus', 'ok', 'Konto serwera zasilone.'); load(); } };
+  $('rollBtn').onclick = async () => {
+    try { say('rollStatus', 'ok', 'Wysyłam transakcję…'); const r = await WolConnect.api('POST', '/api/chain/admin/roll-season', {}, token()); say('rollStatus', 'ok', 'Skarbiec przeniesiony do puli (tx ' + String(r.tx).slice(0, 12) + '…).'); load(); }
+    catch (e) { say('rollStatus', 'err', e.message); }
+  };
+  load(); setInterval(load, 15000);
+})();
+</script>
+</body>
+</html>

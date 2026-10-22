@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en" data-source-lang="en" data-source-lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="shop.ticketsPageTitle">War of Lords - Tournament tickets</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+
+        .nav-menu { background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat; width: 100%; padding: 15px 0; text-align: center; margin-bottom: 40px; }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 20px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+
+        /* Baked-in default nav link layout, adopted site-wide from a player-arranged position
+           (see layout-editor.js) so every visitor sees the same arrangement by default. */
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { display: none !important; position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .back-link { max-width: 1000px; width: 100%; padding: 0 20px; box-sizing: border-box; margin-bottom: 10px; }
+        .back-link a { color: #94a3b8; text-decoration: none; font-size: 14px; font-weight: bold; }
+        .back-link a:hover { color: #e8c766; }
+
+        h1 { color: #e8c766; margin-bottom: 5px; margin-top: 10px; text-shadow: 0px 4px 8px rgba(0,0,0,0.8); text-transform: uppercase; letter-spacing: 0.04em; }
+        .subtitle { color: #cbd5e1; margin-bottom: 40px; text-align: center; font-size: 16px; text-shadow: 0px 2px 4px rgba(0,0,0,0.8); font-weight: 500; }
+
+        .shop-info-bar { background: url('/pasek.png') center / 100% 100% no-repeat; border-radius: 0; padding: 25px 25px 40px; margin-bottom: 30px; max-width: 1100px; width: 1098.89px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 4px 15px rgba(0, 0, 0, 0.3); }
+        .shop-info-bar .player-nick { font-size: 22px; color: #e8c766; font-weight: bold; }
+        .shop-info-bar .player-balance { font-size: 18px; font-weight: bold; color: #34d399; }
+        .shop-info-bar .player-wallet-link { color: #e8c766; font-weight: bold; text-decoration: none; border: 1px solid rgba(232,199,102,0.5); border-radius: 8px; padding: 4px 10px; }
+        .shop-info-bar .player-wallet-link:hover { background: rgba(232,199,102,0.12); }
+        .shop-info-bar .player-tickets { font-size: 18px; font-weight: bold; color: #a78bfa; }
+        .shop-info-bar .player-mini-ticket { font-size: 18px; font-weight: bold; color: #fbbf24; }
+
+        /* Two clearly separate panels side by side — Mini-Turniej on the left, Turniej Miesięczny on
+           the right — so a player never has to scroll past one to reach the other and risk buying
+           the wrong ticket. Stacks to one column only on genuinely narrow viewports. */
+        .two-column-shop { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1100px; width: 100%; padding: 0 20px; box-sizing: border-box; align-items: start; }
+        @media (max-width: 900px) { .two-column-shop { grid-template-columns: 1fr; } }
+        .shop-column {
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.85), rgba(10, 16, 33, 0.9));
+            border: 1px solid rgba(212, 175, 55, 0.28); border-radius: 16px; padding: 24px 22px;
+            box-sizing: border-box; display: flex; flex-direction: column; align-items: center;
+        }
+
+        .payment-methods-info {
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.85), rgba(10, 16, 33, 0.9));
+            border: 1px solid rgba(212, 175, 55, 0.28); border-radius: 16px; padding: 22px 26px;
+            max-width: 1100px; width: 100%; box-sizing: border-box; margin: 0 auto 30px; color: #cbd5e1;
+            font-size: 14px; line-height: 1.6;
+        }
+        .payment-methods-info h3 { color: #e8c766; margin-bottom: 10px; font-size: 17px; }
+        .payment-methods-info ul { margin: 6px 0 10px 20px; padding: 0; }
+        .payment-methods-info li { margin-bottom: 4px; }
+        .payment-methods-info strong { color: #f0d78c; }
+        .shop-column h1 { font-size: 24px; margin-top: 0; }
+        .shop-column .subtitle { margin-bottom: 18px; font-size: 14px; }
+
+        /* Both columns — same room-card wallpaper texture already used for tournament rooms
+           elsewhere (pokoje.html / mini-tournaments.html's .room-card), so each column visually
+           reads as "the same kind of tournament" rather than a plain shop panel. */
+        .shop-column.tournament-column,
+        .shop-column.mini-column {
+            background: url('/tlopokoi.png') center / 100% 100% no-repeat;
+            border: none; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+        .shop-column.tournament-column h1,
+        .shop-column.tournament-column .subtitle,
+        .shop-column.mini-column h1,
+        .shop-column.mini-column .subtitle { text-shadow: 0 2px 4px rgba(0,0,0,0.6); }
+        .shop-column.tournament-column .subtitle a,
+        .shop-column.mini-column .subtitle a { color: #f0d78c; }
+
+        .packages-grid { display: grid; grid-template-columns: minmax(200px, 260px); justify-content: center; gap: 15px; width: 100%; box-sizing: border-box; }
+
+        .package-card { background: linear-gradient(180deg, rgba(18, 27, 48, 0.92), rgba(10, 16, 33, 0.94)); backdrop-filter: blur(4px); border: 1px solid rgba(212, 175, 55, 0.32); border-radius: 12px; padding: 20px; text-align: center; transition: transform 0.2s, border-color 0.2s; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); }
+        .package-card:hover { transform: translateY(-5px); border-color: #d4af37; background: rgba(30, 41, 59, 0.95); }
+        .package-badge { font-size: 28px; margin-bottom: 10px; }
+        .package-name { font-size: 15px; font-weight: bold; color: #f1f5f9; }
+        .package-points { font-size: 24px; font-weight: bold; color: #a78bfa; margin: 10px 0 4px; }
+        .package-cost { font-size: 14px; font-weight: bold; color: #34d399; margin-bottom: 15px; }
+        .btn-package-buy { background-image: url('/przycisk.png'); background-size: 100% 100%; background-color: transparent; color: #e8c766; border: none; padding: 10px; font-weight: bold; border-radius: 0; cursor: pointer; width: 100%; transition: color 0.2s; }
+        .btn-package-buy:hover { color: #f0d78c; }
+        /* Second, clearly distinct button for paying with owned VPLN balance instead of real money
+           (1:1, see regulamin.html §5c) - same texture/shape as the PLN button so it still reads as
+           "a buy button", but a violet accent (matches .player-balance/.package-points elsewhere in
+           this file) makes the two payment methods impossible to confuse at a glance. */
+        .btn-package-buy-vpln { background-image: url('/przycisk.png'); background-size: 100% 100%; background-color: transparent; color: #a78bfa; border: none; padding: 10px; font-weight: bold; border-radius: 0; cursor: pointer; width: 100%; margin-top: 8px; transition: color 0.2s; }
+        .btn-package-buy-vpln:hover { color: #c4b5fd; }
+        .package-payment-divider { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 12px; text-align: center; }
+        .package-vpln-note { font-size: 11px; color: #94a3b8; margin-top: 2px; text-align: center; }
+
+        .shop-disabled-banner { background: rgba(248, 113, 113, 0.15); border: 1px solid #f87171; border-radius: 12px; padding: 14px 22px; margin-bottom: 20px; width: 100%; box-sizing: border-box; text-align: center; color: #fff8f8; font-weight: bold; font-size: 13px; }
+        button:disabled { opacity: 0.5; cursor: not-allowed !important; filter: grayscale(0.4); }
+        #adminPanelLink { position: absolute; left: 234.44px; top: 41.22px; width: 295.89px; height: 60px; margin: 0; box-sizing: border-box; }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+    <script>
+        window.alert = function () {};
+        window.confirm = function () { return true; };
+    </script>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Home</a>
+        <a id="navRooms" href="pokoje.html">Battle Rooms</a>
+        <a id="navTournaments" href="turnieje.html">Tournaments</a>
+        <a id="navShop" href="live.html" class="active">Live Bets</a>
+        <a id="navRanking" href="ranking.html">Overall Ranking</a>
+        <a id="navProfile" href="profile.html">Profile</a>
+        <a id="navRules" href="zasady.html">Rules</a>
+    </div>
+
+    <div id="adminPanelLink" style="display:none;">
+        <a href="admin.html" style="display:inline-block; background:#f59e0b; color:#111827; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;" data-i18n="home.adminPanel">👑 ADMIN PANEL</a>
+    </div>
+
+    <div class="shop-info-bar" id="shopBalance">
+        <span class="player-nick" data-i18n="shop.commanderLoading">Commander: Loading...</span>
+        <span class="player-tickets" data-i18n="shop.ticketsLoading">Tournament tickets: Loading...</span>
+        <span class="player-balance" id="shopVplnBalance" data-i18n="shop.balanceLoading">DOGE balance: Loading...</span>
+        <a class="player-wallet-link" href="portfel.html" data-i18n="shop.wallet">🪙 Wallet: top up / withdraw</a>
+    </div>
+
+    <div class="shop-disabled-banner" id="shopDisabledBanner" style="display:none; max-width:1100px;" data-i18n="shop.shopDisabled">
+        ⛔ The shop has been temporarily closed by the administrator. Purchases are unavailable.
+    </div>
+
+    <div class="shop-disabled-banner" id="purchaseFeedback" style="display:none; max-width:1100px;"></div>
+
+    <div class="two-column-shop">
+        <!-- LEWA KOLUMNA: Mini-Turniej -->
+        <div class="shop-column mini-column">
+            <h1 data-i18n="shop.mini.title">🏅 Mini-Tournament</h1>
+            <p class="subtitle" data-i18n="shop.mini.limitNote">Max 1 unused ticket on your account at a time — using/refunding has no limit, only the purchase counts.</p>
+            <p class="subtitle" style="margin-top:-10px;" data-i18n-html="shop.mini.checkRules">Before you buy, read the <a href="zasady-mini-turniej.html" style="color:#e8c766;">Mini-Tournament Rules</a> and the <a href="regulamin.html" style="color:#e8c766;">Terms of Service</a>.</p>
+
+            <div class="shop-disabled-banner" id="noMiniTournamentBanner" style="display:none;" data-i18n="shop.mini.noneAvailable">
+                🔒 No Mini-Tournaments are available right now. Come back once the administrators open a new room.
+            </div>
+            <div class="shop-disabled-banner" id="miniTicketPoolExhaustedBanner" style="display:none;" data-i18n="shop.mini.poolExhausted">
+                🎫 This month’s pool of Mini-Tournament Tickets has run out. Come back at the start of next month.
+            </div>
+            <div class="shop-disabled-banner" id="miniTicketHeldBanner" style="display:none; background: rgba(52, 211, 153, 0.15); border-color:#34d399;" data-i18n-html="shop.mini.held">
+                ✅ You already have an unused Mini-Tournament Ticket — you can join right away on the <a href="/mini-tournaments" style="color:#34d399;">Mini-Tournaments</a> page.
+            </div>
+
+            <div class="packages-grid">
+                <div class="package-card" id="miniTicketCard">
+                    <div>
+                        <div class="package-badge">🏅</div>
+                        <div class="package-name" data-i18n="shop.mini.ticket">1 Mini-Tournament Ticket</div>
+                        <div class="package-points" id="miniTicketPoolLabel" style="font-size:14px;" data-i18n="shop.loading">Loading...</div>
+                        <div class="package-cost" id="miniTicketPriceLabel" data-i18n="shop.loading">Loading...</div>
+                    </div>
+                    <div>
+                        <button class="btn-package-buy" id="btnBuyMiniTicket" onclick="buyMiniTicket()" data-i18n="shop.buyPln" style="display:none;">BUY FOR PLN</button>
+                        <button class="btn-package-buy-vpln" id="btnBuyMiniTicketVpln" onclick="buyMiniTicketVpln()" data-i18n="shop.buyVpln">BUY FOR DOGE</button>
+                        <div class="package-vpln-note" id="miniTicketVplnNote" data-i18n="shop.vplnNote">Paid from your DOGE balance</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRAWA KOLUMNA: Turniej Miesięczny -->
+        <div class="shop-column tournament-column">
+            <h1 data-i18n="shop.monthly.title">🎟️ Monthly Tournament</h1>
+            <p class="subtitle" data-i18n="shop.monthly.blurb">Paid with your DOGE balance (final price) — 1 ticket per player per calendar month.</p>
+            <p class="subtitle" style="margin-top:-10px;" data-i18n-html="shop.monthly.checkRules">Before you buy, read the <a href="zasady-turnieju.html" style="color:#e8c766;">Tournament Rules</a> and the <a href="regulamin.html" style="color:#e8c766;">Terms of Service</a>.</p>
+            <p class="subtitle" id="ticketPoolInfo" style="margin-top:-10px;" data-i18n="shop.monthly.poolLoading">Monthly pool: loading...</p>
+
+            <div class="shop-disabled-banner" id="noTournamentBanner" style="display:none;" data-i18n="shop.monthly.noneScheduled">
+                🔒 No Monthly Tournament is scheduled right now. Come back once the administrators announce a new edition.
+            </div>
+            <div class="shop-disabled-banner" id="ticketPoolExhaustedBanner" style="display:none;" data-i18n="shop.monthly.poolExhausted">
+                🎫 This month’s pool of tournament tickets has run out. Come back at the start of next month.
+            </div>
+            <div class="shop-disabled-banner" id="salesPausedBanner" style="display:none;" data-i18n="shop.monthly.salesPaused">
+                ⛔ Tournament ticket sales are temporarily paused by the administrators.
+            </div>
+            <div class="shop-disabled-banner" id="monthlyLimitBanner" style="display:none;" data-i18n="shop.monthly.monthlyLimit">
+                🎫 You have already used your limit of 1 tournament ticket this month. The limit resets on the 1st of the next month.
+            </div>
+
+            <div class="packages-grid">
+                <div class="package-card">
+                    <div>
+                        <div class="package-badge">🎫</div>
+                        <div class="package-name" data-i18n="shop.monthly.ticket">1 Tournament Ticket</div>
+                        <div class="package-points" id="ticketPoolLabel" style="font-size:14px;" data-i18n="shop.loading">Loading...</div>
+                        <div class="package-cost" id="ticketPriceLabel" data-i18n="shop.loading">Loading...</div>
+                    </div>
+                    <div>
+                        <button class="btn-package-buy" data-quantity="1" onclick="buyTickets(1)" data-i18n="shop.buyPln" style="display:none;">BUY FOR PLN</button>
+                        <button class="btn-package-buy-vpln" id="btnBuyTicketVpln" onclick="buyTicketVpln()" data-i18n="shop.buyVpln">BUY FOR DOGE</button>
+                        <div class="package-vpln-note" id="ticketVplnNote" data-i18n="shop.vplnNote">Paid from your DOGE balance</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="payment-methods-info">
+        <h3 data-i18n="shop.payments.title">🪙 Payments in DOGE</h3>
+        <p data-i18n-html="shop.payments.intro">All purchases are paid from your virtual <strong>DOGE</strong> balance — no external payment operator.</p>
+        <ul>
+            <li data-i18n-html="shop.payments.deposit"><strong>Top up</strong> — send DOGE to the game wallet address shown in your <a href="portfel.html" style="color:#e8c766;">Wallet</a> and report the transaction; your balance grows once it is verified on-chain.</li>
+            <li data-i18n-html="shop.payments.withdraw"><strong>Withdrawal</strong> — prizes and unused balance can be withdrawn to your own DOGE address (on-chain, after verification).</li>
+        </ul>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+
+        const headers = {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+
+        const username = localStorage.getItem('username') || localStorage.getItem('warlordNick') || i18n.t('shop.defaultNick');
+        let myVplnBalance = 0;
+
+        // Both alert() and confirm() are stubbed to no-ops at the top of this page (see the inline
+        // script right after <body>), so a plain alert(err.message) — used further below, same as
+        // before — would be entirely silent. This is the one place that actually shows something:
+        // a visible banner near the top of the shop, reused by every buy function (PLN and VPLN
+        // alike) for both success and error feedback.
+        let purchaseFeedbackTimer = null;
+        function showPurchaseFeedback(message, isError) {
+            const el = document.getElementById('purchaseFeedback');
+            el.textContent = (isError ? '⚠️ ' : '✅ ') + message;
+            el.style.display = 'block';
+            el.style.background = isError ? 'rgba(248, 113, 113, 0.15)' : 'rgba(52, 211, 153, 0.15)';
+            el.style.borderColor = isError ? '#f87171' : '#34d399';
+            clearTimeout(purchaseFeedbackTimer);
+            purchaseFeedbackTimer = setTimeout(() => { el.style.display = 'none'; }, 6000);
+        }
+
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/auth/me', { headers });
+                if (!response.ok) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('token');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                const profile = await response.json();
+                myVplnBalance = profile.dogeBalance || 0;
+                document.getElementById('shopBalance').innerHTML = `
+                    <span class="player-nick"></span>
+                    <span class="player-tickets">${i18n.t('shop.ticketsCount', { n: profile.tournamentTickets || 0 })}</span>
+                    <span class="player-mini-ticket">${profile.hasUnusedMiniTournamentTicket ? i18n.t('shop.hasMiniTicket') : i18n.t('shop.noMiniTicket')}</span>
+                    <span class="player-balance" id="shopVplnBalance">${i18n.t('shop.balance', { n: myVplnBalance })}</span>
+                    <a class="player-wallet-link" href="portfel.html">${i18n.t('shop.wallet')}</a>
+                `;
+                document.querySelector('#shopBalance .player-nick').textContent = i18n.t('shop.commander', { name: profile.username || username });
+                const adminPanelLinkEl = document.getElementById('adminPanelLink');
+                if (adminPanelLinkEl) adminPanelLinkEl.style.display = (profile.role === 'ADMIN' || profile.isAdmin) ? 'block' : 'none';
+                updateVplnButtonsAffordability();
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Re-applied every time the balance OR a price loads (whichever comes back last) — disables
+        // each VPLN button on its own (never touches the PLN button next to it) the moment the
+        // player's balance can't cover that specific ticket's price.
+        function updateVplnButtonsAffordability() {
+            const ticketBtn = document.getElementById('btnBuyTicketVpln');
+            if (ticketBtn && !ticketBtn.dataset.disabledByRule && typeof ticketPriceZl === 'number') {
+                ticketBtn.disabled = myVplnBalance < ticketPriceZl;
+                document.getElementById('ticketVplnNote').textContent = myVplnBalance < ticketPriceZl
+                    ? i18n.t('shop.notEnoughVpln', { have: myVplnBalance, need: ticketPriceZl }) : i18n.t('shop.vplnNote');
+            }
+            const miniBtn = document.getElementById('btnBuyMiniTicketVpln');
+            if (miniBtn && !miniBtn.dataset.disabledByRule && typeof miniTicketPriceZl === 'number') {
+                miniBtn.disabled = myVplnBalance < miniTicketPriceZl;
+                document.getElementById('miniTicketVplnNote').textContent = myVplnBalance < miniTicketPriceZl
+                    ? i18n.t('shop.notEnoughVpln', { have: myVplnBalance, need: miniTicketPriceZl }) : i18n.t('shop.vplnNote');
+            }
+        }
+
+        async function buyTickets(quantity) {
+            const accepted = await window.WoLPurchaseConsent.confirm({
+                itemLabel: quantity === 1 ? i18n.t('shop.monthly.itemOne') : i18n.t('shop.monthly.itemMany', { n: quantity }),
+                priceLabel: i18n.t('shop.price', { price: quantity * 10 })
+            });
+            if (!accepted) return;
+            try {
+                const response = await fetch('/api/payments/tickets/create', {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({ quantity, consentAccepted: true })
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.error || i18n.t('shop.payStartError'));
+                }
+                // Hand off to HotPay's own hosted payment page — tickets are granted once
+                // payment is confirmed (see platnosc-status.html, which the player lands back on).
+                window.location.href = result.redirectUrl;
+            } catch (err) {
+                showPurchaseFeedback(err.message, true);
+            }
+        }
+
+        async function buyTicketVpln() {
+            const accepted = await window.WoLPurchaseConsent.confirm({
+                itemLabel: i18n.t('shop.monthly.itemVpln'),
+                priceLabel: i18n.t('shop.price', { price: ticketPriceZl })
+            });
+            if (!accepted) return;
+            try {
+                const response = await fetch('/api/payments/tickets/create-vpln', {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({ consentAccepted: true })
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.error || i18n.t('shop.purchaseError'));
+                }
+                showPurchaseFeedback(i18n.t('shop.monthly.boughtVpln'), false);
+                loadProfile();
+                checkTicketEligibility();
+            } catch (err) {
+                showPurchaseFeedback(err.message, true);
+            }
+        }
+
+        let miniTicketPriceZl = 10;
+        let ticketPriceZl = 10;
+
+        async function loadMiniTicketStatus() {
+            try {
+                const priceRes = await fetch('/api/settings/mini-tournament-ticket-price');
+                const priceData = await priceRes.json();
+                miniTicketPriceZl = priceData.priceZl;
+                // "(całkowity koszt: X zł)" so it's unambiguous this IS the final amount charged -
+                // nothing else gets added on top (no VAT, no delivery - see regulamin.html §6.2).
+                document.getElementById('miniTicketPriceLabel').textContent = i18n.t('shop.priceTotal', { price: priceData.priceZl });
+                document.getElementById('miniTicketPoolLabel').textContent = i18n.t('shop.poolAvailable', { remaining: priceData.remaining, total: priceData.poolSize });
+                document.getElementById('miniTicketPoolExhaustedBanner').style.display = priceData.remaining <= 0 ? 'block' : 'none';
+                const vplnBtn = document.getElementById('btnBuyMiniTicketVpln');
+
+                const meRes = await fetch('/api/auth/me', { headers });
+                const btn = document.getElementById('btnBuyMiniTicket');
+                if (meRes.ok) {
+                    const me = await meRes.json();
+                    if (me.hasUnusedMiniTournamentTicket) {
+                        document.getElementById('miniTicketHeldBanner').style.display = 'block';
+                        btn.disabled = true;
+                        btn.textContent = i18n.t('shop.alreadyOwned');
+                        vplnBtn.disabled = true;
+                        vplnBtn.dataset.disabledByRule = '1';
+                        updateVplnButtonsAffordability();
+                        return;
+                    }
+                }
+                if (priceData.remaining <= 0) {
+                    btn.disabled = true;
+                    vplnBtn.disabled = true;
+                    vplnBtn.dataset.disabledByRule = '1';
+                }
+                updateVplnButtonsAffordability();
+            } catch (err) {
+                console.error('Błąd ładowania statusu Biletu do Mini-Turnieju:', err);
+            }
+        }
+
+        async function buyMiniTicket() {
+            const accepted = await window.WoLPurchaseConsent.confirm({
+                itemLabel: i18n.t('shop.mini.item'),
+                priceLabel: i18n.t('shop.price', { price: miniTicketPriceZl })
+            });
+            if (!accepted) return;
+            try {
+                const response = await fetch('/api/payments/mini-tickets/create', {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({ consentAccepted: true })
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.error || i18n.t('shop.payStartError'));
+                }
+                window.location.href = result.redirectUrl;
+            } catch (err) {
+                showPurchaseFeedback(err.message, true);
+            }
+        }
+
+        async function buyMiniTicketVpln() {
+            const accepted = await window.WoLPurchaseConsent.confirm({
+                itemLabel: i18n.t('shop.mini.itemVpln'),
+                priceLabel: i18n.t('shop.price', { price: miniTicketPriceZl })
+            });
+            if (!accepted) return;
+            try {
+                const response = await fetch('/api/payments/mini-tickets/create-vpln', {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({ consentAccepted: true })
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.error || i18n.t('shop.purchaseError'));
+                }
+                showPurchaseFeedback(i18n.t('shop.mini.boughtVpln'), false);
+                loadProfile();
+                loadMiniTicketStatus();
+            } catch (err) {
+                showPurchaseFeedback(err.message, true);
+            }
+        }
+
+        async function checkMiniTournamentAvailability() {
+            try {
+                const response = await fetch('/api/rooms?miniTournament=1');
+                const rooms = await response.json();
+                if (Array.isArray(rooms) && rooms.length > 0) return;
+                document.getElementById('noMiniTournamentBanner').style.display = 'block';
+                document.getElementById('btnBuyMiniTicket').disabled = true;
+                const vplnBtn = document.getElementById('btnBuyMiniTicketVpln');
+                vplnBtn.disabled = true;
+                vplnBtn.dataset.disabledByRule = '1';
+            } catch (err) {
+                console.error('Błąd sprawdzania dostępności Mini-Turniejów:', err);
+            }
+        }
+
+        async function checkShopStatus() {
+            try {
+                const response = await fetch('/api/settings/shop');
+                if (!response.ok) return;
+                const data = await response.json();
+                const disabled = data.enabled === false;
+                document.getElementById('shopDisabledBanner').style.display = disabled ? 'block' : 'none';
+                // Only touches the still-purchasable button(s) — buttons without data-quantity are
+                // permanently disabled (quantities currently blocked from sale) and must stay that
+                // way regardless of whether the shop itself is enabled.
+                document.querySelectorAll('.btn-package-buy[data-quantity]').forEach((btn) => {
+                    btn.disabled = disabled;
+                });
+                // The Mini-Tournament ticket button isn't a quantity package, but the shop-wide
+                // kill-switch still has to gate it — re-applied only when disabling, since loadMiniTicketStatus
+                // runs independently and may have its own more specific reason to keep it disabled.
+                if (disabled) {
+                    document.getElementById('btnBuyMiniTicket').disabled = true;
+                    [document.getElementById('btnBuyTicketVpln'), document.getElementById('btnBuyMiniTicketVpln')].forEach((btn) => {
+                        btn.disabled = true;
+                        btn.dataset.disabledByRule = '1';
+                    });
+                }
+            } catch (err) {
+                console.error('Błąd sprawdzania statusu sklepu:', err);
+            }
+        }
+
+        async function loadTicketPool() {
+            try {
+                const response = await fetch('/api/settings/tournament-tickets');
+                if (!response.ok) return;
+                const data = await response.json();
+                ticketPriceZl = data.ticketPricePLN || 10;
+                // "(całkowity koszt: X zł)" so it's unambiguous this IS the final amount charged -
+                // nothing else gets added on top (no VAT, no delivery - see regulamin.html §6.2).
+                document.getElementById('ticketPriceLabel').textContent = i18n.t('shop.priceTotal', { price: ticketPriceZl });
+                const vplnBtn = document.getElementById('btnBuyTicketVpln');
+                if (!data.open) {
+                    document.getElementById('noTournamentBanner').style.display = 'block';
+                    document.getElementById('ticketPoolInfo').textContent = data.exists ? i18n.t('shop.monthly.closed') : i18n.t('shop.monthly.noTournament');
+                    document.getElementById('ticketPoolLabel').textContent = data.exists ? i18n.t('shop.monthly.closedShort') : i18n.t('shop.monthly.noTournamentShort');
+                    document.querySelectorAll('.btn-package-buy[data-quantity]').forEach((btn) => { btn.disabled = true; });
+                    vplnBtn.disabled = true;
+                    vplnBtn.dataset.disabledByRule = '1';
+                    updateVplnButtonsAffordability();
+                    return;
+                }
+                document.getElementById('ticketPoolInfo').textContent = i18n.t('shop.monthly.poolLeft', { remaining: data.remaining, total: data.total });
+                document.getElementById('ticketPoolLabel').textContent = i18n.t('shop.poolAvailable', { remaining: data.remaining, total: data.total });
+                document.getElementById('ticketPoolExhaustedBanner').style.display = data.remaining <= 0 ? 'block' : 'none';
+                document.getElementById('salesPausedBanner').style.display = data.salesPausedByAdmin ? 'block' : 'none';
+                document.querySelectorAll('.btn-package-buy[data-quantity]').forEach((btn) => {
+                    if (Number(btn.dataset.quantity) > data.remaining || data.salesPausedByAdmin) btn.disabled = true;
+                });
+                if (data.remaining < 1 || data.salesPausedByAdmin) {
+                    vplnBtn.disabled = true;
+                    vplnBtn.dataset.disabledByRule = '1';
+                }
+                updateVplnButtonsAffordability();
+            } catch (err) {
+                console.error('Błąd ładowania puli biletów turniejowych:', err);
+            }
+        }
+
+        async function checkTicketEligibility() {
+            try {
+                const response = await fetch('/api/payments/tickets/eligibility', { headers });
+                if (!response.ok) return;
+                const data = await response.json();
+                document.getElementById('monthlyLimitBanner').style.display = data.canPurchase ? 'none' : 'block';
+                if (!data.canPurchase) {
+                    document.querySelectorAll('.btn-package-buy[data-quantity]').forEach((btn) => {
+                        btn.disabled = true;
+                    });
+                    const vplnBtn = document.getElementById('btnBuyTicketVpln');
+                    vplnBtn.disabled = true;
+                    vplnBtn.dataset.disabledByRule = '1';
+                }
+            } catch (err) {
+                console.error('Błąd sprawdzania limitu biletów:', err);
+            }
+        }
+
+        loadProfile();
+        checkShopStatus();
+        loadTicketPool();
+        checkTicketEligibility();
+        loadMiniTicketStatus();
+        checkMiniTournamentAvailability();
+
+        // Zmiana jezyka: teksty z HTML odswieza i18n.js, a te budowane tutaj (salda, ceny, pule) - ponowne wczytanie.
+        document.addEventListener('wol:langchange', () => {
+            loadProfile();
+            loadTicketPool();
+            loadMiniTicketStatus();
+        });
+    </script>
+    <script src="/purchase-consent-modal.js"></script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+    <script src="/page-scale.js"></script>
+</body>
+</html>

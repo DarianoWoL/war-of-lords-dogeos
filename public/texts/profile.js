@@ -1,0 +1,42 @@
+// Tlumaczenia profilu (profile.html) - tryb fraz, patrz public/i18n.js.
+window.WOL_AUTO_TEXTS = true;
+window.WOL_TEXTS = (window.WOL_TEXTS || []).concat([
+    ['War of Lords - Profil gracza', 'War of Lords - Player profile'],
+    ['👑 PANEL ADMINISTRATORA', '👑 ADMIN PANEL'],
+    ['Profil gracza', 'Player profile'],
+    ['Witaj, dowódco {0}. Tutaj możesz sprawdzić stan konta, swoje punkty i przejść do kolejnego starcia.', 'Welcome, commander {0}. Here you can check your account, your points and head to your next battle.'],
+    ['Dowódca', 'Commander'],
+    ['Bilety turniejowe', 'Tournament tickets'],
+    ['Brak', 'None'],
+    ['Posiadasz ✅', 'You have one ✅'],
+    ['Bilet do Mini-Turnieju', 'Mini-Tournament Ticket'],
+    ['MMR Mini-Turniejów', 'Mini-Tournament MMR'],
+    ['Rola', 'Role'],
+    ['Rozegrane rundy', 'Rounds played'],
+    ['Wygrane rundy', 'Rounds won'],
+    ['🔗 Program Poleceń', '🔗 Referral Programme'],
+    ['Kopiuj kod', 'Copy code'],
+    ['Ładowanie...', 'Loading...'],
+    // "Poleconych z biletem: <span>0</span> / <span>10</span> · Zarobione z poleceń: <span>0</span>"
+    ['Poleconych z biletem:', 'Referred players with a ticket:'],
+    ['· Zarobione z poleceń:', '· Earned from referrals:'],
+    ['🪙 Portfel DOGE', '🪙 DOGE Wallet'],
+    ['Saldo gry jest w DOGE. Doładowanie (wpłata on-chain na adres portfela gry) i wypłata na Twój prywatny adres DOGE są w Portfelu. Wypłata realizowana jest on-chain po weryfikacji, w pełnej kwocie brutto — przychód rozliczasz samodzielnie.',
+        'Your game balance is in DOGE. Top-ups (an on-chain deposit to the game wallet address) and withdrawals to your private DOGE address are in the Wallet. Withdrawals are sent on-chain after verification, in the full gross amount — you settle the income yourself.'],
+    ['Otwórz Portfel →', 'Open Wallet →'],
+    ['Dawne wypłaty VPLN na konto bankowe:', 'Earlier VPLN withdrawals to a bank account:'],
+    ['Oczekuje na realizację', 'Awaiting processing'],
+    ['Zrealizowana', 'Completed'],
+    ['Odrzucona', 'Rejected'],
+    ['Przejdź do pokoi', 'Go to rooms'],
+    ['Zobacz ranking', 'See the ranking'],
+    ['Otwórz sklep', 'Open the shop'],
+    ['Wyloguj się', 'Log out'],
+    ['Błąd ładowania profilu. Spróbuj ponownie później.', 'Error loading the profile. Please try again later.'],
+    ['Ładowanie danych profilu...', 'Loading profile data...'],
+]);
+window.WOL_BLOCKS = (window.WOL_BLOCKS || []).concat([
+    ['Przekaż swój kod polecający innym graczom — wklejają go w formularzu rejestracji. Za każdych 10 poleconych graczy, którzy kupią dowolny bilet (Turniejowy lub do Mini-Turnieju), dostajesz automatycznie nagrodę w DOGE na saldo.',
+        'Share your referral code with other players — they paste it into the registration form. For every <strong>10 referred players</strong> who buy any ticket (Tournament or Mini-Tournament), you automatically get a <strong>DOGE reward</strong> on your balance.',
+        'Przekaż swój kod polecający innym graczom — wklejają go w formularzu rejestracji. Za każdych <strong>10 poleconych graczy</strong>, którzy kupią dowolny bilet (Turniejowy lub do Mini-Turnieju), dostajesz automatycznie <strong>nagrodę w DOGE</strong> na saldo.'],
+]);

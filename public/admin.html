@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>War of Lords - Panel Administratora</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+        .nav-menu {
+            background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat;
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .nav-menu a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin: 0 16px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #e8c766;
+        }
+
+        /* Baked-in default nav link layout, adopted site-wide from a player-arranged position
+           (see layout-editor.js) so every visitor sees the same arrangement by default. */
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        .admin-shell {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px 40px;
+            box-sizing: border-box;
+        }
+        .admin-header {
+            position: relative;
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .mailbox-btn {
+            position: absolute;
+            top: 4px;
+            right: 0;
+            background: #17233d;
+            color: #e8c766;
+            border: 1px solid rgba(212, 175, 55, 0.45);
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .mailbox-btn:hover { background: #1e2c4d; }
+        .mailbox-badge {
+            display: inline-block;
+            background: #ef4444;
+            color: #fff;
+            border-radius: 999px;
+            font-size: 11px;
+            padding: 1px 7px;
+            margin-left: 6px;
+        }
+        .mailbox-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 10, 24, 0.85);
+            z-index: 9999;
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 16px;
+            overflow-y: auto;
+        }
+        .mailbox-modal {
+            background: linear-gradient(180deg, #17233d, #0f1729);
+            border: 1px solid rgba(212, 175, 55, 0.45);
+            border-radius: 14px;
+            max-width: 720px;
+            width: 100%;
+            padding: 24px;
+        }
+        .mailbox-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .mailbox-close-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 22px;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .mailbox-thread {
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        .mailbox-messages {
+            max-height: 220px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .mailbox-message {
+            padding: 8px 12px;
+            border-radius: 10px;
+            max-width: 85%;
+            font-size: 13px;
+        }
+        .mailbox-message.player { align-self: flex-start; background: rgba(212, 175, 55, 0.15); }
+        .mailbox-message.admin { align-self: flex-end; background: rgba(59, 130, 246, 0.15); }
+        .mailbox-message .meta { font-size: 11px; color: #94a3b8; margin-top: 3px; }
+        .mailbox-reply-form { display: flex; gap: 8px; }
+        .mailbox-reply-form textarea {
+            flex: 1; min-height: 46px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3);
+            background: #0f172a; color: #f8fafc; padding: 8px; font-family: inherit; font-size: 13px;
+        }
+        .admin-header h1 {
+            margin: 0;
+            font-size: 36px;
+            color: #e8c766;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .admin-header p {
+            margin: 10px auto 0;
+            max-width: 780px;
+            color: #cbd5e1;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .panel-card {
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96));
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 18px 40px rgba(0,0,0,0.25);
+        }
+        .panel-card.full {
+            grid-column: 1 / -1;
+        }
+        .panel-card h2 {
+            margin: 0 0 14px;
+            font-size: 22px;
+            color: #e8c766;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .panel-card .subtext {
+            margin: 0 0 18px;
+            color: #cbd5e1;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .panel-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        /* Room tiles — same visual language as the "kafelki" room cards on pokoje.html, so an admin
+           browsing many rooms gets the same at-a-glance clarity a player gets picking a room. */
+        .rooms-tile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .room-tile {
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.92), rgba(10, 16, 33, 0.94));
+            border: 1px solid rgba(212, 175, 55, 0.32);
+            border-radius: 16px;
+            padding: 20px;
+            transition: transform 0.2s, border-color 0.2s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+        }
+        .room-tile:hover {
+            transform: translateY(-2px);
+            border-color: #d4af37;
+        }
+        .room-tile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .room-tile-title {
+            margin: 0 0 6px;
+            color: #e8c766;
+            font-size: 18px;
+        }
+        .room-tile-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px 14px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            color: #e2e8f0;
+        }
+        .room-tile-players {
+            color: #cbd5e1;
+            font-size: 12.5px;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+        .room-tile-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .panel-row label {
+            color: #cbd5e1;
+            font-size: 13px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .panel-row input,
+        .panel-row select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.28);
+            background: #0f172a;
+            color: #f8fafc;
+            font-size: 14px;
+        }
+        .btn-action,
+        .btn-small {
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .btn-action {
+            width: 100%;
+            padding: 14px 18px;
+            background: linear-gradient(180deg, #e8c766, #b8901f);
+            color: #1c1408;
+            margin-top: 10px;
+        }
+        .btn-action:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(180deg, #f0d78c, #c9a227);
+        }
+        .btn-action:disabled {
+            background: #475569;
+            color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-small {
+            padding: 10px 12px;
+            font-size: 13px;
+            min-width: 110px;
+            background: #1e293b;
+            color: #f8fafc;
+            border: 1px solid rgba(212, 175, 55, 0.28);
+        }
+        .btn-small:hover {
+            background: #334155;
+        }
+        .btn-red { background: #ef4444; color: #fff; }
+        .btn-green { background: #34d399; color: #0f172a; }
+        .status-dot {
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .status-dot.online { background: #22c55e; box-shadow: 0 0 5px rgba(34, 197, 94, 0.7); }
+        .status-dot.offline { background: #ef4444; }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .admin-table th,
+        .admin-table td {
+            border: 1px solid rgba(212, 175, 55, 0.24);
+            padding: 12px 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+        .admin-table th {
+            background: rgba(212, 175, 55, 0.1);
+            color: #e8c766;
+        }
+        .admin-table tbody tr:hover {
+            background: rgba(15,23,42,0.9);
+        }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+        }
+        .status-pill.active { background: rgba(52,211,153,0.18); color: #34d399; }
+        .status-pill.lobby { background: rgba(212, 175, 55, 0.18); color: #e8c766; }
+        .status-pill.finished { background: rgba(248,113,113,0.18); color: #f87171; }
+        .status-pill.paused { background: rgba(248,113,113,0.18); color: #f87171; }
+        .panel-alert { background: rgba(248, 113, 113, 0.15); border: 1px solid #f87171; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; color: #f8fafc; }
+        .admin-view-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+        .admin-view-tab { border: 1px solid rgba(212, 175, 55, 0.28); border-radius: 10px; background: #0f172a; color: #cbd5e1; padding: 10px 16px; font-size: 14px; font-weight: bold; cursor: pointer; }
+        .admin-view-tab:hover { border-color: #d4af37; color: #e8c766; }
+        .admin-view-tab.active { background: linear-gradient(180deg, #e8c766, #b8901f); color: #1c1408; border-color: #f0d78c; }
+        @media (max-width: 900px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+        #exitPanelLink { position: absolute; left: 234.44px; top: 41.22px; width: 295.89px; height: 60px; margin: 0; box-sizing: border-box; }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+    <script>
+        window.alert = function () {};
+        window.confirm = function () { return true; };
+    </script>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Główna</a>
+        <a id="navRooms" href="pokoje.html">Pokoje Bitewne</a>
+        <a id="navTournaments" href="turnieje.html">Turnieje</a>
+        <a id="navShop" href="sklep.html">Sklep</a>
+        <a id="navRanking" href="ranking.html">Ranking Ogólny</a>
+        <a id="navProfile" href="profile.html">Profil</a>
+        <a id="navRules" href="zasady.html">Zasady</a>
+        <a id="navAdmin" href="admin.html" class="active">Panel Admina</a>
+    </div>
+
+    <div id="exitPanelLink" class="layout-editor-ignore">
+        <a href="#" onclick="if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) { window.location.href = document.referrer; } else { window.location.href = 'index.html'; } return false;" style="display:inline-block; background:#f59e0b; color:#111827; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">⬅ Wyjdź z panelu</a>
+    </div>
+
+    <div class="mailbox-modal-backdrop" id="mailboxModalBackdrop">
+        <div class="mailbox-modal">
+            <div class="mailbox-modal-header">
+                <h2 style="margin:0; color:#e8c766;">Skrzynka pocztowa — wiadomości od zablokowanych graczy</h2>
+                <button type="button" class="mailbox-close-btn" onclick="closeMailbox()">&times;</button>
+            </div>
+            <div id="mailboxContainer"><p style="color:#cbd5e1;">Ładowanie...</p></div>
+        </div>
+    </div>
+
+    <div class="mailbox-modal-backdrop" id="playerModalBackdrop">
+        <div class="mailbox-modal" style="max-width:840px;">
+            <div class="mailbox-modal-header">
+                <h2 style="margin:0; color:#e8c766;" id="playerModalTitle">Profil gracza</h2>
+                <button type="button" class="mailbox-close-btn" onclick="closePlayerModal()">&times;</button>
+            </div>
+            <div id="playerModalContent"><p style="color:#cbd5e1;">Ładowanie...</p></div>
+        </div>
+    </div>
+
+    <div class="admin-shell">
+        <div class="admin-header">
+            <button type="button" class="mailbox-btn" id="mailboxBtn" onclick="openMailbox()">✉ Skrzynka<span id="mailboxUnreadBadge" class="mailbox-badge" style="display:none;"></span></button>
+            <h1>Panel Administratora</h1>
+            <p>Twórz pokoje, śledź aktywne mecze, pauzuj i kończ rundy, a także zarządzaj zarejestrowanymi użytkownikami.</p>
+        </div>
+
+        <div id="adminWarning" class="panel-alert" style="display:none;"></div>
+
+        <div class="dashboard-grid">
+            <div class="panel-card full">
+                <h2>🗂️ Panele Administracyjne</h2>
+                <p class="subtext">Każdy kafelek prowadzi do dedykowanego widoku konfiguracji i sterowania dla wybranego obszaru.</p>
+                <div class="rooms-tile-grid">
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">🛒 Sklep</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Włącz/wyłącz sprzedaż biletów turniejowych.</p>
+                        <a href="/admin/settings/shop" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">🛡️ Tryb Drużynowy</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Włącz/wyłącz tworzenie nowych pokoi drużynowych.</p>
+                        <a href="/admin/settings/team-mode" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">📱 Aplikacja Mobilna</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Włącz/wyłącz przycisk pobierania apki (.apk) na stronie głównej.</p>
+                        <a href="/admin/settings/app-download" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">🗓️ Turniej Miesięczny</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Harmonogram, pula biletów, cena i nagrody VPLN edycji.</p>
+                        <a href="admin-turniej-miesieczny.html" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">⚔️ Zwykłe Rundy</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Pokoje rozgrywek standardowych i mecze towarzyskie — tworzenie i sterowanie.</p>
+                        <a href="/admin/rooms/regular" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">🎟️ Rundy Kwalifikacyjne</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Pokoje etapu kwalifikacji Turnieju Miesięcznego (rundy 1-4).</p>
+                        <a href="/admin/rooms/qualifiers" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">🥈 Rundy Półfinałowe</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">4 stałe pokoje etapu półfinałowego.</p>
+                        <a href="/admin/rooms/semifinals" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">🏆 Finał</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Pokój meczu finałowego.</p>
+                        <a href="/admin/rooms/final" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">👥 Gracze</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Lista graczy, blokady, multikonta, powiązania, skrzynka pocztowa.</p>
+                        <a href="/admin/rooms/players" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">🏅 Mini-Turnieje</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Twórz pokoje Mini-Turniejów z nagrodami VPLN i wymogiem biletu.</p>
+                        <a href="/admin/rooms/mini-tournaments" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">💳 Rejestr Wpłat</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Pełna ewidencja wpłat za bilety turniejowe, z eksportem do CSV.</p>
+                        <a href="/admin/platnosci" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">🪙 Portfel DOGE</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Wpłaty i wypłaty DOGE graczy do weryfikacji on-chain i potwierdzenia.</p>
+                        <a href="/admin/doge" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">🎬 Symulacja turnieju</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Prezentacja turnieju miesięcznego z 350 botami: kwalifikacje, półfinały, finał, zakłady i podsumowanie pieniędzy (ok. 5 minut). Można ją uruchamiać z własnymi ustawieniami.</p>
+                        <a href="/symulacja" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Otwórz</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">🐕 DogeOS (testnet)</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Pula nagród i skarbiec w kontrakcie: wpłać DOGE z własnego portfela jednym kliknięciem, doładuj gaz serwera, zamknij sezon.</p>
+                        <a href="/admin/dogeos" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">💸 Wypłaty VPLN</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Zgłoszenia wypłaty VPLN→PLN do realizacji (100% brutto) oraz wewnętrzny rejestr wypłaconych nagród.</p>
+                        <a href="/admin/wyplaty" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">🎫 Limity Sprzedaży Biletów</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Jedno miejsce na obie pule biletów (Turniej Miesięczny + Mini-Turnieje) i podgląd względem limitu działalności nierejestrowanej.</p>
+                        <a href="/admin/limity-biletow" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                    <div class="room-tile" style="text-align:center;">
+                        <h3 class="room-tile-title">📰 Nowości</h3>
+                        <p style="color:#cbd5e1; font-size:13px; margin-bottom:14px;">Publikuj ogłoszenia, które wyskakują graczom na stronie głównej do momentu zapoznania się.</p>
+                        <a href="/admin/news" class="btn-action" style="display:inline-block; text-decoration:none; width:auto; padding:12px 20px;">Zarządzaj</a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="rundyView" style="display:none;">
+                    <div class="admin-view-tabs" id="roundTypeTabs">
+                        <button type="button" class="admin-view-tab active" data-type="free" onclick="setRoundType('free')">Rundy zwykłe (darmowe)</button>
+                        <button type="button" class="admin-view-tab" data-type="qualification" onclick="setRoundType('qualification')">Rundy kwalifikacyjne</button>
+                        <button type="button" class="admin-view-tab" data-type="semifinal" onclick="setRoundType('semifinal')">Rundy półfinałowe</button>
+                        <button type="button" class="admin-view-tab" data-type="final" onclick="setRoundType('final')">Runda finałowa</button>
+                    </div>
+
+                    <div id="roundTypeCreateFree">
+                        <h2>Tworzenie nowego pokoju</h2>
+                        <p class="subtext">Utwórz nowy pokój bitewny z własnymi ustawieniami. Rundy są darmowe — bez wpisowego i bez nagród za wygraną.</p>
+                        <div class="panel-row">
+                            <div>
+                                <label>Nazwa pokoju</label>
+                                <input type="text" id="adminRoomName" placeholder="Nazwa pokoju" />
+                            </div>
+                            <div>
+                                <label>Maksymalna liczba graczy</label>
+                                <input type="number" id="adminRoomMaxPlayers" min="2" max="20" value="10" />
+                            </div>
+                            <div>
+                                <label>Długość rundy (minuty)</label>
+                                <input type="number" id="adminRoundDuration" min="15" max="600" value="60" />
+                            </div>
+                        </div>
+                        <div class="panel-row">
+                            <div>
+                                <label>Modyfikator ekonomii</label>
+                                <input type="number" id="adminEcoModifier" min="-5" max="5" step="0.25" value="0" />
+                            </div>
+                            <div>
+                                <label>Modyfikator wojska</label>
+                                <input type="number" id="adminMilitaryModifier" min="-5" max="5" step="0.25" value="0" />
+                            </div>
+                        </div>
+                        <div class="panel-row">
+                            <div>
+                                <label><input type="checkbox" id="adminRoomPlayersCanAddBots" /> Pozwól graczom samodzielnie dodawać boty w poczekalni</label>
+                            </div>
+                        </div>
+                        <button class="btn-action" onclick="createAdminRoom()">Utwórz pokój</button>
+
+                        <h2 style="margin-top:28px;">Tworzenie pokoju — system Gotowości</h2>
+                        <p class="subtext">Gracze startują rundę sami, klikając „Gotowy" w poczekalni — potrzeba minimum 5 graczy, a runda rusza automatycznie (10s odliczania), gdy wszyscy potwierdzą gotowość.</p>
+                        <div class="panel-row">
+                            <div>
+                                <label>Nazwa pokoju</label>
+                                <input type="text" id="readyRoomName" placeholder="Nazwa pokoju" />
+                            </div>
+                            <div>
+                                <label>Długość rundy (minuty)</label>
+                                <input type="number" id="readyRoomDuration" min="15" max="600" value="60" />
+                            </div>
+                        </div>
+                        <div class="panel-row">
+                            <div>
+                                <label><input type="checkbox" id="readyRoomPlayersCanAddBots" /> Pozwól graczom samodzielnie dodawać boty w poczekalni</label>
+                            </div>
+                        </div>
+                        <button class="btn-action" onclick="createReadyRoom()">Utwórz pokój z systemem Gotowości</button>
+
+                        <h2 style="margin-top:28px;">Tworzenie pokoju — tryb drużynowy</h2>
+                        <p class="subtext">Mapa drużynowa: 50 wiosek głównych (bez wiosek pomocniczych) podzielona na 10 stałych regionów po 5 wiosek — pokój wykorzystuje tylko tyle regionów, ile wybierzesz poniżej (2-10 drużyn), reszta zostaje neutralna. Gracze sami wybierają drużynę w poczekalni (mogą się przełączać) i mają tam wspólny czat. Runda startuje automatycznie po potwierdzeniu gotowości przez wszystkich (min. 2 zajęte drużyny), albo w każdej chwili ręcznie przez Ciebie ("Start gry" w poczekalni, gdy wszyscy mają już wybraną drużynę) — możesz też dodać boty bezpośrednio do wybranej drużyny w poczekalni. Runda jest darmowa, bez wpisowego i bez nagród za wygraną. Sojusznicy mogą się wzajemnie wspierać wojskiem.</p>
+                        <div class="panel-row">
+                            <div>
+                                <label>Nazwa pokoju</label>
+                                <input type="text" id="teamRoomName" placeholder="Nazwa pokoju" />
+                            </div>
+                            <div>
+                                <label>Długość rundy (minuty)</label>
+                                <input type="number" id="teamRoomDuration" min="15" max="600" value="60" />
+                            </div>
+                            <div>
+                                <label>Liczba drużyn (2-10)</label>
+                                <input type="number" id="teamRoomTeamCount" min="2" max="10" value="2" />
+                            </div>
+                        </div>
+                        <button class="btn-action" id="createTeamRoomBtn" onclick="createTeamRoom()">Utwórz pokój drużynowy</button>
+                        <a href="edytor_mapy_druzynowej.html" class="btn-action" style="display:inline-block; text-decoration:none; text-align:center; margin-top:10px;">🗺️ Edytor pozycji wiosek na mapie</a>
+                    </div>
+
+                    <div id="roundTypeCreateQualification" style="display:none;">
+                        <h2>Tworzenie rundy kwalifikacyjnej</h2>
+                        <p class="subtext">Osobna pula pokoi wyłącznie dla rund kwalifikacyjnych — nie mieszają się ze zwykłymi pokojami. Runda startuje automatycznie, gdy pokój się zapełni, tak samo jak zwykły pokój standardowy. Jest darmowa (bez wpisowego) i nie wypłaca żadnych nagród.</p>
+                        <div class="panel-row">
+                            <div>
+                                <label>Nazwa turnieju</label>
+                                <input type="text" id="qualRoomName" placeholder="Nazwa turnieju" />
+                            </div>
+                            <div>
+                                <label>Maksymalna liczba graczy</label>
+                                <input type="number" id="qualRoomMaxPlayers" min="2" max="20" value="10" />
+                            </div>
+                            <div>
+                                <label>Długość rundy (minuty)</label>
+                                <input type="number" id="qualRoundDuration" min="15" max="600" value="60" />
+                            </div>
+                        </div>
+                        <div class="panel-row">
+                            <div>
+                                <label>Modyfikator ekonomii</label>
+                                <input type="number" id="qualEcoModifier" min="-5" max="5" step="0.25" value="0" />
+                            </div>
+                            <div>
+                                <label>Modyfikator wojska</label>
+                                <input type="number" id="qualMilitaryModifier" min="-5" max="5" step="0.25" value="0" />
+                            </div>
+                        </div>
+                        <div class="panel-row">
+                            <div>
+                                <label><input type="checkbox" id="qualPlayersCanAddBots" /> Pozwól graczom samodzielnie dodawać boty w poczekalni</label>
+                            </div>
+                        </div>
+                        <button class="btn-action" onclick="createQualificationRoom()">Utwórz rundę kwalifikacyjną</button>
+                    </div>
+
+                    <div id="roundTypeInfoSemifinal" style="display:none; margin-bottom:20px;">
+                        <h2>Rundy półfinałowe</h2>
+                        <p class="subtext">4 stałe pokoje półfinałowe, tworzone automatycznie przy starcie serwera i zapauzowane domyślnie — nie tworzy się ich ręcznie. Dołączenie nie kosztuje biletu. Odpauzuj je na liście poniżej, gdy rundy kwalifikacyjne się zakończą i półfinaliści są gotowi zagrać.</p>
+                    </div>
+
+                    <div id="roundTypeInfoFinal" style="display:none; margin-bottom:20px;">
+                        <h2>Runda finałowa</h2>
+                        <p class="subtext">1 stały pokój finałowy, tworzony automatycznie przy starcie serwera i zapauzowany domyślnie — nie tworzy się go ręcznie. Dołączenie nie kosztuje biletu. Odpauzuj go na liście poniżej, gdy 10 finalistów zostanie wyłonionych.</p>
+                    </div>
+
+                    <div class="admin-view-tabs" style="margin-top:10px;">
+                        <button type="button" class="admin-view-tab active" id="viewTabRoomsAll" onclick="setRoomsSubView('rooms-all')">Pokaż aktywne pokoje</button>
+                        <button type="button" class="admin-view-tab" id="viewTabRoomsOngoing" onclick="setRoomsSubView('rooms-ongoing')">Pokaż trwające rundy</button>
+                    </div>
+
+                    <div id="roomsView">
+                        <h2 id="roomsViewTitle">Aktywne pokoje</h2>
+                        <p class="subtext" id="roomsViewSubtext">Wszystkie utworzone pokoje — niezależnie od stanu rundy. Kończąc rundę usuwasz tylko rundę, pokój pozostaje i można w nim od razu wystartować kolejną.</p>
+                        <div id="activeMatchesContainer" class="rooms-tile-grid"></div>
+                    </div>
+                </div>
+
+                <div id="usersView" style="display:none;">
+                    <h2>Panel Graczy</h2>
+                    <p class="subtext">Zarządzaj punktami premium i blokadami kont. Zablokowani gracze nie mogą logować się ani uczestniczyć w rozgrywkach. Kliknij wiersz gracza, aby zobaczyć pełny profil, historię zakupów i logowań. Lista jest posortowana w kolejności zakładania kont (najstarsze konto jako pierwsze).</p>
+                    <div class="status-pill" id="playerCountPill" style="margin-bottom:16px; font-size:15px; background: rgba(212, 175, 55, 0.14); color:#e8c766; border:1px solid rgba(212, 175, 55, 0.3);">Zarejestrowani gracze: <strong style="margin-left:6px;">—</strong></div>
+                    <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+                        <input type="text" id="userSearchInput" placeholder="Szukaj gracza po nazwie..." oninput="filterAdminUsers()" style="flex:1; min-width:220px; padding:12px 14px; border-radius:10px; border:1px solid rgba(212, 175, 55, 0.28); background:#0f172a; color:#f8fafc; font-size:14px; box-sizing:border-box;" />
+                        <button type="button" class="btn-small" id="blockedOnlyToggle" onclick="toggleBlockedOnlyFilter()">Pokaż tylko zablokowanych</button>
+                    </div>
+                    <div id="usersContainer"></div>
+                </div>
+
+                <div id="multiAccountsView" style="display:none;">
+                    <h2>Wykryte Multikonta</h2>
+                    <p class="subtext">Twarde dowody sieciowe i sprzętowe — pary kont, którym serwer zablokował dołączenie do tego samego pokoju z powodu wspólnego Device ID lub wspólnego adresu IP w ciągu ostatnich 7 dni.</p>
+                    <div id="multiAccountsContainer"></div>
+                </div>
+
+                <div id="suspiciousLinksView" style="display:none;">
+                    <h2>Podejrzane Powiązania</h2>
+                    <p class="subtext">Pary graczy wyłapane przez analizę behawioralną — jak często grają razem oraz jednostronne przejęcia wiosek przy zerowej/symbolicznej obronie (podkładanie się, win-trading).</p>
+                    <div id="suspiciousLinksContainer"></div>
+                </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+        const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        async function showAdminError(message) {
+            const warning = document.getElementById('adminWarning');
+            warning.style.display = 'block';
+            warning.innerText = message;
+        }
+
+        async function hideAdminError() {
+            const warning = document.getElementById('adminWarning');
+            warning.style.display = 'none';
+            warning.innerText = '';
+        }
+
+        function formatNumber(value) {
+            return Number(value).toLocaleString('pl-PL');
+        }
+
+        async function fetchAdminProfile() {
+            try {
+                const response = await fetch('/api/auth/me', { headers });
+                if (!response.ok) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('token');
+                    return window.location.href = '/login.html';
+                }
+                const profile = await response.json();
+                if (!profile.isAdmin) {
+                    return showAdminError('Brak uprawnień administratora.');
+                }
+                // Sklep / Tryb Drużynowy now live at their own /admin/settings/* pages (see the
+                // tile grid above) — no longer loaded/polled from here.
+            } catch (err) {
+                console.error(err);
+                showAdminError('Błąd ładowania panelu administratora.');
+            }
+        }
+
+        let shopEnabled = true;
+
+        function renderShopStatus() {
+            const label = document.getElementById('shopStatusLabel');
+            const btn = document.getElementById('toggleShopBtn');
+            if (shopEnabled) {
+                label.textContent = 'Sklep: Włączony';
+                label.className = 'status-pill active';
+                btn.textContent = 'Wyłącz sklep';
+            } else {
+                label.textContent = 'Sklep: Wyłączony';
+                label.className = 'status-pill finished';
+                btn.textContent = 'Włącz sklep';
+            }
+        }
+
+        async function loadShopStatus() {
+            try {
+                const response = await fetch('/api/settings/shop');
+                if (!response.ok) return;
+                const data = await response.json();
+                shopEnabled = data.enabled !== false;
+                renderShopStatus();
+            } catch (err) {
+                console.error('Błąd ładowania statusu sklepu:', err);
+            }
+        }
+
+        async function toggleShop() {
+            try {
+                const response = await fetch('/api/admin/settings/shop', {
+                    method: 'PUT',
+                    headers,
+                    body: JSON.stringify({ enabled: !shopEnabled })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zmienić statusu sklepu.');
+                shopEnabled = result.enabled;
+                renderShopStatus();
+            } catch (err) {
+                console.error(err);
+                alert(err.message);
+            }
+        }
+
+        let teamModeEnabled = true;
+
+        function renderTeamModeStatus() {
+            const label = document.getElementById('teamModeStatusLabel');
+            const btn = document.getElementById('toggleTeamModeBtn');
+            const createBtn = document.getElementById('createTeamRoomBtn');
+            if (teamModeEnabled) {
+                label.textContent = 'Tryb drużynowy: Włączony';
+                label.className = 'status-pill active';
+                btn.textContent = 'Wyłącz tryb drużynowy';
+            } else {
+                label.textContent = 'Tryb drużynowy: Wyłączony';
+                label.className = 'status-pill finished';
+                btn.textContent = 'Włącz tryb drużynowy';
+            }
+            if (createBtn) createBtn.disabled = !teamModeEnabled;
+        }
+
+        async function loadTeamModeStatus() {
+            try {
+                const response = await fetch('/api/settings/team-mode');
+                if (!response.ok) return;
+                const data = await response.json();
+                teamModeEnabled = data.enabled !== false;
+                renderTeamModeStatus();
+            } catch (err) {
+                console.error('Błąd ładowania statusu trybu drużynowego:', err);
+            }
+        }
+
+        async function toggleTeamMode() {
+            try {
+                const response = await fetch('/api/admin/settings/team-mode', {
+                    method: 'PUT',
+                    headers,
+                    body: JSON.stringify({ enabled: !teamModeEnabled })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zmienić statusu trybu drużynowego.');
+                teamModeEnabled = result.enabled;
+                renderTeamModeStatus();
+            } catch (err) {
+                console.error(err);
+                alert(err.message);
+            }
+        }
+
+        function numOrDefault(value, fallback) {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? parsed : fallback;
+        }
+
+        async function createAdminRoom() {
+            hideAdminError();
+            const payload = {
+                name: document.getElementById('adminRoomName').value.trim(),
+                maxPlayers: Number(document.getElementById('adminRoomMaxPlayers').value) || 10,
+                playersCanAddBots: document.getElementById('adminRoomPlayersCanAddBots').checked,
+                settings: {
+                    dlugoscRundySekundy: Number(document.getElementById('adminRoundDuration').value) * 60 || 3600,
+                    modyfikatorCzasuEkonomii: numOrDefault(document.getElementById('adminEcoModifier').value, 0),
+                    modyfikatorCzasuWojska: numOrDefault(document.getElementById('adminMilitaryModifier').value, 0),
+                }
+            };
+            try {
+                const response = await fetch('/api/rooms', { method: 'POST', headers, body: JSON.stringify(payload) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się utworzyć pokoju.');
+                document.getElementById('adminRoomName').value = '';
+                await loadAdminRooms();
+                alert('Pokój został utworzony.');
+            } catch (err) {
+                console.error(err);
+                showAdminError(err.message || 'Błąd tworzenia pokoju.');
+            }
+        }
+
+        async function createReadyRoom() {
+            hideAdminError();
+            const payload = {
+                name: document.getElementById('readyRoomName').value.trim(),
+                roomType: 'percentage',
+                playersCanAddBots: document.getElementById('readyRoomPlayersCanAddBots').checked,
+                settings: {
+                    dlugoscRundySekundy: Number(document.getElementById('readyRoomDuration').value) * 60 || 3600
+                }
+            };
+            try {
+                const response = await fetch('/api/rooms', { method: 'POST', headers, body: JSON.stringify(payload) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się utworzyć pokoju.');
+                document.getElementById('readyRoomName').value = '';
+                alert(`Pokój '${result.room.nazwaPokoju}' został utworzony.`);
+                await loadAdminRooms();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd tworzenia pokoju.');
+            }
+        }
+
+        async function createTeamRoom() {
+            hideAdminError();
+            const payload = {
+                name: document.getElementById('teamRoomName').value.trim(),
+                roomType: 'team',
+                teamCount: Math.min(10, Math.max(2, Number(document.getElementById('teamRoomTeamCount').value) || 2)),
+                settings: {
+                    dlugoscRundySekundy: Number(document.getElementById('teamRoomDuration').value) * 60 || 3600
+                }
+            };
+            try {
+                const response = await fetch('/api/rooms', { method: 'POST', headers, body: JSON.stringify(payload) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się utworzyć pokoju.');
+                document.getElementById('teamRoomName').value = '';
+                alert(`Pokój '${result.room.nazwaPokoju}' został utworzony.`);
+                await loadAdminRooms();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd tworzenia pokoju.');
+            }
+        }
+
+        function formatRoundClock(value) {
+            const total = Math.max(0, Math.floor(Number(value) || 0));
+            const hours = String(Math.floor(total / 3600)).padStart(2, '0');
+            const minutes = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
+            const seconds = String(total % 60).padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+
+        // Room templates are pure settings now — no round status to show, just whether they're
+        // currently accepting new joins.
+        function createRoomTemplateCard(room) {
+            const waitingCount = room.waitingCount || 0;
+            const maxPlayers = room.maxGraczy || room.maxPlayers || 10;
+            const isPaused = !!room.isPaused;
+            const isPercentage = room.roomType === 'percentage';
+            const isTeam = room.roomType === 'team';
+            const readyCount = (isPercentage || isTeam) ? (room.waitingPlayers || []).filter(p => p.isBot || p.ready).length : 0;
+            const statusLabel = isPaused ? 'Zapauzowany' : 'Dostępny';
+            const statusClass = isPaused ? 'paused' : 'lobby';
+            const container = document.createElement('div');
+            container.className = 'room-tile';
+            container.innerHTML = `
+                <div class="room-tile-header">
+                    <div>
+                        <h3 class="room-tile-title">${room.nazwaPokoju || room.roomName}</h3>
+                        <div class="status-pill ${statusClass}">${statusLabel}</div>
+                        ${isPercentage ? '<span class="status-pill lobby" style="margin-left:6px;">System Gotowości</span>' : ''}
+                        ${isTeam ? '<span class="status-pill lobby" style="margin-left:6px;">Tryb drużynowy</span>' : ''}
+                    </div>
+                </div>
+                <div class="room-tile-info">
+                    <div><strong>W kolejce:</strong> ${waitingCount} / ${maxPlayers}${(isPercentage || isTeam) && waitingCount > 0 ? ` (${readyCount} gotowych)` : ''}</div>
+                    <div><strong>Czas rundy:</strong> ${Math.floor((room.ustawienia?.dlugoscRundySekundy || 3600) / 60)} min</div>
+                </div>
+                <div class="room-tile-players">
+                    ${room.waitingPlayers?.length ? `W kolejce: ${room.waitingPlayers.map(p => p.username).join(', ')}` : 'Brak graczy w kolejce.'}
+                </div>
+                <div class="room-tile-actions">
+                    <button class="btn-small" onclick="togglePauseRoom('${room._id}', ${isPaused})">${isPaused ? 'Wznów' : 'Pauza'}</button>
+                    <button class="btn-small btn-red" onclick="deleteAdminRoom('${room._id}', '${room.nazwaPokoju || room.roomName}')">Usuń pokój</button>
+                </div>
+            `;
+            return container;
+        }
+
+        // Rounds are real, live matches -- own roster, own timer, own pool, completely independent
+        // of the template they came from and of any other parallel round from the same template.
+        function createRoundCard(round) {
+            const maxPlayers = round.maxPlayers || (round.players || []).length || 10;
+            const remaining = round.roundEndsAt ? Math.max(0, Math.floor((new Date(round.roundEndsAt).getTime() - Date.now()) / 1000)) : null;
+            const container = document.createElement('div');
+            container.className = 'room-tile';
+            container.innerHTML = `
+                <div class="room-tile-header">
+                    <div>
+                        <h3 class="room-tile-title">${round.roomName}</h3>
+                        <div class="status-pill active">Trwa runda${remaining !== null ? ` • ${formatRoundClock(remaining)}` : ''}</div>
+                        ${round.roomType === 'percentage' ? '<span class="status-pill lobby" style="margin-left:6px;">System Gotowości</span>' : ''}
+                        ${round.roomType === 'team' ? '<span class="status-pill lobby" style="margin-left:6px;">Tryb drużynowy</span>' : ''}
+                    </div>
+                </div>
+                <div class="room-tile-info">
+                    <div><strong>Gracze:</strong> ${round.currentPlayersCount || (round.players || []).length}</div>
+                    <div><strong>Czas rundy:</strong> ${Math.floor((round.settings?.dlugoscRundySekundy || 3600) / 60)} min</div>
+                    <div><strong>Do końca rundy:</strong> ${remaining !== null ? formatRoundClock(remaining) : '—'}</div>
+                </div>
+                <div class="room-tile-players">
+                    ${round.players?.length ? `Gracze: ${round.players.map(p => p.name || p.username).join(', ')}` : 'Brak graczy.'}
+                </div>
+                <div class="room-tile-actions">
+                    <button class="btn-small btn-green" onclick="spectateRound('${round._id}')">Oglądaj</button>
+                    <button class="btn-small btn-red" onclick="endAdminRound('${round._id}', '${round.roomName}')">Zakończ</button>
+                    <button class="btn-small btn-red" onclick="deleteAdminRound('${round._id}', '${round.roomName}')">Usuń rundę</button>
+                </div>
+            `;
+            return container;
+        }
+
+        let currentView = 'rundy'; // top-level tab: 'rundy' | 'users' | 'multi-accounts' | 'suspicious-links'
+        let currentRoundType = 'free'; // 'free' | 'qualification' | 'semifinal' | 'final'
+        let currentRoomsSubView = 'rooms-all'; // 'rooms-all' | 'rooms-ongoing'
+        let lastRoomTemplates = [];
+        let lastRounds = [];
+
+        // Maps the active round-type sub-tab onto the `?tournament=&stage=` query both
+        // /api/admin/rooms and /api/admin/rounds already understand server-side.
+        function roundTypeQuery(type) {
+            if (type === 'free') return '';
+            if (type === 'qualification') return '?tournament=1&stage=qualification';
+            return `?tournament=1&stage=${type}`; // 'semifinal' | 'final'
+        }
+
+        function renderRoomsView() {
+            const container = document.getElementById('activeMatchesContainer');
+            if (currentRoomsSubView === 'rooms-ongoing') {
+                if (!lastRounds.length) {
+                    container.innerHTML = '<p style="color:#cbd5e1;">Brak trwających rund w tej chwili.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                lastRounds.forEach(round => container.appendChild(createRoundCard(round)));
+            } else {
+                if (!lastRoomTemplates.length) {
+                    container.innerHTML = '<p style="color:#cbd5e1;">Brak żadnych utworzonych pokoi. Utwórz nowy pokój powyżej.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                lastRoomTemplates.forEach(room => container.appendChild(createRoomTemplateCard(room)));
+            }
+        }
+
+        async function loadAdminRoomTemplates() {
+            const container = document.getElementById('activeMatchesContainer');
+            if (!lastRoomTemplates.length && currentRoomsSubView === 'rooms-all') {
+                container.innerHTML = '<p style="color:#cbd5e1;">Ładowanie pokoi...</p>';
+            }
+            try {
+                const response = await fetch('/api/admin/rooms' + roundTypeQuery(currentRoundType), { headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Błąd przy pobieraniu pokoi.');
+                lastRoomTemplates = result;
+                if (currentRoomsSubView === 'rooms-all') renderRoomsView();
+            } catch (err) {
+                if (currentRoomsSubView === 'rooms-all') container.innerHTML = `<p style="color:#f87171;">${err.message || 'Błąd.'}</p>`;
+            }
+        }
+
+        async function loadAdminRounds() {
+            const container = document.getElementById('activeMatchesContainer');
+            if (!lastRounds.length && currentRoomsSubView === 'rooms-ongoing') {
+                container.innerHTML = '<p style="color:#cbd5e1;">Ładowanie rund...</p>';
+            }
+            try {
+                const response = await fetch('/api/admin/rounds' + roundTypeQuery(currentRoundType), { headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Błąd przy pobieraniu rund.');
+                lastRounds = result;
+                if (currentRoomsSubView === 'rooms-ongoing') renderRoomsView();
+            } catch (err) {
+                if (currentRoomsSubView === 'rooms-ongoing') container.innerHTML = `<p style="color:#f87171;">${err.message || 'Błąd.'}</p>`;
+            }
+        }
+
+        function loadAdminRooms() {
+            // Kept as the single polling entry point (setInterval below calls this only while the
+            // "Zarządzanie Rundami" tab is active) — fetches BOTH independent data sources for the
+            // currently selected round type, each only re-renders if its own sub-tab is showing.
+            loadAdminRoomTemplates();
+            loadAdminRounds();
+        }
+
+        // Inner "Pokaż aktywne pokoje" / "Pokaż trwające rundy" toggle, scoped to whichever round
+        // type is currently selected (see setRoundType below).
+        function setRoomsSubView(sub) {
+            currentRoomsSubView = sub;
+            document.getElementById('viewTabRoomsAll').classList.toggle('active', sub === 'rooms-all');
+            document.getElementById('viewTabRoomsOngoing').classList.toggle('active', sub === 'rooms-ongoing');
+            document.getElementById('roomsViewTitle').textContent = sub === 'rooms-ongoing' ? 'Trwające rundy' : 'Aktywne pokoje';
+            document.getElementById('roomsViewSubtext').textContent = sub === 'rooms-ongoing'
+                ? 'Tylko faktycznie trwające rundy — każda ma własny skład graczy, czas startu i stan rozgrywki, niezależnie od pozostałych.'
+                : 'Stałe szablony ustawień — nigdy nie znikają. Dołączenie do pokoju to wejście do kolejki; gdy zbierze się komplet, rusza nowa, niezależna runda, a pokój od razu jest znów dostępny dla kolejnych graczy.';
+            if (sub === 'rooms-ongoing') loadAdminRounds(); else loadAdminRoomTemplates();
+            renderRoomsView();
+        }
+
+        // "Zarządzanie Rundami" round-type sub-tabs (Rundy zwykłe / kwalifikacyjne / półfinałowe /
+        // Runda finałowa) — swaps which creation panel is shown and re-scopes the rooms/rounds list.
+        function setRoundType(type) {
+            currentRoundType = type;
+            document.querySelectorAll('#roundTypeTabs .admin-view-tab').forEach((btn) => {
+                btn.classList.toggle('active', btn.dataset.type === type);
+            });
+            document.getElementById('roundTypeCreateFree').style.display = type === 'free' ? 'block' : 'none';
+            document.getElementById('roundTypeCreateQualification').style.display = type === 'qualification' ? 'block' : 'none';
+            document.getElementById('roundTypeInfoSemifinal').style.display = type === 'semifinal' ? 'block' : 'none';
+            document.getElementById('roundTypeInfoFinal').style.display = type === 'final' ? 'block' : 'none';
+            lastRoomTemplates = [];
+            lastRounds = [];
+            setRoomsSubView(currentRoomsSubView);
+        }
+
+        function setAdminView(view) {
+            currentView = view;
+
+            document.getElementById('viewTabRundy').classList.toggle('active', view === 'rundy');
+            document.getElementById('viewTabUsers').classList.toggle('active', view === 'users');
+            document.getElementById('viewTabMultiAccounts').classList.toggle('active', view === 'multi-accounts');
+            document.getElementById('viewTabSuspiciousLinks').classList.toggle('active', view === 'suspicious-links');
+
+            document.getElementById('rundyView').style.display = view === 'rundy' ? 'block' : 'none';
+            document.getElementById('usersView').style.display = view === 'users' ? 'block' : 'none';
+            document.getElementById('multiAccountsView').style.display = view === 'multi-accounts' ? 'block' : 'none';
+            document.getElementById('suspiciousLinksView').style.display = view === 'suspicious-links' ? 'block' : 'none';
+
+            if (view === 'rundy') {
+                setRoundType(currentRoundType);
+            } else if (view === 'users') {
+                loadAdminUsers();
+            } else if (view === 'multi-accounts') {
+                loadMultiAccounts();
+            } else if (view === 'suspicious-links') {
+                loadSuspiciousLinks();
+            }
+        }
+
+        async function createQualificationRoom() {
+            hideAdminError();
+            const payload = {
+                name: document.getElementById('qualRoomName').value.trim(),
+                maxPlayers: Number(document.getElementById('qualRoomMaxPlayers').value) || 10,
+                playersCanAddBots: document.getElementById('qualPlayersCanAddBots').checked,
+                isTournament: true,
+                settings: {
+                    dlugoscRundySekundy: Number(document.getElementById('qualRoundDuration').value) * 60 || 3600,
+                    modyfikatorCzasuEkonomii: numOrDefault(document.getElementById('qualEcoModifier').value, 0),
+                    modyfikatorCzasuWojska: numOrDefault(document.getElementById('qualMilitaryModifier').value, 0),
+                }
+            };
+            try {
+                const response = await fetch('/api/rooms', { method: 'POST', headers, body: JSON.stringify(payload) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się utworzyć rundy kwalifikacyjnej.');
+                document.getElementById('qualRoomName').value = '';
+                await loadAdminRoomTemplates();
+                renderRoomsView();
+                alert('Runda kwalifikacyjna została utworzona.');
+            } catch (err) {
+                console.error(err);
+                showAdminError(err.message || 'Błąd tworzenia rundy kwalifikacyjnej.');
+            }
+        }
+
+        function formatDateTime(value) {
+            if (!value) return '—';
+            return new Date(value).toLocaleString('pl-PL');
+        }
+
+        const multiAccountReasonLabels = {
+            device_id_match: 'Wspólne urządzenie (Device ID)',
+            shared_ip_history: 'Wspólny adres IP (7 dni)',
+            pinned_hardware_id_match: 'Trwałe powiązanie kont (wykryte wcześniej)'
+        };
+
+        async function loadMultiAccounts() {
+            const container = document.getElementById('multiAccountsContainer');
+            container.innerHTML = '<p style="color:#cbd5e1;">Ładowanie...</p>';
+            try {
+                const response = await fetch('/api/admin/multi-accounts', { headers });
+                const incidents = await response.json();
+                if (!response.ok) throw new Error(incidents.error || 'Błąd przy pobieraniu incydentów.');
+                if (!incidents.length) {
+                    container.innerHTML = '<p style="color:#cbd5e1;">Brak wykrytych prób multikonta.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                incidents.forEach((incident) => container.appendChild(createMultiAccountCard(incident)));
+            } catch (err) {
+                container.innerHTML = `<p style="color:#f87171;">${err.message || 'Błąd.'}</p>`;
+            }
+        }
+
+        function createMultiAccountCard(incident) {
+            const card = document.createElement('div');
+            card.className = 'panel-card';
+            card.style.marginBottom = '14px';
+            const evidence = incident.reason === 'device_id_match'
+                ? `Wspólne Device ID: <code>${incident.sharedDeviceId || '—'}</code>`
+                : `Wspólny adres IP: <code>${incident.sharedIp || '—'}</code> (Device ID: <code>${incident.sharedDeviceId || '—'}</code>)`;
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; align-items:center;">
+                    <div style="font-size:16px;">
+                        <strong>${incident.mainUsername}</strong> ${incident.mainUserBlocked ? '<span style="color:#f87171;">(zablokowany)</span>' : ''}
+                        &nbsp;<---->&nbsp;
+                        <strong>${incident.secondaryUsername}</strong> ${incident.secondaryUserBlocked ? '<span style="color:#f87171;">(zablokowany)</span>' : ''}
+                    </div>
+                    <span style="color:#d4af37; font-size:13px;">${formatDateTime(incident.detectedAt)}</span>
+                </div>
+                <p class="subtext" style="margin:8px 0 0;">${multiAccountReasonLabels[incident.reason] || incident.reason} · ${evidence}${incident.resolved ? ' · <span style="color:#22c55e;">rozwiązane</span>' : ''}</p>
+                <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="btn-small ${incident.mainUserBlocked ? 'btn-green' : 'btn-red'}" onclick="multiAccountAction('${incident._id}', '${incident.mainUserBlocked ? 'unblock_main' : 'block_main'}')">${incident.mainUserBlocked ? 'Odblokuj' : 'Zablokuj'} ${incident.mainUsername}</button>
+                    <button class="btn-small ${incident.secondaryUserBlocked ? 'btn-green' : 'btn-red'}" onclick="multiAccountAction('${incident._id}', '${incident.secondaryUserBlocked ? 'unblock_secondary' : 'block_secondary'}')">${incident.secondaryUserBlocked ? 'Odblokuj' : 'Zablokuj'} ${incident.secondaryUsername}</button>
+                    <button class="btn-small ${(incident.mainUserBlocked && incident.secondaryUserBlocked) ? 'btn-green' : 'btn-red'}" onclick="multiAccountAction('${incident._id}', '${(incident.mainUserBlocked && incident.secondaryUserBlocked) ? 'unblock_both' : 'block_both'}')">${(incident.mainUserBlocked && incident.secondaryUserBlocked) ? 'Odblokuj oba konta' : 'Zbanuj oba konta'}</button>
+                    <button class="btn-small" onclick="multiAccountUnpin('${incident._id}')" title="Czyści pole hardwareId dla obu kont, żeby pinned_hardware_id_match przestał je permanentnie blokować">Odepnij urządzenie</button>
+                </div>
+            `;
+            return card;
+        }
+
+        async function multiAccountAction(incidentId, action) {
+            try {
+                const response = await fetch(`/api/admin/multi-accounts/${incidentId}/action`, {
+                    method: 'POST', headers, body: JSON.stringify({ action })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się wykonać akcji.');
+                await loadMultiAccounts();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd podczas wykonywania akcji.');
+            }
+        }
+
+        async function multiAccountUnpin(incidentId) {
+            try {
+                const response = await fetch(`/api/admin/multi-accounts/${incidentId}/unpin`, { method: 'POST', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się odpiąć urządzenia.');
+                await loadMultiAccounts();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd podczas odpinania urządzenia.');
+            }
+        }
+
+        async function loadSuspiciousLinks() {
+            const container = document.getElementById('suspiciousLinksContainer');
+            container.innerHTML = '<p style="color:#cbd5e1;">Ładowanie...</p>';
+            try {
+                const response = await fetch('/api/admin/suspicious-links', { headers });
+                const pairs = await response.json();
+                if (!response.ok) throw new Error(pairs.error || 'Błąd przy pobieraniu powiązań.');
+                if (!pairs.length) {
+                    container.innerHTML = '<p style="color:#cbd5e1;">Brak wykrytych podejrzanych powiązań.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                pairs.forEach((pair) => container.appendChild(createSuspiciousLinkCard(pair)));
+            } catch (err) {
+                container.innerHTML = `<p style="color:#f87171;">${err.message || 'Błąd.'}</p>`;
+            }
+        }
+
+        function createSuspiciousLinkCard(pair) {
+            const card = document.createElement('div');
+            card.className = 'panel-card';
+            card.style.marginBottom = '14px';
+            const percentText = pair.gamesTogetherPercent === null ? 'brak danych' : `${pair.gamesTogetherPercent}%`;
+            const logsHtml = pair.oneSidedCaptures.slice(0, 10).map((c) => `
+                <li>${formatDateTime(c.timestamp)} — <strong>${c.aggressorUsername}</strong> przejął wioskę od <strong>${c.defenderUsername}</strong>
+                    przy obronie ${Math.round(c.defensePower)} / ataku ${Math.round(c.attackPower)}
+                    ${c.lateGame ? ' <span style="color:#f59e0b;">(końcówka rundy)</span>' : ''}
+                </li>`).join('');
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; align-items:center;">
+                    <div style="font-size:16px;">
+                        <strong>${pair.usernameA}</strong> ${pair.userABlocked ? '<span style="color:#f87171;">(zablokowany)</span>' : ''}
+                        &nbsp;&harr;&nbsp;
+                        <strong>${pair.usernameB}</strong> ${pair.userBBlocked ? '<span style="color:#f87171;">(zablokowany)</span>' : ''}
+                    </div>
+                    <span style="color:#d4af37; font-size:13px;">Ostatni incydent: ${formatDateTime(pair.lastIncidentAt)}</span>
+                </div>
+                <p class="subtext" style="margin:8px 0 0;">
+                    Wspólne mecze: <strong>${pair.gamesTogether}</strong> (${percentText} rozgrywek jednego z graczy) ·
+                    Jednostronne przejęcia wiosek: <strong>${pair.totalOneSidedCaptures}</strong>
+                    ${pair.warningIssued ? ' · <span style="color:#f59e0b;">ostrzeżenie wydane</span>' : ''}
+                    ${pair.adminReviewed ? ' · <span style="color:#22c55e;">przejrzane</span>' : ''}
+                </p>
+                <details style="margin-top:8px;">
+                    <summary style="cursor:pointer; color:#d4af37;">Zobacz logi anomalii bitewnych (${pair.oneSidedCaptures.length})</summary>
+                    <ul style="margin:8px 0 0; padding-left:18px; color:#cbd5e1; font-size:13px;">${logsHtml}</ul>
+                </details>
+                <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="btn-small" onclick="suspiciousLinkWarn('${pair._id}')">Nadaj ostrzeżenie</button>
+                    <button class="btn-small" onclick="suspiciousLinkReview('${pair._id}')">Oznacz jako przejrzane</button>
+                    <button class="btn-small btn-red" ${pair.userABlocked ? 'disabled' : ''} onclick="suspiciousLinkBan('${pair._id}', 'A')">Zbanuj ${pair.usernameA}</button>
+                    <button class="btn-small btn-red" ${pair.userBBlocked ? 'disabled' : ''} onclick="suspiciousLinkBan('${pair._id}', 'B')">Zbanuj ${pair.usernameB}</button>
+                    <button class="btn-small btn-red" onclick="suspiciousLinkBan('${pair._id}', 'both')">Zbanuj oba konta</button>
+                </div>
+            `;
+            return card;
+        }
+
+        async function suspiciousLinkWarn(pairId) {
+            try {
+                const response = await fetch(`/api/admin/suspicious-links/${pairId}/warn`, { method: 'POST', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się nadać ostrzeżenia.');
+                await loadSuspiciousLinks();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd podczas nadawania ostrzeżenia.');
+            }
+        }
+
+        async function suspiciousLinkReview(pairId) {
+            try {
+                const response = await fetch(`/api/admin/suspicious-links/${pairId}/review`, { method: 'POST', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się oznaczyć jako przejrzane.');
+                await loadSuspiciousLinks();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd.');
+            }
+        }
+
+        async function suspiciousLinkBan(pairId, target) {
+            try {
+                const response = await fetch(`/api/admin/suspicious-links/${pairId}/ban`, {
+                    method: 'POST', headers, body: JSON.stringify({ target })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zbanować konta.');
+                await loadSuspiciousLinks();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd podczas banowania.');
+            }
+        }
+
+        // Room management (Zarządzanie Rundami) and the player list (Panel Graczy / Multikonta /
+        // Podejrzane Powiązania) now live at /admin/rooms/* (see the tile grid above) — no longer
+        // polled from here.
+
+        // --- Mailbox (blocked-player messages) --------------------------------------------------
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str == null ? '' : String(str);
+            return div.innerHTML;
+        }
+
+        async function refreshMailboxBadge() {
+            try {
+                const response = await fetch('/api/admin/mailbox', { headers });
+                const conversations = await response.json();
+                if (!response.ok) return;
+                const unreadCount = conversations.filter((c) => c.hasUnreadFromPlayer).length;
+                const badge = document.getElementById('mailboxUnreadBadge');
+                if (unreadCount > 0) {
+                    badge.textContent = unreadCount;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            } catch (err) {
+                console.error('Błąd odświeżania skrzynki:', err);
+            }
+        }
+
+        function openMailbox() {
+            document.getElementById('mailboxModalBackdrop').style.display = 'flex';
+            loadMailbox();
+        }
+
+        function closeMailbox() {
+            document.getElementById('mailboxModalBackdrop').style.display = 'none';
+        }
+
+        async function loadMailbox() {
+            const container = document.getElementById('mailboxContainer');
+            container.innerHTML = '<p style="color:#cbd5e1;">Ładowanie...</p>';
+            try {
+                const response = await fetch('/api/admin/mailbox', { headers });
+                const conversations = await response.json();
+                if (!response.ok) throw new Error(conversations.error || 'Błąd przy pobieraniu skrzynki.');
+                if (!conversations.length) {
+                    container.innerHTML = '<p style="color:#cbd5e1;">Brak wiadomości od graczy.</p>';
+                    refreshMailboxBadge();
+                    return;
+                }
+                container.innerHTML = '';
+                conversations.forEach((c) => container.appendChild(createMailboxThread(c)));
+                refreshMailboxBadge();
+            } catch (err) {
+                container.innerHTML = `<p style="color:#f87171;">${err.message || 'Błąd.'}</p>`;
+            }
+        }
+
+        function createMailboxThread(conversation) {
+            const wrap = document.createElement('div');
+            wrap.className = 'mailbox-thread';
+            const messagesHtml = (conversation.messages || []).map((m) => `
+                <div class="mailbox-message ${m.sender === 'admin' ? 'admin' : 'player'}">
+                    <div>${escapeHtml(m.text)}</div>
+                    <div class="meta">${m.sender === 'admin' ? 'Ty (admin)' : conversation.username} · ${new Date(m.at).toLocaleString('pl-PL')}</div>
+                </div>
+            `).join('');
+            wrap.innerHTML = `
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; align-items:center;">
+                    <strong>${conversation.username}</strong>
+                    <span style="font-size:12px; color:${conversation.isBlocked ? '#f87171' : '#22c55e'};">${conversation.isBlocked ? 'Zablokowany' : 'Odblokowany'}</span>
+                </div>
+                ${conversation.blockReason ? `<p class="subtext" style="margin:6px 0 0;">Powód: ${escapeHtml(conversation.blockReason)}</p>` : ''}
+                <div class="mailbox-messages">${messagesHtml}</div>
+                <div class="mailbox-reply-form">
+                    <textarea placeholder="Odpowiedz graczowi..." id="mailboxReply_${conversation.userId}"></textarea>
+                    <button class="btn-small" onclick="sendMailboxReply('${conversation.userId}')">Wyślij</button>
+                </div>
+            `;
+            if (conversation.hasUnreadFromPlayer) {
+                fetch(`/api/admin/mailbox/${conversation.userId}/mark-read`, { method: 'POST', headers }).catch(() => {});
+            }
+            return wrap;
+        }
+
+        async function sendMailboxReply(userId) {
+            const textarea = document.getElementById(`mailboxReply_${userId}`);
+            const text = textarea.value.trim();
+            if (!text) return;
+            try {
+                const response = await fetch(`/api/admin/mailbox/${userId}/reply`, {
+                    method: 'POST', headers, body: JSON.stringify({ text })
+                });
+                if (!response.ok) throw new Error('Nie udało się wysłać odpowiedzi.');
+                await loadMailbox();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd podczas wysyłania odpowiedzi.');
+            }
+        }
+
+        refreshMailboxBadge();
+        setInterval(refreshMailboxBadge, 15000);
+
+        async function spectateRound(roundId) {
+            window.location.href = `/game.html?roundId=${roundId}`;
+        }
+
+        async function togglePauseRoom(roomId, isPaused) {
+            try {
+                const response = await fetch(`/api/rooms/${roomId}/pause`, { method: 'PUT', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zmienić stanu pauzy.');
+                await loadAdminRoomTemplates();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd zmiany stanu pauzy.');
+            }
+        }
+
+        async function endAdminRound(roundId, name) {
+            try {
+                const response = await fetch(`/api/rounds/${roundId}/end`, { method: 'PUT', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zakończyć rundy.');
+                await loadAdminRounds();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd zakończenia rundy.');
+            }
+        }
+
+        async function deleteAdminRound(roundId, name) {
+            if (!window.confirm(`Na pewno usunąć rundę "${name}"? Tej operacji nie można cofnąć.`)) return;
+            try {
+                const response = await fetch(`/api/rounds/${roundId}`, { method: 'DELETE', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się usunąć rundy.');
+                await loadAdminRounds();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd usuwania rundy.');
+            }
+        }
+
+        async function deleteAdminRoom(roomId, name) {
+            if (!window.confirm(`Na pewno usunąć pokój "${name}"? Tej operacji nie można cofnąć.`)) return;
+            try {
+                const response = await fetch(`/api/rooms/${roomId}`, { method: 'DELETE', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się usunąć pokoju.');
+                await loadAdminRoomTemplates();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd usuwania pokoju.');
+            }
+        }
+
+        function formatCreatedAt(value) {
+            if (!value) return '—';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return '—';
+            return date.toLocaleString('pl-PL', {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+        }
+
+        function createUserRow(user) {
+            const tr = document.createElement('tr');
+            tr.style.cursor = 'pointer';
+            tr.title = 'Kliknij, aby zobaczyć pełny profil gracza';
+            tr.onclick = () => openPlayerDetails(user._id);
+            const blockText = user.isBlocked ? 'TAK' : 'NIE';
+            const dotClass = user.isOnline ? 'online' : 'offline';
+            const dotTitle = user.isOnline ? 'Online' : 'Offline';
+            tr.innerHTML = `
+                <td>${user._creationOrder || '—'}</td>
+                <td><span class="status-dot ${dotClass}" title="${dotTitle}"></span>${user.username}</td>
+                <td style="white-space:nowrap; font-size:13px; color:#cbd5e1;">${formatCreatedAt(user.createdAt)}</td>
+                <td>${formatNumber(user.skillPoints || 0)}</td>
+                <td>${blockText}</td>
+                <td style="max-width:220px; font-size:12px; color:#fca5a5;">${user.isBlocked ? escapeHtml(user.blockReason || '—') : '—'}</td>
+                <td style="display:flex; flex-wrap:wrap; gap:8px;">
+                    <button class="btn-small" onclick="event.stopPropagation(); toggleUserBlock('${user._id}', ${!user.isBlocked})">${user.isBlocked ? 'Odblokuj' : 'Zablokuj'}</button>
+                </td>
+            `;
+            return tr;
+        }
+
+        let allAdminUsers = [];
+        let blockedOnlyFilterActive = false;
+
+        function toggleBlockedOnlyFilter() {
+            blockedOnlyFilterActive = !blockedOnlyFilterActive;
+            document.getElementById('blockedOnlyToggle').classList.toggle('btn-red', blockedOnlyFilterActive);
+            document.getElementById('blockedOnlyToggle').textContent = blockedOnlyFilterActive ? 'Pokaż wszystkich graczy' : 'Pokaż tylko zablokowanych';
+            filterAdminUsers();
+        }
+
+        function renderUsersTable(users) {
+            const container = document.getElementById('usersContainer');
+            if (!users.length) {
+                container.innerHTML = '<p style="color:#cbd5e1;">Brak graczy pasujących do wyszukiwania.</p>';
+                return;
+            }
+            const table = document.createElement('table');
+            table.className = 'admin-table';
+            table.innerHTML = `
+                <thead>
+                    <tr><th>#</th><th>Nick</th><th>Data utworzenia konta</th><th>MMR</th><th>Zablokowany</th><th>Powód blokady</th><th>Akcje</th></tr>
+                </thead>
+            `;
+            const tbody = document.createElement('tbody');
+            users.forEach(user => tbody.appendChild(createUserRow(user)));
+            table.appendChild(tbody);
+            container.innerHTML = '';
+            container.appendChild(table);
+        }
+
+        function filterAdminUsers() {
+            const query = document.getElementById('userSearchInput').value.trim().toLowerCase();
+            let filtered = query
+                ? allAdminUsers.filter(user => (user.username || '').toLowerCase().includes(query))
+                : allAdminUsers;
+            if (blockedOnlyFilterActive) {
+                filtered = filtered.filter(user => user.isBlocked);
+            }
+            renderUsersTable(filtered);
+        }
+
+        async function loadAdminUsers() {
+            const container = document.getElementById('usersContainer');
+            if (!allAdminUsers.length) {
+                container.innerHTML = '<p style="color:#cbd5e1;">Ładowanie graczy...</p>';
+            }
+            try {
+                const response = await fetch('/api/admin/users', { headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Błąd przy pobieraniu użytkowników.');
+                // Server already returns users sorted ascending by createdAt (see /api/admin/users
+                // in server.js), so this array's index IS the account-creation order — stamp it once
+                // here so it stays stable even when the table below gets filtered by search.
+                const users = Array.isArray(result) ? result : [];
+                allAdminUsers = users.map((user, index) => ({ ...user, _creationOrder: index + 1 }));
+                const countPill = document.getElementById('playerCountPill');
+                if (countPill) countPill.querySelector('strong').textContent = formatNumber(allAdminUsers.length);
+                if (!allAdminUsers.length) {
+                    container.innerHTML = '<p style="color:#cbd5e1;">Brak zarejestrowanych użytkowników.</p>';
+                    return;
+                }
+                filterAdminUsers();
+            } catch (err) {
+                container.innerHTML = `<p style="color:#f87171;">${err.message || 'Błąd.'}</p>`;
+            }
+        }
+
+        async function toggleUserBlock(userId, blocked) {
+            let reason = null;
+            if (blocked) {
+                reason = window.prompt('Podaj powód blokady (zobaczy go gracz):', 'Naruszenie regulaminu.');
+                if (reason === null) return; // cancelled
+            }
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/block`, { method: 'PUT', headers, body: JSON.stringify({ blocked, reason }) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zaktualizować blokady.');
+                await loadAdminUsers();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd aktualizacji blokady.');
+            }
+        }
+
+        function closePlayerModal() {
+            document.getElementById('playerModalBackdrop').style.display = 'none';
+        }
+
+        const accountStatusLabels = {
+            true: 'Zablokowane',
+            false: 'Aktywne'
+        };
+
+        function renderPlayerModal(data) {
+            const user = data.user;
+            document.getElementById('playerModalTitle').textContent = `Profil gracza — ${user.username}`;
+
+            const profileRows = [
+                ['Nazwa użytkownika', escapeHtml(user.username)],
+                ['Adres e-mail', escapeHtml(user.email || '—')],
+                ['Data dołączenia', formatCreatedAt(user.createdAt)],
+                ['Status konta', accountStatusLabels[!!user.isBlocked]],
+                ['Powód blokady', user.isBlocked ? escapeHtml(user.blockReason || '—') : '—'],
+                ['MMR (Skill Points)', formatNumber(user.skillPoints || 0)],
+                ['Rozegrane rundy', formatNumber(user.roundsPlayed || 0)],
+                ['Wygrane rundy', formatNumber(user.roundsWon || 0)],
+                ['Bilety turniejowe', formatNumber(user.tournamentTickets || 0)],
+                ['Punkty kwalifikacyjne', formatNumber(user.qualificationPoints || 0)],
+                ['Bezpośredni awans do półfinału', user.semifinalDirectPass ? 'Tak' : 'Nie'],
+                ['Administrator', user.isAdmin ? 'Tak' : 'Nie'],
+                ['Zaakceptował regulamin', user.hasAcceptedRules ? 'Tak' : 'Nie'],
+                ['Zgoda marketingowa', user.marketingOptIn ? 'Tak' : 'Nie'],
+                ['Wykorzystał darmową rundę próbną', user.freeTrialUsed ? 'Tak' : 'Nie']
+            ];
+            const profileHtml = `
+                <h3 style="color:#e8c766; margin:0 0 10px;">Dane profilowe</h3>
+                <table class="admin-table" style="margin-bottom:20px;">
+                    <tbody>
+                        ${profileRows.map(([label, value]) => `<tr><td style="color:#94a3b8;">${label}</td><td>${value}</td></tr>`).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            const orders = data.ticketOrders || [];
+            const purchasesHtml = `
+                <h3 style="color:#e8c766; margin:0 0 10px;">Historia zakupów</h3>
+                ${orders.length ? `
+                    <table class="admin-table" style="margin-bottom:20px;">
+                        <thead><tr><th>Data</th><th>Ilość</th><th>Kwota</th><th>Status</th><th>Opłacono</th></tr></thead>
+                        <tbody>
+                            ${orders.map((o) => `
+                                <tr>
+                                    <td style="white-space:nowrap; font-size:13px;">${formatCreatedAt(o.createdAt)}</td>
+                                    <td>${formatNumber(o.quantity)}</td>
+                                    <td>${formatNumber(o.grossAmountZl)} ${escapeHtml(o.currency || 'PLN')}</td>
+                                    <td>${escapeHtml(o.status)}</td>
+                                    <td style="white-space:nowrap; font-size:13px;">${formatCreatedAt(o.paidAt)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                ` : '<p class="subtext" style="margin:0 0 20px;">Brak zakupów.</p>'}
+            `;
+
+            const logins = (user.loginHistory || []).slice(0, 20);
+            const loginsHtml = `
+                <h3 style="color:#e8c766; margin:0 0 10px;">Historia logowań</h3>
+                ${logins.length ? `
+                    <table class="admin-table">
+                        <thead><tr><th>Data</th><th>IP</th><th>Device ID</th></tr></thead>
+                        <tbody>
+                            ${logins.map((l) => `
+                                <tr>
+                                    <td style="white-space:nowrap; font-size:13px;">${formatCreatedAt(l.at)}</td>
+                                    <td>${escapeHtml(l.ip || '—')}</td>
+                                    <td style="font-size:12px;">${escapeHtml(l.deviceId || '—')}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                ` : '<p class="subtext" style="margin:0;">Brak zarejestrowanych logowań.</p>'}
+            `;
+
+            document.getElementById('playerModalContent').innerHTML = profileHtml + purchasesHtml + loginsHtml;
+        }
+
+        async function openPlayerDetails(userId) {
+            document.getElementById('playerModalBackdrop').style.display = 'flex';
+            document.getElementById('playerModalTitle').textContent = 'Profil gracza';
+            document.getElementById('playerModalContent').innerHTML = '<p style="color:#cbd5e1;">Ładowanie...</p>';
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/details`, { headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się pobrać danych gracza.');
+                renderPlayerModal(result);
+            } catch (err) {
+                document.getElementById('playerModalContent').innerHTML = `<p style="color:#f87171;">${err.message || 'Błąd.'}</p>`;
+            }
+        }
+
+        fetchAdminProfile();
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+    <script src="/page-scale.js"></script>
+</body>
+</html>

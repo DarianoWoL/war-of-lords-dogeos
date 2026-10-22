@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>War of Lords - Nowości</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;
+            background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif;
+            margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; padding-bottom: 60px;
+        }
+        .nav-menu { background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat; width: 100%; padding: 15px 0; text-align: center; margin-bottom: 30px; }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 16px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .shell { width: 100%; max-width: 700px; padding: 0 20px 40px; box-sizing: border-box; }
+        .back-link { display: inline-block; margin-bottom: 18px; color: #94a3b8; text-decoration: none; font-size: 14px; }
+        .back-link:hover { color: #e8c766; }
+        .page-header { text-align: center; margin-bottom: 24px; }
+        .page-header h1 { margin: 0; font-size: 30px; color: #e8c766; letter-spacing: 1px; text-transform: uppercase; }
+        .panel-alert { background: rgba(248, 113, 113, 0.15); border: 1px solid #f87171; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; color: #f8fafc; }
+        .panel-card { background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96)); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 18px; padding: 24px; margin-bottom: 20px; }
+        .panel-card h2 { margin: 0 0 8px; font-size: 20px; color: #e8c766; }
+        .panel-card .subtext { margin: 0 0 18px; color: #cbd5e1; font-size: 14px; line-height: 1.5; }
+        input, textarea { width: 100%; box-sizing: border-box; padding: 10px 12px; margin-bottom: 12px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.28); background: #0f172a; color: #f8fafc; font-size: 14px; font-family: inherit; }
+        textarea { resize: vertical; min-height: 90px; }
+        .btn-small { border: none; border-radius: 10px; cursor: pointer; font-weight: bold; padding: 10px 16px; font-size: 14px; background: #1e293b; color: #f8fafc; border: 1px solid rgba(212, 175, 55, 0.28); }
+        .btn-small:hover { background: #334155; }
+        .btn-gold { border: none; border-radius: 10px; cursor: pointer; font-weight: bold; padding: 10px 16px; font-size: 14px; background: linear-gradient(180deg, #e8c766, #b8901f); color: #1c1408; }
+        .btn-gold:hover { filter: brightness(1.05); }
+        .btn-danger { border: none; border-radius: 8px; cursor: pointer; font-weight: bold; padding: 6px 12px; font-size: 12px; background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.28); }
+        .news-row { border: 1px solid rgba(212, 175, 55, 0.18); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+        .news-row-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
+        .news-row-title { font-weight: bold; color: #e8c766; font-size: 15px; }
+        .news-row-meta { color: #94a3b8; font-size: 12px; margin-top: 2px; }
+        .news-row-body { color: #cbd5e1; font-size: 14px; white-space: pre-wrap; line-height: 1.4; }
+        .news-empty { color: #64748b; font-size: 13px; text-align: center; padding: 10px 0; }
+    </style>
+</head>
+<body>
+    <script>
+        window.alert = function () {};
+        window.confirm = function () { return true; };
+    </script>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="/index.html">Główna</a>
+        <a id="navRooms" href="/pokoje.html">Pokoje Bitewne</a>
+        <a id="navTournaments" href="/turnieje.html">Turnieje</a>
+        <a id="navShop" href="/sklep.html">Sklep</a>
+        <a id="navRanking" href="/ranking.html">Ranking Ogólny</a>
+        <a id="navProfile" href="/profile.html">Profil</a>
+        <a id="navRules" href="/zasady.html">Zasady</a>
+        <a id="navAdmin" href="/admin.html" class="active">Panel Admina</a>
+    </div>
+
+    <div class="shell">
+        <a class="back-link" href="/admin.html">&larr; Wróć do panelu administratora</a>
+        <div class="page-header">
+            <h1>📰 Nowości</h1>
+        </div>
+
+        <div id="adminWarning" class="panel-alert" style="display:none;"></div>
+
+        <div class="panel-card">
+            <h2>Dodaj ogłoszenie</h2>
+            <p class="subtext">Pojawi się jako wyskakujące okienko na stronie głównej każdemu graczowi, który jeszcze go nie widział — do momentu aż kliknie „Zapoznałem się”. Nigdy nie pokazuje się w trakcie rozgrywki.</p>
+            <input type="text" id="newTitle" placeholder="Tytuł (max 120 znaków)" maxlength="120" />
+            <textarea id="newBody" placeholder="Treść ogłoszenia (max 2000 znaków)" maxlength="2000"></textarea>
+            <button type="button" class="btn-gold" id="publishBtn" onclick="publishNews()">Opublikuj</button>
+        </div>
+
+        <div class="panel-card">
+            <h2>Opublikowane ogłoszenia</h2>
+            <div id="newsList">Wczytywanie...</div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (!token) { window.location.href = '/login.html'; }
+        const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        function showAdminError(message) {
+            const warning = document.getElementById('adminWarning');
+            warning.style.display = 'block';
+            warning.innerText = message;
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str == null ? '' : String(str);
+            return div.innerHTML;
+        }
+
+        async function loadNews() {
+            const listEl = document.getElementById('newsList');
+            try {
+                const response = await fetch('/api/admin/news', { headers });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Błąd ładowania.');
+                if (!data.items.length) {
+                    listEl.innerHTML = '<div class="news-empty">Brak ogłoszeń.</div>';
+                    return;
+                }
+                listEl.innerHTML = data.items.map((item) => `
+                    <div class="news-row">
+                        <div class="news-row-header">
+                            <div>
+                                <div class="news-row-title">${escapeHtml(item.title)}</div>
+                                <div class="news-row-meta">${new Date(item.createdAt).toLocaleString('pl-PL')}${item.createdBy ? ' · ' + escapeHtml(item.createdBy) : ''}</div>
+                            </div>
+                            <button type="button" class="btn-danger" onclick="deleteNews('${item._id}')">Usuń</button>
+                        </div>
+                        <div class="news-row-body">${escapeHtml(item.body)}</div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                listEl.innerHTML = '';
+                showAdminError(err.message);
+            }
+        }
+
+        async function publishNews() {
+            const title = document.getElementById('newTitle').value.trim();
+            const body = document.getElementById('newBody').value.trim();
+            if (!title || !body) return showAdminError('Podaj tytuł i treść.');
+            const btn = document.getElementById('publishBtn');
+            btn.disabled = true;
+            try {
+                const response = await fetch('/api/admin/news', { method: 'POST', headers, body: JSON.stringify({ title, body }) });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Błąd publikacji.');
+                document.getElementById('newTitle').value = '';
+                document.getElementById('newBody').value = '';
+                loadNews();
+            } catch (err) {
+                showAdminError(err.message);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function deleteNews(id) {
+            try {
+                const response = await fetch(`/api/admin/news/${id}`, { method: 'DELETE', headers });
+                if (!response.ok) throw new Error('Błąd usuwania.');
+                loadNews();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        async function init() {
+            const response = await fetch('/api/auth/me', { headers });
+            if (!response.ok) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('token');
+                return window.location.href = '/login.html';
+            }
+            const profile = await response.json();
+            if (!profile.isAdmin) return showAdminError('Brak uprawnień administratora.');
+            loadNews();
+        }
+
+        init();
+    </script>
+    <script src="/page-scale.js"></script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+/* Doge look: bright, rounded, playful. Everything is scoped to html[data-theme="doge"]. */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
+html[data-theme="doge"] {
+  --d-yellow: #ffd84a; --d-orange: #ff9f1c; --d-brown: #4a2c00; --d-cream: #fff6d6; --d-sky: #8fd3ff; --d-card: #fffdf2;
+}
+html[data-theme="doge"] { min-height: 100%; background-image: url("/assets/doge-bg.jpg"); background-size: 100% 82vw; background-position: center 118px; background-repeat: no-repeat; background-attachment: scroll; background-color: #7a6a52; }
+html[data-theme="doge"] body {
+  background: none !important;
+  color: var(--d-brown) !important; font-family: 'Fredoka', 'Segoe UI', sans-serif !important;
+}
+html[data-theme="doge"] .nav-menu {
+  background: linear-gradient(180deg, #ffe27a, #ffc93c) !important; border: 4px solid var(--d-brown); border-radius: 0 0 36px 36px;
+  box-shadow: 0 6px 0 #c98400, 0 10px 18px rgba(0,0,0,.2); height: 100px !important; margin-bottom: 36px !important;
+}
+html[data-theme="doge"] .nav-menu::before { content: '🐶 WAR OF LORDS'; position: absolute; left: 40px; top: 28px; font: 700 30px 'Fredoka', sans-serif; color: var(--d-brown); letter-spacing: .04em; }
+html[data-theme="doge"] .nav-menu a {
+  position: absolute !important; top: 30px !important; width: auto !important; height: auto !important; margin: 0 !important; padding: 10px 18px !important;
+  background: var(--d-cream); color: var(--d-brown) !important; border: 3px solid var(--d-brown); border-radius: 999px; font: 600 16px 'Fredoka', sans-serif !important;
+  box-shadow: 0 3px 0 var(--d-brown); transition: transform .12s;
+}
+html[data-theme="doge"] .nav-menu a:hover { transform: translateY(-2px) rotate(-2deg); background: #fff; }
+html[data-theme="doge"] .nav-menu a.active { background: var(--d-orange); color: #fff !important; }
+html[data-theme="doge"] #navHome { left: 520px !important; } html[data-theme="doge"] #navTournaments { left: 640px !important; }
+html[data-theme="doge"] #navMiniTournaments { left: 800px !important; } html[data-theme="doge"] #navShop { left: 990px !important; }
+html[data-theme="doge"] #navRanking { left: 1110px !important; } html[data-theme="doge"] #navProfile { left: 1300px !important; }
+html[data-theme="doge"] #navRules { left: 1410px !important; }
+html[data-theme="doge"] .page-header h1, html[data-theme="doge"] .room-card h3 {
+  color: var(--d-brown) !important; text-shadow: 2px 2px 0 var(--d-yellow) !important; font-family: 'Fredoka', sans-serif;
+}
+html[data-theme="doge"] .page-header p, html[data-theme="doge"] .room-card .room-meta-text, html[data-theme="doge"] .info-bar .ticket-status,
+html[data-theme="doge"] .empty-state { color: #5a3a10 !important; }
+html[data-theme="doge"] .page-header a { color: #c45a00 !important; }
+html[data-theme="doge"] .info-bar, html[data-theme="doge"] .room-card {
+  background: var(--d-card) !important; border: 4px solid var(--d-brown); border-radius: 28px !important; box-shadow: 0 7px 0 #c98400, 0 12px 20px rgba(0,0,0,.18) !important;
+}
+html[data-theme="doge"] .info-bar .ticket-status strong { color: #d96a00 !important; }
+html[data-theme="doge"] .btn-join {
+  background: linear-gradient(180deg, #ffb52e, #ff8a00) !important; background-image: linear-gradient(180deg, #ffb52e, #ff8a00) !important; color: #fff !important;
+  border: 3px solid var(--d-brown) !important; border-radius: 999px !important; box-shadow: 0 4px 0 var(--d-brown); font-family: 'Fredoka', sans-serif; text-shadow: 1px 1px 0 var(--d-brown);
+}
+html[data-theme="doge"] .btn-join:hover { color: #fff !important; transform: translateY(-2px); }
+html[data-theme="doge"] .btn-join:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--d-brown); }
+html[data-theme="doge"] .btn-join:disabled { background: #d9cfb5 !important; background-image: none !important; color: #8a7a55 !important; text-shadow: none; }
+html[data-theme="doge"] .prize-item { background: #fff3c4 !important; border: 3px solid var(--d-brown) !important; border-radius: 18px !important; }
+html[data-theme="doge"] .prize-item .prize-label { color: #7a4a00 !important; } html[data-theme="doge"] .prize-item .prize-value { color: #d96a00 !important; }
+html[data-theme="doge"] .ticket-badge { background: var(--d-yellow) !important; color: var(--d-brown) !important; border: 2px solid var(--d-brown); }
+
+/* Footer, cookie bar, wallet widget, language switch */
+html[data-theme="doge"] .wol-site-footer { background: var(--d-card) !important; border: 3px solid var(--d-brown) !important; border-radius: 22px !important; color: #5a3a10 !important; box-shadow: 0 5px 0 #c98400 !important; }
+html[data-theme="doge"] .wol-site-footer a { color: #c45a00 !important; font-weight: 600; }
+html[data-theme="doge"] .wol-cookie-banner { background: var(--d-card) !important; color: var(--d-brown) !important; border-top: 4px solid var(--d-brown) !important; }
+html[data-theme="doge"] .wol-cookie-banner a { color: #c45a00 !important; }
+html[data-theme="doge"] .wol-cookie-banner button { background: var(--d-orange) !important; color: #fff !important; border: 2px solid var(--d-brown) !important; border-radius: 999px !important; font-family: 'Fredoka', sans-serif; }
+html[data-theme="doge"] #wolGuestConnect, html[data-theme="doge"] #wolWalletWidget .wolPill, html[data-theme="doge"] #wolWalletWidget .wolClaim {
+  background: linear-gradient(180deg, #ffb52e, #ff8a00) !important; color: #fff !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important;
+  box-shadow: 0 4px 0 var(--d-brown) !important; font-family: 'Fredoka', sans-serif !important; text-shadow: 1px 1px 0 var(--d-brown);
+}
+html[data-theme="doge"] #wolWalletWidget .wolMenu { background: var(--d-card) !important; color: var(--d-brown) !important; border: 3px solid var(--d-brown) !important; border-radius: 18px !important; }
+html[data-theme="doge"] #wolWalletWidget .wolMenu * { color: var(--d-brown); }
+
+/* Home page panels */
+html[data-theme="doge"] .main-info-bar, html[data-theme="doge"] .dash-card, html[data-theme="doge"] .news-box {
+  background: var(--d-card) !important; border: 4px solid var(--d-brown); border-radius: 28px !important; box-shadow: 0 7px 0 #c98400, 0 12px 20px rgba(0,0,0,.18) !important;
+}
+html[data-theme="doge"] .main-info-bar { padding-bottom: 25px !important; }
+html[data-theme="doge"] .dash-card:nth-child(1) { background: #fff0b8 !important; }
+html[data-theme="doge"] .dash-card:nth-child(2) { background: #d9f1ff !important; }
+html[data-theme="doge"] .dash-card:nth-child(3) { background: #ffe0e6 !important; }
+html[data-theme="doge"] .dash-card { transition: transform .15s; } html[data-theme="doge"] .dash-card:hover { transform: translateY(-4px) rotate(-.6deg); }
+html[data-theme="doge"] .info-label, html[data-theme="doge"] .dash-desc, html[data-theme="doge"] .log-time, html[data-theme="doge"] .chat-time, html[data-theme="doge"] .chat-login-hint { color: #7a4a00 !important; }
+html[data-theme="doge"] .info-value, html[data-theme="doge"] .dash-title, html[data-theme="doge"] .news-title, html[data-theme="doge"] .chat-user { color: var(--d-brown) !important; text-shadow: none !important; }
+html[data-theme="doge"] .info-value *, html[data-theme="doge"] .main-info-bar strong { color: #d96a00 !important; }
+html[data-theme="doge"] .news-log, html[data-theme="doge"] .chat-messages, html[data-theme="doge"] .news-box li, html[data-theme="doge"] .news-box p, html[data-theme="doge"] .news-box div, html[data-theme="doge"] .chat-text { color: var(--d-brown) !important; }
+html[data-theme="doge"] .news-box strong, html[data-theme="doge"] .news-box b { color: #c45a00 !important; }
+html[data-theme="doge"] .news-log > *, html[data-theme="doge"] .chat-messages { background: #fff3c4 !important; border-color: #e0b84a !important; border-radius: 14px; }
+html[data-theme="doge"] .btn-dash {
+  background: linear-gradient(180deg, #ffb52e, #ff8a00) !important; background-image: linear-gradient(180deg, #ffb52e, #ff8a00) !important; color: #fff !important;
+  border: 3px solid var(--d-brown) !important; border-radius: 999px !important; box-shadow: 0 4px 0 var(--d-brown); font-family: 'Fredoka', sans-serif; text-shadow: 1px 1px 0 var(--d-brown);
+}
+html[data-theme="doge"] .chat-form input, html[data-theme="doge"] input[type="text"], html[data-theme="doge"] input[type="number"], html[data-theme="doge"] input[type="password"] {
+  background: #fff !important; color: var(--d-brown) !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important;
+}
+
+/* Pages that use CSS variables (Live Bets, DogeOS wallet page, login): recolor through the variables */
+html[data-theme="doge"] { --gold: #c45a00; --card: #fffdf2; --line: #4a2c00; --muted: #7a4a00; --good: #0a8a4a; --bad: #c62828; }
+html[data-theme="doge"] .banner { background: #ff9f1c !important; color: var(--d-brown) !important; font-weight: 700; border-bottom: 3px solid var(--d-brown); }
+html[data-theme="doge"] h1 { color: var(--d-brown) !important; text-shadow: 2px 2px 0 var(--d-yellow) !important; }
+html[data-theme="doge"] h1 small, html[data-theme="doge"] .muted, html[data-theme="doge"] .meta { color: #7a4a00 !important; text-shadow: none !important; }
+html[data-theme="doge"] h2, html[data-theme="doge"] .resbox .winner { color: #c45a00 !important; }
+html[data-theme="doge"] .back, html[data-theme="doge"] a { color: #c45a00 !important; font-weight: 600; }
+html[data-theme="doge"] .card { background: var(--d-card) !important; border: 4px solid var(--d-brown) !important; border-radius: 26px !important; box-shadow: 0 7px 0 #c98400, 0 12px 20px rgba(0,0,0,.18) !important; color: var(--d-brown); }
+html[data-theme="doge"] .rule { background: #fff3c4 !important; border: 3px solid var(--d-brown) !important; border-radius: 16px !important; color: var(--d-brown) !important; }
+html[data-theme="doge"] .rule b { color: #c45a00 !important; }
+html[data-theme="doge"] .player { border-top: 2px dashed #e0b84a !important; }
+html[data-theme="doge"] .player .info { color: #7a4a00 !important; }
+html[data-theme="doge"] .result { background: #fff3c4 !important; color: var(--d-brown) !important; border-radius: 14px !important; }
+html[data-theme="doge"] button:not(.secondary):not(#wolThemeToggle):not(.wolPill):not(.wolClaim) {
+  background: linear-gradient(180deg, #ffb52e, #ff8a00) !important; color: #fff !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important;
+  box-shadow: 0 3px 0 var(--d-brown); font-family: 'Fredoka', sans-serif !important; text-shadow: 1px 1px 0 var(--d-brown);
+}
+html[data-theme="doge"] button.secondary { background: #fff !important; color: var(--d-brown) !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important; }
+html[data-theme="doge"] .tag { border: 2px solid var(--d-brown); }
+html[data-theme="doge"] .tag.open { background: #b8f5cf !important; color: #05562b !important; } html[data-theme="doge"] .tag.closed { background: #ffe08a !important; color: #6b3d00 !important; }
+html[data-theme="doge"] .tag.resolved { background: #bfe3ff !important; color: #0b3d75 !important; } html[data-theme="doge"] .tag.cancelled { background: #e5e0d0 !important; color: #444 !important; }
+html[data-theme="doge"] #resultsOverlay { background: rgba(74,44,0,.55) !important; }
+html[data-theme="doge"] .resbox { background: var(--d-card) !important; border: 4px solid var(--d-brown) !important; border-radius: 28px !important; color: var(--d-brown); }
+html[data-theme="doge"] .resbox .split, html[data-theme="doge"] .resbox .sub { color: #5a3a10 !important; }
+html[data-theme="doge"] .resbox td, html[data-theme="doge"] .resbox th { border-bottom: 1px solid #e0b84a !important; }
+html[data-theme="doge"] .resbox .you.won { background: #b8f5cf !important; color: #05562b !important; } html[data-theme="doge"] .resbox .you.lost { background: #ffd0d0 !important; color: #8a1c1c !important; }
+html[data-theme="doge"] .resbox .you.refund { background: #e5e0d0 !important; color: #444 !important; }
+html[data-theme="doge"] .status.ok { background: #b8f5cf !important; color: #05562b; } html[data-theme="doge"] .status.err { background: #ffd0d0 !important; color: #8a1c1c; }
+
+/* Tables / lists that still use dark image panels */
+html[data-theme="doge"] .leaderboard-container, html[data-theme="doge"] .leaderboard-scroll, html[data-theme="doge"] table { background: var(--d-card) !important; background-image: none !important; color: var(--d-brown) !important; }
+html[data-theme="doge"] table th { background: var(--d-yellow) !important; color: var(--d-brown) !important; border-bottom: 3px solid var(--d-brown) !important; }
+html[data-theme="doge"] table td { color: var(--d-brown) !important; border-bottom: 1px solid #e0b84a !important; }
+
+/* Menu bar stays pinned on top while the page scrolls under it (so the logo in the background is never covered) */
+html[data-theme="doge"] .nav-menu { position: sticky !important; top: 26px; z-index: 5000; }
+
+html[data-theme="doge"] > #wolGuestConnect, html[data-theme="doge"] > #wolWalletWidget { top: 28px !important; right: 96px !important; z-index: 6000 !important; }
+
+/* Dark panels on rules, tournaments, login and modals */
+html[data-theme="doge"] .rules-card, html[data-theme="doge"] .login-container, html[data-theme="doge"] .mmr-ranking-panel, html[data-theme="doge"] .qualification-ranking-panel,
+html[data-theme="doge"] .semifinal-panel, html[data-theme="doge"] .modal-window {
+  background: var(--d-card) !important; background-image: none !important; border: 4px solid var(--d-brown) !important; border-radius: 26px !important;
+  box-shadow: 0 7px 0 #c98400, 0 12px 20px rgba(0,0,0,.18) !important; backdrop-filter: none !important; color: var(--d-brown) !important;
+}
+html[data-theme="doge"] .rules-card *, html[data-theme="doge"] .login-container *, html[data-theme="doge"] .mmr-ranking-panel *, html[data-theme="doge"] .qualification-ranking-panel *,
+html[data-theme="doge"] .semifinal-panel *, html[data-theme="doge"] .modal-window * { color: var(--d-brown); text-shadow: none !important; }
+html[data-theme="doge"] .rules-card h1, html[data-theme="doge"] .rules-card h2, html[data-theme="doge"] .rules-card h3, html[data-theme="doge"] .mmr-ranking-panel h3,
+html[data-theme="doge"] .qualification-ranking-panel h3, html[data-theme="doge"] .semifinal-panel h3, html[data-theme="doge"] .login-container h1 { color: #c45a00 !important; }
+html[data-theme="doge"] .rules-card a, html[data-theme="doge"] .login-container a { color: #c45a00 !important; }
+html[data-theme="doge"] .rules-card strong, html[data-theme="doge"] .rules-card b { color: #7a4a00 !important; }
+html[data-theme="doge"] .mmr-ranking-list li, html[data-theme="doge"] .qual-ranking-list li, html[data-theme="doge"] .semifinal-players-list li { background: #fff3c4 !important; border-radius: 12px; }
+html[data-theme="doge"] .modal-overlay { background: rgba(74,44,0,.55) !important; }
+html[data-theme="doge"] .login-container button, html[data-theme="doge"] .modal-window button { color: #fff !important; }
+
+/* Lobby (poczekalnia) */
+html[data-theme="doge"] .settings-panel, html[data-theme="doge"] .lobby-container, html[data-theme="doge"] .mm-box, html[data-theme="doge"] .team-card {
+  background: var(--d-card) !important; background-image: none !important; border: 4px solid var(--d-brown) !important; border-radius: 26px !important;
+  box-shadow: 0 7px 0 #c98400, 0 12px 20px rgba(0,0,0,.18) !important; color: var(--d-brown) !important;
+}
+html[data-theme="doge"] .settings-panel *, html[data-theme="doge"] .lobby-container *, html[data-theme="doge"] .mm-box *, html[data-theme="doge"] .team-card * { color: var(--d-brown); }
+html[data-theme="doge"] .settings-panel h2, html[data-theme="doge"] .lobby-container h2, html[data-theme="doge"] .lobby-container h3, html[data-theme="doge"] .mm-box h2, html[data-theme="doge"] .mm-box h3 { color: #c45a00 !important; }
+html[data-theme="doge"] .settings-row, html[data-theme="doge"] .player-item { border-color: #e0b84a !important; }
+html[data-theme="doge"] .player-item { background: #fff3c4 !important; border-radius: 14px !important; }
+html[data-theme="doge"] .lobby-wrapper h1, html[data-theme="doge"] .lobby-wrapper h2, html[data-theme="doge"] .lobby-wrapper > div > h1 { color: var(--d-brown) !important; text-shadow: 2px 2px 0 var(--d-yellow) !important; }
+html[data-theme="doge"] .mm-accept-btn, html[data-theme="doge"] .mm-retry-btn, html[data-theme="doge"] .ready-toggle-btn {
+  background: linear-gradient(180deg, #ffb52e, #ff8a00) !important; color: #fff !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important; box-shadow: 0 4px 0 var(--d-brown); text-shadow: 1px 1px 0 var(--d-brown);
+}
+html[data-theme="doge"] .mm-ring-fg { stroke: #ff8a00 !important; } html[data-theme="doge"] .mm-ring-bg { stroke: #e0b84a !important; }
+html[data-theme="doge"] .btn-leave, html[data-theme="doge"] .mm-cancel-btn { background: #fff !important; color: #b23b00 !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important; }
+
+/* Game screen */
+html[data-theme="doge"] #topBar { background-image: none !important; background: linear-gradient(180deg, #ffe27a, #ffc93c) !important; border: 4px solid var(--d-brown) !important; border-radius: 0 0 36px 36px !important; box-shadow: 0 6px 0 #c98400; }
+html[data-theme="doge"] #topBar *:not(button):not(#exitGameBtn) { color: var(--d-brown) !important; text-shadow: none !important; }
+html[data-theme="doge"] #topBar img { filter: none; }
+html[data-theme="doge"] .panel-card, html[data-theme="doge"] #menuPanelCard {
+  background-image: none !important; background: var(--d-card) !important; border: 4px solid var(--d-brown) !important; border-radius: 26px !important; box-shadow: 0 6px 0 #c98400, 0 10px 18px rgba(0,0,0,.18) !important; color: var(--d-brown);
+}
+html[data-theme="doge"] .panel-card *:not(button):not(input), html[data-theme="doge"] #menuPanelCard *:not(button) { color: var(--d-brown) !important; text-shadow: none !important; }
+html[data-theme="doge"] .panel-card h2 { color: #c45a00 !important; }
+html[data-theme="doge"] .panel-card table th { background: var(--d-yellow) !important; }
+html[data-theme="doge"] .panel-card input { background: #fff !important; color: var(--d-brown) !important; border: 2px solid var(--d-brown) !important; border-radius: 12px !important; }
+html[data-theme="doge"] #centerPanel, html[data-theme="doge"] .round-result-card, html[data-theme="doge"] #roundResultModal .modal-card { border-color: var(--d-brown) !important; }
+html[data-theme="doge"] #centerPanel > div:not(#villageImage), html[data-theme="doge"] #teamChatMessages { background: var(--d-card) !important; color: var(--d-brown) !important; border-radius: 22px !important; }
+html[data-theme="doge"] #centerPanel > div:not(#villageImage) * { color: var(--d-brown) !important; }
+html[data-theme="doge"] .round-result-card { background: var(--d-card) !important; background-image: none !important; border: 4px solid var(--d-brown) !important; border-radius: 28px !important; }
+html[data-theme="doge"] .round-result-card * { color: var(--d-brown); }
+html[data-theme="doge"] #villageImage.map-mode { border: 4px solid var(--d-brown); border-radius: 26px; box-shadow: 0 6px 0 #c98400; filter: saturate(1.25) brightness(1.1); }
+/* villages as little doghouses / bones instead of orange buttons */
+html[data-theme="doge"] button.map-node { background: rgba(255,246,214,.95) !important; background-image: none !important; border: 3px solid var(--d-brown) !important; box-shadow: 0 3px 0 var(--d-brown) !important; color: var(--d-brown) !important; text-shadow: none !important; font-size: 0 !important; padding: 0 !important; }
+html[data-theme="doge"] button.map-node.main::before { content: '🐶'; font-size: 26px; }
+html[data-theme="doge"] button.map-node.sub::before { content: '🦴'; font-size: 20px; }
+html[data-theme="doge"] button.map-node.main:not(.sub)::before { content: '🏠'; }
+html[data-theme="doge"] .map-node-label { color: var(--d-brown) !important; background: rgba(255,246,214,.92); padding: 1px 8px; border-radius: 999px; border: 2px solid var(--d-brown); text-shadow: none !important; font-size: 12px; }
+html[data-theme="doge"] #topBar button:not(#exitGameBtn), html[data-theme="doge"] .village-nav-arrow { color: #fff !important; }
+html[data-theme="doge"] button.map-node.map-node.map-node:not(#x):not(#y) { background: rgba(255,246,214,.95) !important; background-image: none !important; color: var(--d-brown) !important; }
+html[data-theme="doge"] button.map-node.map-node.map-node:not(#x):not(#y).map-node-mine { box-shadow: 0 0 0 4px #ffd84a, 0 3px 0 var(--d-brown) !important; }
+
+/* Room tiles: picture banner on top of every card */
+html[data-theme="doge"] .room-card::before { content: ''; display: block; align-self: stretch; height: 150px; margin: -25px -25px 14px; background: var(--room-img, url('/assets/room-1.jpg')) center / cover no-repeat; border-bottom: 4px solid var(--d-brown); }
+html[data-theme="doge"] .room-card:nth-child(4n+1) { --room-img: url('/assets/room-1.jpg'); }
+html[data-theme="doge"] .room-card:nth-child(4n+2) { --room-img: url('/assets/room-2.jpg'); }
+html[data-theme="doge"] .room-card:nth-child(4n+3) { --room-img: url('/assets/room-3.jpg'); }
+html[data-theme="doge"] .room-card:nth-child(4n) { --room-img: url('/assets/room-4.jpg'); }
+
+/* ===== Game top bar rebuilt for the Doge look (flex row of chips, no banner artwork) ===== */
+html[data-theme="doge"] #topBar { aspect-ratio: auto !important; height: auto !important; min-height: 0 !important; padding: 12px 22px !important; gap: 14px !important; justify-content: center !important; flex-wrap: wrap; }
+html[data-theme="doge"] #topBar > *, html[data-theme="doge"] #topBar .panel, html[data-theme="doge"] #topBar .timer-pill, html[data-theme="doge"] #topBar .center-title {
+  position: static !important; left: auto !important; top: auto !important; width: auto !important; height: auto !important; margin: 0 !important; transform: none !important;
+}
+html[data-theme="doge"] #topBar .panel > *, html[data-theme="doge"] #topBar .timer-pill, html[data-theme="doge"] #topBarPlayerPanel > .timer-pill, html[data-theme="doge"] #topBarTreasuryPanel > strong { position: static !important; top: auto !important; left: auto !important; }
+/* every group is a cream chip with an icon */
+html[data-theme="doge"] #topBarTreasuryPanel, html[data-theme="doge"] #topBarRoundTimer, html[data-theme="doge"] #topBarCenterTitle, html[data-theme="doge"] #topBarPlayerPanel {
+  display: flex !important; flex-direction: row !important; align-items: center !important; flex-wrap: nowrap !important; gap: 10px !important;
+  background: var(--d-card) !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important; padding: 6px 20px 6px 10px !important; box-shadow: 0 3px 0 #c98400;
+}
+html[data-theme="doge"] #topBarTreasuryPanel { display: grid !important; grid-template-columns: 46px auto; grid-template-rows: auto auto; column-gap: 10px !important; row-gap: 0 !important; border-radius: 40px !important; }
+html[data-theme="doge"] #topBarTreasuryPanel::before { content: ''; grid-row: 1 / 3; width: 46px; height: 46px; background: url('/assets/coin.png') center / contain no-repeat; filter: drop-shadow(0 2px 0 rgba(74,44,0,.5)); }
+html[data-theme="doge"] #topBarTreasuryPanel > strong { display: none !important; }
+html[data-theme="doge"] #goldAmount { font: 700 22px 'Fredoka', sans-serif !important; color: #c45a00 !important; line-height: 1.05; }
+html[data-theme="doge"] #goldProduction { font-size: 11px !important; color: #7a4a00 !important; }
+html[data-theme="doge"] #topBarRoundTimer { flex-direction: column !important; gap: 0 !important; padding-left: 52px !important; position: relative !important; }
+html[data-theme="doge"] #topBarRoundTimer::before { content: '⏳'; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 26px; }
+html[data-theme="doge"] #topBarRoundTimer strong, html[data-theme="doge"] #topBarPlayerPanel strong { font-size: 10px !important; letter-spacing: .06em; text-transform: uppercase; color: #7a4a00 !important; }
+html[data-theme="doge"] #roundTimerDisplay, html[data-theme="doge"] #realTimeDisplay, html[data-theme="doge"] #populationAmount { font: 700 18px 'Fredoka', sans-serif !important; color: var(--d-brown) !important; }
+html[data-theme="doge"] #topBarCenterTitle { padding: 6px 12px !important; }
+html[data-theme="doge"] #villageTitle { font: 700 22px 'Fredoka', sans-serif !important; color: var(--d-brown) !important; min-width: 9ch; text-align: center; }
+html[data-theme="doge"] #topBarPlayerPanel { text-align: left !important; align-items: center !important; padding-left: 52px !important; position: relative !important; gap: 16px !important; }
+html[data-theme="doge"] #topBarPlayerPanel::before { content: '🕒'; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 26px; }
+html[data-theme="doge"] #topBarPlayerPanel > .timer-pill { display: flex !important; flex-direction: column !important; padding: 0 !important; min-width: 0 !important; }
+html[data-theme="doge"] #topBarPlayerPanel > strong { display: inline !important; }
+html[data-theme="doge"] #populationAmount::before { content: '🐕 '; }
+html[data-theme="doge"] #exitGameBtn { left: auto !important; margin: 0 !important; }
+html[data-theme="doge"] #topBar #topBarRoundTimer, html[data-theme="doge"] #topBar #topBarPlayerPanel { position: relative !important; }
+html[data-theme="doge"] #topBar #topBarRoundTimer::before, html[data-theme="doge"] #topBar #topBarPlayerPanel::before { z-index: 1; }
+
+/* Wallet / confirmation overlays built in JS with inline styles (wol-connect.js) */
+html[data-theme="doge"] div[style*="position:fixed;inset:0"] { background: rgba(74,44,0,.55) !important; }
+html[data-theme="doge"] div[style*="position:fixed;inset:0"] > div { background: var(--d-card) !important; border: 4px solid var(--d-brown) !important; border-radius: 28px !important; box-shadow: 0 8px 0 #c98400 !important; color: var(--d-brown) !important; font-family: 'Fredoka', sans-serif; }
+html[data-theme="doge"] div[style*="position:fixed;inset:0"] > div h2 { color: #c45a00 !important; }
+html[data-theme="doge"] div[style*="position:fixed;inset:0"] > div p, html[data-theme="doge"] div[style*="position:fixed;inset:0"] > div .wolMsg, html[data-theme="doge"] div[style*="position:fixed;inset:0"] > div div { color: var(--d-brown) !important; }
+html[data-theme="doge"] div[style*="position:fixed;inset:0"] > div input { background: #fff !important; color: var(--d-brown) !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important; }
+html[data-theme="doge"] div[style*="position:fixed;inset:0"] > div .wolSpin { border-color: #e0b84a !important; border-top-color: #ff8a00 !important; }
+html[data-theme="doge"] div[style*="position:fixed;inset:0"] > div button.wolNo { background: #fff !important; color: var(--d-brown) !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important; }

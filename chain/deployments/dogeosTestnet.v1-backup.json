@@ -1,0 +1,8 @@
+{
+  "network": "dogeosTestnet",
+  "chainId": 6281971,
+  "address": "0x901Ce4f25F31CB6e8Ac3fbF162F441cFB1007571",
+  "deployTx": "0xbf21ae66f2f53085900d57f5e7d1e7a86bd2b485a27f1bfa499809fab2c6ecfe",
+  "deployedAt": "2026-10-21T02:21:36.990Z",
+  "deployBlock": 8764858
+}

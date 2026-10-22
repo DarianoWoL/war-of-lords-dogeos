@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" data-source-lang="en" data-source-lang="en" data-source-lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>War of Lords - Player profile</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+
+        .nav-menu {
+            background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat;
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .nav-menu a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #e8c766;
+        }
+
+        /* Baked-in default nav link layout, adopted site-wide from a player-arranged position
+           (see layout-editor.js) so every visitor sees the same arrangement by default. */
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { display: none !important; position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .profile-card {
+            width: 100%;
+            max-width: 980px;
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96));
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 20px;
+            padding: 30px;
+            box-sizing: border-box;
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 16px 45px rgba(0,0,0,0.4);
+            margin-bottom: 30px;
+        }
+
+        .profile-card h1 {
+            margin: 0 0 15px;
+            color: #e8c766;
+            font-size: 34px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .profile-card p {
+            color: #cbd5e1;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 18px;
+            margin-top: 25px;
+        }
+
+        .stat-box {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-box h2 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #e8c766;
+        }
+
+        .stat-box p {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .profile-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 14px;
+            margin-top: 30px;
+        }
+
+        .profile-actions a,
+        .profile-actions button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            border: none;
+            color: #e8c766;
+            font-weight: 700;
+            text-decoration: none;
+            padding: 14px 22px;
+            border-radius: 0;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .profile-actions a:hover,
+        .profile-actions button:hover {
+            color: #f0d78c;
+            transform: translateY(-1px);
+        }
+
+        .referral-card {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 16px;
+            padding: 22px;
+            margin-top: 22px;
+            text-align: center;
+        }
+        .referral-card h2 {
+            margin: 0 0 8px;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #e8c766;
+        }
+        .referral-card p { margin: 4px 0; color: #cbd5e1; font-size: 14px; }
+        .referral-link-row { display: flex; gap: 8px; justify-content: center; align-items: center; margin: 14px 0; flex-wrap: wrap; }
+        .referral-link-row input {
+            flex: 1; min-width: 220px; max-width: 420px; padding: 10px 14px; border-radius: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.28); background: #0f172a; color: #f8fafc; font-size: 13px;
+        }
+        .referral-link-row button {
+            border: none; border-radius: 10px; cursor: pointer; font-weight: bold; padding: 10px 16px;
+            background: linear-gradient(180deg, #e8c766, #b8901f); color: #1c1408; font-size: 13px;
+        }
+        .referral-link-row button:hover { filter: brightness(1.05); }
+        .referral-progress { color: #fbbf24; font-weight: 700; }
+
+        .error-box {
+            max-width: 980px;
+            width: 100%;
+            margin: 0 auto;
+            background: rgba(248, 113, 113, 0.16);
+            border: 1px solid #f87171;
+            border-radius: 16px;
+            padding: 18px 22px;
+            color: #f8fafc;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: none;
+        }
+        #adminPanelLink { position: absolute; left: 234.44px; top: 41.22px; width: 295.89px; height: 60px; margin: 0; box-sizing: border-box; }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/texts/profile.js"></script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Home</a>
+        <a id="navRooms" href="pokoje.html">Battle Rooms</a>
+        <a id="navTournaments" href="turnieje.html">Tournaments</a>
+        <a id="navShop" href="live.html">Live Bets</a>
+        <a id="navRanking" href="ranking.html">Overall Ranking</a>
+        <a id="navProfile" href="profile.html" class="active">Profile</a>
+        <a id="navRules" href="zasady.html">Rules</a>
+    </div>
+
+    <div id="adminPanelLink" style="display:none;">
+        <a href="admin.html" style="display:inline-block; background:#f59e0b; color:#111827; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">👑 ADMIN PANEL</a>
+    </div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <div class="profile-card">
+        <h1>Player profile</h1>
+        <p id="profileDescription">Loading profile data...</p>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h2>Nick</h2>
+                <p id="profileName">---</p>
+            </div>
+            <div class="stat-box">
+                <h2>Tournament tickets</h2>
+                <p id="profileTickets">---</p>
+            </div>
+            <div class="stat-box">
+                <h2>Mini-Tournament Ticket</h2>
+                <p id="profileMiniTicket">---</p>
+            </div>
+            <div class="stat-box">
+                <h2>DOGE</h2>
+                <p id="profileVpln">---</p>
+            </div>
+            <div class="stat-box">
+                <h2>Skill Points</h2>
+                <p id="profileSkill">---</p>
+            </div>
+            <div class="stat-box">
+                <h2>Mini-Tournament MMR</h2>
+                <p id="profileTournamentMmr">---</p>
+            </div>
+            <div class="stat-box">
+                <h2>Role</h2>
+                <p id="profileRole">---</p>
+            </div>
+            <div class="stat-box">
+                <h2>Rounds played</h2>
+                <p id="profileRoundsPlayed">---</p>
+            </div>
+            <div class="stat-box">
+                <h2>Rounds won</h2>
+                <p id="profileRoundsWon">---</p>
+            </div>
+        </div>
+
+        <div class="referral-card">
+            <h2>🔗 Referral Programme</h2>
+            <p>Share your referral code with other players — they paste it into the registration form. For every <strong>10 referred players</strong> who buy any ticket (Tournament or Mini-Tournament), you automatically get a <strong>DOGE reward</strong> on your balance.</p>
+            <div class="referral-link-row">
+                <input type="text" id="referralCodeInput" readonly value="Loading...">
+                <button type="button" id="copyReferralCodeBtn">Copy code</button>
+            </div>
+            <p>Referred players with a ticket: <span class="referral-progress" id="referralQualifyingCount">0</span> / <span id="referralNextMilestone">10</span> · Earned from referrals: <span class="referral-progress" id="referralVplnEarned">0</span></p>
+        </div>
+
+        <div class="referral-card" id="dogeosCard">
+            <h2>🐕 DogeOS Testnet</h2>
+            <p>Link your DogeOS wallet to pay tournament entry on-chain, claim prizes and bet on rounds (testnet DOGE, no real value).</p>
+            <div class="referral-link-row">
+                <a href="dogeos.html" style="color:#e8c766; font-weight:bold;">Open DogeOS →</a>
+            </div>
+        </div>
+
+        <div class="referral-card" id="withdrawalCard">
+            <h2>🪙 DOGE Wallet</h2>
+            <p>Your game balance is in DOGE. Top-ups (an on-chain deposit to the game wallet address) and withdrawals to your private DOGE address are in the Wallet. Withdrawals are sent on-chain after verification, in the full gross amount — you settle the income yourself.</p>
+            <div class="referral-link-row">
+                <a href="portfel.html" style="color:#e8c766; font-weight:bold;">Open Wallet →</a>
+            </div>
+            <div id="withdrawalHistoryList" style="text-align:left; margin-top:10px;"></div>
+        </div>
+
+        <div class="profile-actions">
+            <a href="pokoje.html">Go to rooms</a>
+            <a href="ranking.html">See the ranking</a>
+            <a href="sklep.html">Open the shop</a>
+            <button id="logoutButton">Log out</button>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        const headers = {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+
+        const errorBox = document.getElementById('errorBox');
+
+        function showError(message) {
+            errorBox.textContent = message;
+            errorBox.style.display = 'block';
+        }
+
+        function hideError() {
+            errorBox.style.display = 'none';
+        }
+
+        async function loadProfile() {
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/auth/me', { headers });
+                if (!response.ok) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('token');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                const profile = await response.json();
+
+                document.getElementById('profileDescription').textContent = `Welcome, commander ${profile.username}. Here you can check your account, your points and head to your next battle.`;
+                document.getElementById('profileName').textContent = profile.username || 'Commander';
+                document.getElementById('profileTickets').textContent = (profile.tournamentTickets || 0) > 0 ? 'You have one ✅' : 'None';
+                document.getElementById('profileMiniTicket').textContent = profile.hasUnusedMiniTournamentTicket ? 'You have one ✅' : 'None';
+                document.getElementById('profileVpln').textContent = `${profile.dogeBalance || 0}`;
+                document.getElementById('profileSkill').textContent = `${profile.skillPoints || 0} MMR`;
+                document.getElementById('profileTournamentMmr').textContent = `${profile.tournamentMMR ?? 1000} MMR`;
+                document.getElementById('profileRole').textContent = profile.role || (profile.isAdmin ? 'ADMIN' : 'PLAYER');
+                const adminPanelLinkEl = document.getElementById('adminPanelLink');
+                if (adminPanelLinkEl) adminPanelLinkEl.style.display = (profile.role === 'ADMIN' || profile.isAdmin) ? 'block' : 'none';
+                document.getElementById('profileRoundsPlayed').textContent = `${profile.roundsPlayed || 0}`;
+                document.getElementById('profileRoundsWon').textContent = `${profile.roundsWon || 0}`;
+
+                try { localStorage.setItem('username', profile.username); } catch (e) {}
+            } catch (err) {
+                showError('Error loading the profile. Please try again later.');
+                console.error(err);
+            }
+        }
+
+        async function loadReferralStatus() {
+            try {
+                const response = await fetch('/api/referral/status', { headers });
+                if (!response.ok) return;
+                const data = await response.json();
+                document.getElementById('referralCodeInput').value = data.referralCode;
+                document.getElementById('referralQualifyingCount').textContent = data.qualifyingCount;
+                document.getElementById('referralNextMilestone').textContent = data.nextMilestone;
+                document.getElementById('referralVplnEarned').textContent = data.vplnEarnedFromReferrals;
+            } catch (err) {
+                console.error('Błąd ładowania statusu poleceń:', err);
+            }
+        }
+
+        const WITHDRAWAL_STATUS_LABELS = { PENDING: 'Awaiting processing', COMPLETED: 'Completed', REJECTED: 'Rejected' };
+
+        async function loadWithdrawalHistory() {
+            try {
+                const res = await fetch('/api/withdrawals/my', { headers });
+                if (!res.ok) return;
+                const data = await res.json();
+                const list = document.getElementById('withdrawalHistoryList');
+                if (!data.requests.length) { list.innerHTML = ''; return; }
+                list.innerHTML = '<p style="color:#94a3b8; font-size:13px; margin:10px 0 4px;">Earlier VPLN withdrawals to a bank account:</p>' + data.requests.map((r) => `
+                    <p style="font-size:13px;">${new Date(r.requestedAt || r.createdAt).toLocaleString('pl-PL')} — ${r.vplnAmount} VPLN — <strong>${WITHDRAWAL_STATUS_LABELS[r.status] || r.status}</strong>${r.status === 'REJECTED' && r.adminNote ? ` (${r.adminNote})` : ''}</p>
+                `).join('');
+            } catch (err) {
+                console.error('Błąd ładowania historii wypłat:', err);
+            }
+        }
+
+        document.getElementById('copyReferralCodeBtn').addEventListener('click', () => {
+            const input = document.getElementById('referralCodeInput');
+            input.select();
+            navigator.clipboard?.writeText(input.value).catch(() => document.execCommand('copy'));
+        });
+
+        document.getElementById('logoutButton').addEventListener('click', () => {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('token');
+            window.location.href = '/login.html';
+        });
+
+        loadProfile();
+        loadReferralStatus();
+        loadWithdrawalHistory();
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+    <script src="/page-scale.js"></script>
+    <script src="/wol-connect.js"></script>
+</body>
+</html>

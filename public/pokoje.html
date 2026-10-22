@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en" data-source-lang="en" data-source-lang="en" data-source-lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>War of Lords - Battle Rooms</title>
+    <style>
+        body { 
+            background-image: url('/assets/background.png'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a; 
+            
+            color: #f8fafc; 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding-bottom: 60px; 
+        }
+        
+        .nav-menu { background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat; width: 100%; padding: 15px 0; text-align: center; margin-bottom: 30px; }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 20px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+
+        /* Baked-in default nav link layout, adopted site-wide from a player-arranged position
+           (see layout-editor.js) so every visitor sees the same arrangement by default. */
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { display: none !important; position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .info-bar { background: url('/pasek.png') center / 100% 100% no-repeat; border-radius: 0; padding: 30px 25px 45px; margin-bottom: 30px; max-width: 1100px; width: 1098.89px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 4px 15px rgba(0, 0, 0, 0.3); }
+        .info-bar #playerBarNick { font-size: 22px; color: #e8c766; font-weight: bold; }
+        .info-bar #playerBarBalance { font-size: 18px; font-weight: bold; }
+
+        .mode-toggle-bar { display: flex; gap: 14px; max-width: 1100px; width: 100%; padding: 0 20px; box-sizing: border-box; margin-bottom: 25px; }
+        .mode-toggle-btn {
+            flex: 1;
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            border: none;
+            border-radius: 0;
+            color: #94a3b8;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            padding: 16px 10px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .mode-toggle-btn:hover { color: #e2e8f0; }
+        .mode-toggle-btn.active {
+            color: #f0d78c;
+        }
+
+        .rooms-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; max-width: 1100px; width: 100%; padding: 0 20px; box-sizing: border-box; }
+        /* 2026-10-02, explicit request: removed the @media (max-width: 640px) rule that used to
+           stack .rooms-grid into a single wide column on mobile. page-scale.js (already loaded
+           on this page) scales the whole page down to fit any width instead, so the room cards
+           now always render in the same small, neat multi-column grid as desktop. */
+
+        .room-card { background: url('/tlopokoi.png') center / 100% 100% no-repeat; border-radius: 0; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; min-height: 380px; transition: transform 0.2s, border-color 0.2s; position: relative; overflow: hidden; text-align: center; align-items: center; justify-content: flex-start; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); }
+        .room-card:hover:not(.locked) { transform: translateY(-2px); border-color: #d4af37; }
+
+        .room-card.wide { grid-column: span 2; min-height: 360px; flex-direction: column; justify-content: flex-start; align-items: center; }
+
+        .room-info { width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .room-card h3 { margin: 0 0 10px 0; font-size: 26px; text-transform: uppercase; color: #e8c766; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .room-card .room-meta-text { font-size: 16px; color: #cbd5e1; margin: 4px 0; font-weight: 500; }
+
+        .prize-pool-box { width: 100%; max-width: 450px; background: #0f172a; border: 1px solid rgba(212, 175, 55, 0.28); border-radius: 10px; padding: 15px; margin: 15px 0; box-sizing: border-box; }
+        .pool-row { display: flex; flex-direction: column; align-items: center; margin-bottom: 8px; font-size: 15px; }
+        .pool-row:last-child { margin-bottom: 0; }
+        .pool-total { font-size: 17px; font-weight: bold; color: #34d399; border-bottom: 1px dashed rgba(212, 175, 55, 0.3); padding-bottom: 8px; margin-bottom: 10px; width: 100%; }
+
+        .btn-join { background-image: url('/przycisk.png'); background-size: 100% 100%; background-color: transparent; color: #e8c766; border: none; padding: 12px 25px; font-size: 15px; font-weight: bold; border-radius: 0; cursor: pointer; transition: color 0.2s; width: 80%; text-transform: uppercase; margin-top: auto; }
+        .btn-join:hover { color: #f0d78c; }
+
+        .room-card.locked { filter: brightness(0.8); }
+        .room-card .admin-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 16px; }
+        .room-card .admin-action-btn { background-image: url('/przycisk.png'); background-size: 100% 100%; background-color: transparent; color: #cbd5e1; border: none; border-radius: 0; padding: 10px 12px; cursor: pointer; font-size: 13px; transition: color 0.2s; }
+        .room-card .admin-action-btn:hover { color: #e8c766; }
+        .room-card.locked .lock-notice { display: block; }
+        .room-card.locked .btn-join { background-image: none !important; color: #94a3b8 !important; cursor: not-allowed; }
+        .session-warning-banner { width: 100%; max-width: 1100px; margin: 0 auto 20px auto; padding: 18px 22px; background: rgba(248, 113, 113, 0.17); border: 1px solid #f87171; border-radius: 14px; color: #f8fafc; text-align: center; box-shadow: 0 6px 18px rgba(0,0,0,0.18); }
+        .session-warning-text { font-size: 16px; font-weight: 700; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px; }
+        .session-warning-btn { background-image: url('/przycisk.png'); background-size: 100% 100%; background-color: transparent; border: none; color: #22c55e; padding: 10px 18px; border-radius: 0; cursor: pointer; font-size: 14px; font-weight: bold; transition: color 0.2s; }
+        .session-warning-btn:hover { color: #6ee7b7; }
+        .session-leave-btn { background-image: url('/przycisk.png'); background-size: 100% 100%; background-color: transparent; border: none; color: #ef4444; padding: 10px 18px; border-radius: 0; cursor: pointer; font-size: 14px; font-weight: bold; transition: color 0.2s; }
+        .session-leave-btn:hover { color: #fca5a5; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-overlay.active { display: flex; }
+        .modal-window { background: linear-gradient(180deg, rgba(16, 25, 45, 0.98), rgba(8, 15, 29, 0.99)); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 16px; width: min(600px, 90%); padding: 25px; box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 10px 30px rgba(0,0,0,0.45); }
+        .modal-window h3 { margin-top: 0; color: #e8c766; text-transform: uppercase; letter-spacing: 0.04em; }
+        .modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .modal-row.full { grid-column: 1 / -1; }
+        .modal-window label { display: block; margin-bottom: 6px; color: #cbd5e1; font-size: 0.95rem; }
+        .modal-window input { width: 100%; padding: 10px; border: 1px solid rgba(212, 175, 55, 0.28); border-radius: 8px; background: #0f172a; color: #f8fafc; }
+        .modal-buttons { display: flex; justify-content: flex-end; gap: 12px; }
+        .modal-buttons button { padding: 12px 18px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .modal-buttons .btn-save { background: #34d399; color: #0f172a; }
+        .modal-buttons .btn-cancel { background: #334155; color: #f8fafc; }
+        #adminPanelLink { position: absolute; left: 234.44px; top: 41.22px; width: 295.89px; height: 60px; margin: 0; box-sizing: border-box; }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/texts/pokoje.js"></script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+    <script>
+        window.alert = function () {};
+        window.confirm = function () { return true; };
+    </script>
+
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Home</a>
+        <a id="navRooms" href="pokoje.html" class="active">Battle Rooms</a>
+        <a id="navTournaments" href="turnieje.html">Tournaments</a>
+        <a id="navShop" href="live.html">Live Bets</a>
+        <a id="navRanking" href="ranking.html">Overall Ranking</a>
+        <a id="navProfile" href="profile.html">Profile</a>
+        <a id="navRules" href="zasady.html">Rules</a>
+    </div>
+
+    <div id="adminPanelLink" style="display:none;">
+        <a href="admin.html" style="display:inline-block; background:#f59e0b; color:#111827; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">👑 ADMIN PANEL</a>
+    </div>
+
+    <div class="info-bar">
+        <span id="playerBarNick">Commander: Loading...</span>
+    </div>
+
+    <div class="mode-toggle-bar">
+        <button type="button" class="mode-toggle-btn active" id="modeToggleSolo">🧍 Solo mode</button>
+        <button type="button" class="mode-toggle-btn" id="modeToggleTeam">👥 Team mode</button>
+    </div>
+
+    <div id="adminNotice" class="session-warning-banner" style="display:none;">
+        <div class="session-warning-text" id="adminNoticeText"></div>
+    </div>
+
+    <div id="activeGameBanner" class="session-warning-banner" style="display:none;">
+        <div class="session-warning-text">⚠️ You have a game in progress! <button class="session-warning-btn" id="resumeBattleBtn">Back to the battle</button><button class="session-leave-btn" id="leaveActiveGameBtn">Leave the game</button></div>
+    </div>
+
+    <div class="rooms-grid" id="roomsGrid">
+        <div class="room-card">
+            <div class="room-info">
+                <h3>Loading rooms...</h3>
+                <div class="room-meta-text">Please wait, loading data from the server.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="editRoomModal">
+        <div class="modal-window">
+            <h3>Edit Room</h3>
+            <div class="modal-row full">
+                <label for="editRoomName">Room name</label>
+                <input type="text" id="editRoomName" placeholder="Room name" />
+            </div>
+            <div class="modal-row">
+                <div>
+                    <label for="editMaxPlayers">Maximum number of players</label>
+                    <input type="number" id="editMaxPlayers" min="2" max="20" />
+                </div>
+                <div>
+                    <label for="editRoundDuration">Round length (minutes)</label>
+                    <input type="number" id="editRoundDuration" min="15" max="600" step="15" />
+                </div>
+            </div>
+            <div class="modal-row">
+                <div>
+                    <label for="editEcoModifier">Economy modifier</label>
+                    <input type="number" id="editEcoModifier" min="-1" max="5" step="0.25" />
+                </div>
+                <div>
+                    <label for="editMilitaryModifier">Army modifier</label>
+                    <input type="number" id="editMilitaryModifier" min="-1" max="5" step="0.25" />
+                </div>
+            </div>
+            <div class="modal-row full" id="editPlayersCanAddBotsRow">
+                <label for="editPlayersCanAddBots"><input type="checkbox" id="editPlayersCanAddBots" /> Let players add bots in the lobby themselves</label>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-cancel" type="button" onclick="closeEditRoomModal()">Cancel</button>
+                <button class="btn-save" type="button" onclick="saveRoomChanges()">Save changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="/wol-connect.js"></script>
+    <script src="/fingerprint.js"></script>
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        // Gosc (bez portfela) moze przegladac liste, ale nic nie zrobi - akcje odsylaja do logowania.
+        const GUEST = !token;
+
+        const headers = {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            'Content-Type': 'application/json'
+        };
+
+        let playerId = null;
+        let isAdmin = false;
+        let actualAdmin = false;
+        let forceAdmin = false;
+        let currentEditRoom = null;
+
+        // Dynamic origin: works unchanged on localhost, on the LAN, or through an ngrok tunnel.
+        const deviceId = window.WLBFingerprint ? window.WLBFingerprint.getDeviceId() : null;
+        const socket = GUEST ? { on() {}, off() {}, emit() {}, connected: false } : io(window.location.origin, { auth: { token, deviceId } });
+        socket.on('account:blocked', () => {
+            window.location.href = '/index.html';
+        });
+
+        function setAdminControlsVisibility() {
+            const adminNotice = document.getElementById('adminNotice');
+            const adminNoticeText = document.getElementById('adminNoticeText');
+            if (!adminNotice || !adminNoticeText) return;
+
+            if (forceAdmin) {
+                adminNoticeText.textContent = 'Admin mode forced in the UI. Remember that admin endpoints may still require real server permissions.';
+                adminNotice.style.display = 'block';
+            } else {
+                adminNotice.style.display = 'none';
+            }
+        }
+
+        const nick = localStorage.getItem('username') || localStorage.getItem('warlordNick') || 'Commander';
+        document.getElementById('playerBarNick').innerText = `Commander: ${nick}`;
+
+        const roomsGrid = document.getElementById('roomsGrid');
+
+        function formatNumber(value) {
+            return Number(value).toLocaleString('pl-PL');
+        }
+
+        function createRoomCard(room) {
+            const players = room.waitingCount || 0;
+            const max = room.maxGraczy || 10;
+            const isPaused = room.isPaused === true;
+            // A room template never "fills up" in a lasting sense — reaching the threshold spins
+            // off an independent round and the waiting queue is cleared right away, so capacity
+            // alone never locks the card — only an admin pausing the room does.
+            const isFull = false;
+
+            const card = document.createElement('div');
+            card.className = 'room-card' + (isPaused ? ' locked' : '');
+
+            const info = document.createElement('div');
+            info.className = 'room-info';
+
+            const title = document.createElement('h3');
+            title.textContent = room.nazwaPokoju || 'Room';
+            info.appendChild(title);
+
+            const statusText = document.createElement('div');
+            statusText.className = 'room-meta-text';
+            statusText.textContent = isPaused ? 'Status: Paused' : 'Status: Available';
+            statusText.style.color = isPaused ? '#f87171' : '#cbd5e1';
+            info.appendChild(statusText);
+
+            const isPercentageRoom = room.roomType === 'percentage';
+            const isTeamRoom = room.roomType === 'team';
+
+            if (isTeamRoom) {
+                const teamCount = Math.min(10, Math.max(2, Number(room.teamCount) || 2));
+                const teamBadge = document.createElement('div');
+                teamBadge.className = 'room-meta-text';
+                teamBadge.style.color = '#a78bfa';
+                teamBadge.style.fontWeight = 'bold';
+                teamBadge.textContent = `👥 Team mode — ${teamCount} teams, up to 5 players each`;
+                info.appendChild(teamBadge);
+            }
+
+            if (!isPercentageRoom) {
+                const capacityText = document.createElement('div');
+                capacityText.className = 'room-meta-text';
+                capacityText.textContent = `${max} players per match`;
+                info.appendChild(capacityText);
+            }
+
+            const durationMinutes = Math.round((room.ustawienia?.dlugoscRundySekundy || 3600) / 60);
+            const durationText = document.createElement('div');
+            durationText.className = 'room-meta-text';
+            const speedFactor = room.speedFactor ?? (120 / durationMinutes);
+            durationText.textContent = `Round length: ${durationMinutes} min · Speed: ${speedFactor}x`;
+            info.appendChild(durationText);
+
+            if (isPercentageRoom) {
+                const readyStartText = document.createElement('div');
+                readyStartText.className = 'room-meta-text';
+                readyStartText.style.color = '#34d399';
+                readyStartText.style.fontWeight = 'bold';
+                readyStartText.textContent = 'Start: automatic once everyone confirms they are ready (minimum 5 players)';
+                info.appendChild(readyStartText);
+            } else if (isTeamRoom) {
+                const readyStartText = document.createElement('div');
+                readyStartText.className = 'room-meta-text';
+                readyStartText.style.color = '#34d399';
+                readyStartText.style.fontWeight = 'bold';
+                readyStartText.textContent = 'Start: automatic once everyone is ready (players pick their teams in the lobby)';
+                info.appendChild(readyStartText);
+            }
+
+            const playersText = document.createElement('div');
+            playersText.className = 'room-meta-text';
+            playersText.style.fontSize = '14px';
+            playersText.innerHTML = `Signed-up players: <span style="color:#fbbf24; font-weight:bold;">${players} / ${max}</span>`;
+            info.appendChild(playersText);
+
+            card.appendChild(info);
+
+            const lockNotice = document.createElement('div');
+            lockNotice.className = 'lock-notice';
+            if (isPaused) {
+                lockNotice.textContent = '⏸️ The room is paused';
+            } else {
+                lockNotice.textContent = isFull ? '🔒 ROOM FULL' : '🔒 Waiting for a full line-up';
+            }
+            card.appendChild(lockNotice);
+
+            const button = document.createElement('button');
+            button.className = 'btn-join';
+            button.type = 'button';
+            button.textContent = isPaused ? 'Paused' : (isFull ? 'Full' : 'Join the game');
+            button.disabled = isFull || isPaused;
+            button.addEventListener('click', () => joinRoom(room._id, room.nazwaPokoju));
+            card.appendChild(button);
+
+            if (isAdmin) {
+                const actions = document.createElement('div');
+                actions.className = 'admin-actions';
+
+                const pauseBtn = document.createElement('button');
+                pauseBtn.className = 'admin-action-btn';
+                pauseBtn.textContent = room.isPaused ? 'Resume' : 'Pause';
+                pauseBtn.addEventListener('click', () => toggleRoomPause(room._id, room.isPaused));
+                actions.appendChild(pauseBtn);
+
+                const editBtn = document.createElement('button');
+                editBtn.className = 'admin-action-btn';
+                editBtn.textContent = 'Edit';
+                editBtn.addEventListener('click', () => openEditRoomModal(room));
+                actions.appendChild(editBtn);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'admin-action-btn';
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.addEventListener('click', () => deleteRoom(room._id, room.nazwaPokoju));
+                actions.appendChild(deleteBtn);
+
+                card.appendChild(actions);
+            }
+
+            return card;
+        }
+
+        // 'solo' (default on page load) shows standard+percentage rooms exactly as before;
+        // 'team' shows only roomType 'team' rooms instead — a pure client-side filter over the same
+        // fetched list, toggled by the two big buttons under the info-bar.
+        let browseMode = 'solo';
+        let allRooms = [];
+
+        function renderRoomsGrid() {
+            const filtered = allRooms.filter((room) => (browseMode === 'team') === (room.roomType === 'team'));
+            roomsGrid.innerHTML = '';
+            if (!filtered.length) {
+                const emptyText = browseMode === 'team'
+                    ? 'No team rooms — ask an administrator to create one.'
+                    : 'Ask an administrator to create a room or try again later.';
+                roomsGrid.innerHTML = `<div class="room-card"><div class="room-info"><h3>No rooms available</h3><div class="room-meta-text">${emptyText}</div></div></div>`;
+                return;
+            }
+            filtered.forEach(room => {
+                roomsGrid.appendChild(createRoomCard(room));
+            });
+        }
+
+        function setBrowseMode(mode) {
+            browseMode = mode;
+            document.getElementById('modeToggleSolo').classList.toggle('active', mode === 'solo');
+            document.getElementById('modeToggleTeam').classList.toggle('active', mode === 'team');
+            renderRoomsGrid();
+        }
+
+        document.getElementById('modeToggleSolo').addEventListener('click', () => setBrowseMode('solo'));
+        document.getElementById('modeToggleTeam').addEventListener('click', () => setBrowseMode('team'));
+
+        // Mirrors the site-wide "teamModeEnabled" kill-switch in admin.html: when the admin turns
+        // team mode off, existing team rounds keep running but the browse toggle here disappears so
+        // players can't start new ones — falls back to 'solo' if it happened to be on 'team' already.
+        async function loadTeamModeAvailability() {
+            try {
+                const response = await fetch('/api/settings/team-mode');
+                if (!response.ok) return;
+                const data = await response.json();
+                const enabled = data.enabled !== false;
+                const teamBtn = document.getElementById('modeToggleTeam');
+                if (!teamBtn) return;
+                teamBtn.style.display = enabled ? '' : 'none';
+                if (!enabled && browseMode === 'team') {
+                    setBrowseMode('solo');
+                }
+            } catch (err) {
+                console.error('Błąd ładowania dostępności trybu drużynowego:', err);
+            }
+        }
+
+        async function loadRooms() {
+            try {
+                // Room templates are the same honest data for everyone now — no masking needed,
+                // since a Room never conflates with any round happening underneath it. Live rounds
+                // are only ever visible via the dedicated "Trwające rundy" view in admin.html.
+                const endpoint = '/api/rooms';
+                const response = await fetch(endpoint, { headers });
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Could not load the room list.');
+                }
+                const data = await response.json();
+                allRooms = Array.isArray(data) ? data : (data.rooms || []);
+                renderRoomsGrid();
+            } catch (error) {
+                console.error(error);
+                roomsGrid.innerHTML = `<div class="room-card"><div class="room-info"><h3>Error loading rooms</h3><div class="room-meta-text">${error.message}</div></div></div>`;
+            }
+        }
+
+        async function joinRoom(roomId, roomName) {
+            if (GUEST) { window.location.href = '/login.html'; return; }
+            if (!roomId) return alert('Invalid room ID.');
+            try {
+                const response = await fetch(`/api/rooms/${roomId}/join`, {
+                    method: 'POST',
+                    headers
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    if (WolConnect.isActiveGameError(result.error) && await WolConnect.handleActiveGame()) return joinRoom(roomId, roomName);
+                    throw new Error(result.error || 'Could not join the room.');
+                }
+                const joinedRoom = result.room || {};
+                const displayName = joinedRoom.nazwaPokoju || roomName || 'Room';
+                window.location.href = `/poczekalnia.html?roomId=${roomId}&roomName=${encodeURIComponent(displayName)}`;
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        function joinLobby() {
+            if (typeof playerId === 'string' && playerId && socket.connected) {
+                socket.emit('lobby:join', { id: playerId, username: nick });
+            }
+        }
+
+        async function leaveRoom(roomId) {
+            if (!roomId) return alert('Missing room ID.');
+            try {
+                const response = await fetch(`/api/rooms/${roomId}/leave`, {
+                    method: 'POST',
+                    headers
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Could not leave the room.');
+                alert(result.message || 'You left the room.');
+                loadRooms();
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        }
+
+        async function loadProfile() {
+            if (GUEST) { loadRooms(); return; }
+            try {
+                const response = await fetch('/api/auth/me', { headers });
+                if (!response.ok) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('token');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                const profile = await response.json();
+                try { localStorage.setItem('lastProfileRefresh', String(Date.now())); } catch (e) {}
+                forceAdmin = localStorage.getItem('forceAdmin') === 'true';
+                actualAdmin = profile.role === 'ADMIN';
+                isAdmin = forceAdmin || actualAdmin;
+                playerId = profile._id;
+                setAdminControlsVisibility();
+                const adminPanelLinkEl = document.getElementById('adminPanelLink');
+                if (adminPanelLinkEl) adminPanelLinkEl.style.display = isAdmin ? 'block' : 'none';
+                await checkActiveGame();
+                loadRooms();
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // "Trwająca rozgrywka" only ever means an actual active Round — sitting in a Room's waiting
+        // queue is not a game in progress (see GET /api/game/state on the server, which now only
+        // ever reports an active Round, never a queue-wait state).
+        async function checkActiveGame() {
+            try {
+                const response = await fetch('/api/game/state', { headers });
+                if (!response.ok) return hideActiveGameBanner();
+                const data = await response.json();
+                if (data && data.state && data.state.roundId && data.state.status !== 'finished') {
+                    showActiveGameBanner(data.state.roundId);
+                } else {
+                    hideActiveGameBanner();
+                }
+            } catch (err) {
+                console.error('Błąd sprawdzania aktywnej gry:', err);
+                hideActiveGameBanner();
+            }
+        }
+
+        async function leaveActiveGame(roundId) {
+            if (!roundId) return;
+            const leaveBtn = document.getElementById('leaveActiveGameBtn');
+            if (leaveBtn) leaveBtn.disabled = true;
+            try {
+                const response = await fetch(`/api/rounds/${roundId}/forfeit`, {
+                    method: 'POST',
+                    headers
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    console.error('Błąd opuszczania rozgrywki:', data.error);
+                    if (leaveBtn) leaveBtn.disabled = false;
+                    return;
+                }
+                hideActiveGameBanner();
+                loadRooms();
+            } catch (err) {
+                console.error('Błąd opuszczania rozgrywki:', err);
+                if (leaveBtn) leaveBtn.disabled = false;
+            }
+        }
+
+        function showActiveGameBanner(roundId) {
+            const banner = document.getElementById('activeGameBanner');
+            const button = document.getElementById('resumeBattleBtn');
+            const leaveBtn = document.getElementById('leaveActiveGameBtn');
+            banner.style.display = 'block';
+            button.onclick = () => {
+                window.location.href = `/game.html?roundId=${roundId}`;
+            };
+            if (leaveBtn) {
+                leaveBtn.disabled = false;
+                leaveBtn.onclick = () => leaveActiveGame(roundId);
+            }
+
+            // show remaining time from server
+            let timerEl = document.getElementById('activeGameTimer');
+            if (!timerEl) {
+                timerEl = document.createElement('span');
+                timerEl.id = 'activeGameTimer';
+                timerEl.style.marginLeft = '12px';
+                banner.querySelector('.session-warning-text').appendChild(timerEl);
+            }
+            let intervalId = null;
+            async function updateTimer() {
+                try {
+                    const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+                    const res = await fetch('/api/game/state', { headers: { 'Authorization': 'Bearer ' + token } });
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    if (!data || !data.state || !data.state.endsAt) return;
+                    const endsAt = new Date(data.state.endsAt);
+                    const diff = Math.max(0, Math.floor((endsAt.getTime() - Date.now()) / 1000));
+                    const hours = String(Math.floor(diff / 3600)).padStart(2, '0');
+                    const mins = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
+                    const secs = String(diff % 60).padStart(2, '0');
+                    timerEl.innerText = `Time left: ${hours}:${mins}:${secs}`;
+                } catch (e) {
+                    // ignore
+                }
+            }
+            updateTimer();
+            if (banner.dataset.timerId) {
+                try { clearInterval(Number(banner.dataset.timerId)); } catch (e) {}
+            }
+            banner.dataset.timerId = String(setInterval(updateTimer, 1000));
+        }
+
+        function hideActiveGameBanner() {
+            const banner = document.getElementById('activeGameBanner');
+            if (banner && banner.dataset && banner.dataset.timerId) {
+                try { clearInterval(Number(banner.dataset.timerId)); } catch (e) {}
+                delete banner.dataset.timerId;
+            }
+            if (banner) {
+                banner.style.display = 'none';
+            }
+            try { localStorage.removeItem('warlord-active-round-id'); } catch (e) {}
+        }
+
+        function openEditRoomModal(room) {
+            currentEditRoom = room;
+            document.getElementById('editRoomName').value = room.nazwaPokoju || '';
+            document.getElementById('editMaxPlayers').value = room.maxGraczy || 10;
+            document.getElementById('editRoundDuration').value = Math.floor((room.ustawienia?.dlugoscRundySekundy || 7200) / 60);
+            document.getElementById('editEcoModifier').value = room.ustawienia?.modyfikatorCzasuEkonomii ?? 0;
+            document.getElementById('editMilitaryModifier').value = room.ustawienia?.modyfikatorCzasuWojska ?? 0;
+            document.getElementById('editPlayersCanAddBots').checked = Boolean(room.playersCanAddBots);
+            document.getElementById('editPlayersCanAddBotsRow').style.display = room.roomType === 'team' ? 'none' : '';
+            document.getElementById('editRoomModal').classList.add('active');
+        }
+
+        function closeEditRoomModal() {
+            currentEditRoom = null;
+            document.getElementById('editRoomModal').classList.remove('active');
+        }
+
+        function numOrDefault(value, fallback) {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? parsed : fallback;
+        }
+
+        async function saveRoomChanges() {
+            if (!currentEditRoom) return;
+            const payload = {
+                nazwaPokoju: document.getElementById('editRoomName').value,
+                maxGraczy: Number(document.getElementById('editMaxPlayers').value) || 10,
+                roundDurationMinutes: Number(document.getElementById('editRoundDuration').value) || 120,
+                economyTimeModifier: numOrDefault(document.getElementById('editEcoModifier').value, 0),
+                militaryTimeModifier: numOrDefault(document.getElementById('editMilitaryModifier').value, 0),
+                playersCanAddBots: document.getElementById('editPlayersCanAddBots').checked
+            };
+            try {
+                const response = await fetch(`/api/rooms/${currentEditRoom._id}`, {
+                    method: 'PUT',
+                    headers,
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Could not save the changes.');
+                closeEditRoomModal();
+                loadRooms();
+                alert('The room has been updated.');
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        }
+
+        async function toggleRoomPause(roomId, currentValue) {
+            try {
+                const response = await fetch(`/api/rooms/${roomId}/pause`, {
+                    method: 'PUT',
+                    headers
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Could not change the room state.');
+                loadRooms();
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        }
+
+        async function deleteRoom(roomId, roomName) {
+            try {
+                const response = await fetch(`/api/rooms/${roomId}`, {
+                    method: 'DELETE',
+                    headers
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Could not delete the room.');
+                loadRooms();
+                alert('The room has been deleted.');
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+            }
+        }
+
+        loadProfile();
+        loadTeamModeAvailability();
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+    <script src="/page-scale.js"></script>
+    <script src="/wol-guest.js"></script>
+</body>
+</html>

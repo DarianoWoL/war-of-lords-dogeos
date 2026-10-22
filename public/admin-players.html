@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>War of Lords - Gracze</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;
+            background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif;
+            margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; padding-bottom: 60px;
+        }
+        .nav-menu { background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat; width: 100%; padding: 15px 0; text-align: center; margin-bottom: 30px; }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 16px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .shell { width: 100%; max-width: 1100px; padding: 0 20px 40px; box-sizing: border-box; }
+        .back-link { display: inline-block; margin-bottom: 18px; color: #94a3b8; text-decoration: none; font-size: 14px; }
+        .back-link:hover { color: #e8c766; }
+        .page-header { position: relative; text-align: center; margin-bottom: 24px; }
+        .page-header h1 { margin: 0; font-size: 30px; color: #e8c766; letter-spacing: 1px; text-transform: uppercase; }
+        .page-header p { margin: 10px auto 0; max-width: 700px; color: #cbd5e1; font-size: 15px; line-height: 1.6; }
+        .panel-alert { background: rgba(248, 113, 113, 0.15); border: 1px solid #f87171; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; color: #f8fafc; }
+
+        .mailbox-btn { position: absolute; top: 4px; right: 0; background: #17233d; color: #e8c766; border: 1px solid rgba(212, 175, 55, 0.45); border-radius: 10px; padding: 10px 16px; font-size: 14px; cursor: pointer; }
+        .mailbox-btn:hover { background: #1e2c4d; }
+        .mailbox-badge { display: inline-block; background: #ef4444; color: #fff; border-radius: 999px; font-size: 11px; padding: 1px 7px; margin-left: 6px; }
+        .mailbox-modal-backdrop { position: fixed; inset: 0; background: rgba(4, 10, 24, 0.85); z-index: 9999; display: none; align-items: flex-start; justify-content: center; padding: 40px 16px; overflow-y: auto; }
+        .mailbox-modal { background: linear-gradient(180deg, #17233d, #0f1729); border: 1px solid rgba(212, 175, 55, 0.45); border-radius: 14px; max-width: 720px; width: 100%; padding: 24px; }
+        .mailbox-modal.wide { max-width: 840px; }
+        .mailbox-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .mailbox-close-btn { background: transparent; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1; }
+        .mailbox-thread { border: 1px solid rgba(212, 175, 55, 0.25); border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+        .mailbox-messages { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin: 10px 0; }
+        .mailbox-message { padding: 8px 12px; border-radius: 10px; max-width: 85%; font-size: 13px; }
+        .mailbox-message.player { align-self: flex-start; background: rgba(212, 175, 55, 0.15); }
+        .mailbox-message.admin { align-self: flex-end; background: rgba(59, 130, 246, 0.15); }
+        .mailbox-message .meta { font-size: 11px; color: #94a3b8; margin-top: 3px; }
+        .mailbox-reply-form { display: flex; gap: 8px; }
+        .mailbox-reply-form textarea { flex: 1; min-height: 46px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3); background: #0f172a; color: #f8fafc; padding: 8px; font-family: inherit; font-size: 13px; }
+
+        .admin-view-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+        .admin-view-tab { border: 1px solid rgba(212, 175, 55, 0.28); border-radius: 10px; background: #0f172a; color: #cbd5e1; padding: 10px 16px; font-size: 14px; font-weight: bold; cursor: pointer; }
+        .admin-view-tab.active { background: linear-gradient(180deg, #e8c766, #b8901f); color: #1c1408; border-color: transparent; }
+        .btn-small { border: none; border-radius: 10px; cursor: pointer; font-weight: bold; padding: 10px 12px; font-size: 13px; min-width: 100px; background: #1e293b; color: #f8fafc; border: 1px solid rgba(212, 175, 55, 0.28); }
+        .btn-small:hover { background: #334155; }
+        .btn-small:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-red { background: #ef4444; color: #fff; border-color: transparent; }
+        .btn-green { background: #34d399; color: #0f172a; border-color: transparent; }
+        .status-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
+        .status-dot.online { background: #22c55e; box-shadow: 0 0 5px rgba(34, 197, 94, 0.7); }
+        .status-dot.offline { background: #ef4444; }
+        .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: bold; background: rgba(212, 175, 55, 0.18); color: #e8c766; }
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table th, .admin-table td { border: 1px solid rgba(212, 175, 55, 0.24); padding: 10px 8px; font-size: 13px; text-align: left; }
+        .admin-table th { color: #e8c766; }
+        .panel-card { background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96)); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 18px; padding: 20px; margin-bottom: 14px; }
+        .panel-card .subtext { color: #cbd5e1; font-size: 13px; line-height: 1.5; }
+        .search-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+        .search-row input[type="text"] { flex: 1; min-width: 220px; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.28); background: #0f172a; color: #f8fafc; font-size: 14px; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <script>
+        window.alert = function () {};
+        window.confirm = function () { return true; };
+    </script>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="/index.html">Główna</a>
+        <a id="navRooms" href="/pokoje.html">Pokoje Bitewne</a>
+        <a id="navTournaments" href="/turnieje.html">Turnieje</a>
+        <a id="navShop" href="/sklep.html">Sklep</a>
+        <a id="navRanking" href="/ranking.html">Ranking Ogólny</a>
+        <a id="navProfile" href="/profile.html">Profil</a>
+        <a id="navRules" href="/zasady.html">Zasady</a>
+        <a id="navAdmin" href="/admin.html" class="active">Panel Admina</a>
+    </div>
+
+    <div class="mailbox-modal-backdrop" id="mailboxModalBackdrop">
+        <div class="mailbox-modal">
+            <div class="mailbox-modal-header">
+                <h2 style="margin:0; color:#e8c766;">Skrzynka pocztowa — wiadomości od zablokowanych graczy</h2>
+                <button type="button" class="mailbox-close-btn" onclick="closeMailbox()">&times;</button>
+            </div>
+            <div id="mailboxContainer"><p style="color:#cbd5e1;">Ładowanie...</p></div>
+        </div>
+    </div>
+
+    <div class="mailbox-modal-backdrop" id="playerModalBackdrop">
+        <div class="mailbox-modal wide">
+            <div class="mailbox-modal-header">
+                <h2 style="margin:0; color:#e8c766;" id="playerModalTitle">Profil gracza</h2>
+                <button type="button" class="mailbox-close-btn" onclick="closePlayerModal()">&times;</button>
+            </div>
+            <div id="playerModalContent"><p style="color:#cbd5e1;">Ładowanie...</p></div>
+        </div>
+    </div>
+
+    <div class="shell">
+        <a class="back-link" href="/admin/rooms">&larr; Wróć do Zarządzania Pokojami</a>
+        <div class="page-header">
+            <button type="button" class="mailbox-btn" id="mailboxBtn" onclick="openMailbox()">✉ Skrzynka<span id="mailboxUnreadBadge" class="mailbox-badge" style="display:none;"></span></button>
+            <h1>👥 Gracze</h1>
+            <p>Lista graczy, blokady, wykryte multikonta, podejrzane powiązania i skrzynka pocztowa.</p>
+        </div>
+
+        <div id="adminWarning" class="panel-alert" style="display:none;"></div>
+
+        <div class="admin-view-tabs">
+            <button type="button" class="admin-view-tab active" id="tabUsers" onclick="setView('users')">Lista graczy</button>
+            <button type="button" class="admin-view-tab" id="tabMulti" onclick="setView('multi')">Wykryte Multikonta</button>
+            <button type="button" class="admin-view-tab" id="tabLinks" onclick="setView('links')">Podejrzane Powiązania</button>
+        </div>
+
+        <div id="usersView">
+            <div class="status-pill" id="playerCountPill" style="margin-bottom:16px;">Zarejestrowani gracze: <strong style="margin-left:6px;">—</strong></div>
+            <div class="search-row">
+                <input type="text" id="userSearchInput" placeholder="Szukaj gracza po nazwie..." oninput="filterAdminUsers()" />
+                <button type="button" class="btn-small" id="blockedOnlyToggle" onclick="toggleBlockedOnlyFilter()">Pokaż tylko zablokowanych</button>
+            </div>
+            <div id="usersContainer"><p style="color:#cbd5e1;">Ładowanie...</p></div>
+        </div>
+
+        <div id="multiView" style="display:none;">
+            <p class="subtext" style="color:#cbd5e1; margin-bottom:16px;">Twarde dowody sieciowe i sprzętowe — pary kont, którym serwer zablokował dołączenie do tego samego pokoju z powodu wspólnego Device ID lub wspólnego adresu IP w ciągu ostatnich 7 dni.</p>
+            <div id="multiAccountsContainer"><p style="color:#cbd5e1;">Ładowanie...</p></div>
+        </div>
+
+        <div id="linksView" style="display:none;">
+            <p class="subtext" style="color:#cbd5e1; margin-bottom:16px;">Pary graczy wyłapane przez analizę behawioralną — jak często grają razem oraz jednostronne przejęcia wiosek przy zerowej/symbolicznej obronie (podkładanie się, win-trading).</p>
+            <div id="suspiciousLinksContainer"><p style="color:#cbd5e1;">Ładowanie...</p></div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (!token) { window.location.href = '/login.html'; }
+        const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        function showAdminError(message) {
+            const warning = document.getElementById('adminWarning');
+            warning.style.display = 'block';
+            warning.innerText = message;
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str == null ? '' : String(str);
+            return div.innerHTML;
+        }
+
+        function formatNumber(value) {
+            return Number(value).toLocaleString('pl-PL');
+        }
+
+        function formatDateTime(value) {
+            if (!value) return '—';
+            return new Date(value).toLocaleString('pl-PL');
+        }
+
+        function formatCreatedAt(value) {
+            if (!value) return '—';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return '—';
+            return date.toLocaleString('pl-PL', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+
+        // Shows the CURRENT lockout state (see attemptLogin in server.js) — a past, already-expired
+        // loginLockedUntil isn't shown as active, but failedLoginAttempts/loginLockoutTier stay
+        // visible as a running "how many times has this account been brute-forced" indicator.
+        function formatLoginLockoutStatus(user) {
+            const now = new Date();
+            const lockedUntil = user.loginLockedUntil ? new Date(user.loginLockedUntil) : null;
+            const isLocked = lockedUntil && lockedUntil > now;
+            const attempts = user.failedLoginAttempts || 0;
+            if (isLocked) {
+                return `🔒 Zablokowane do ${lockedUntil.toLocaleString('pl-PL')} (próg ${user.loginLockoutTier || '?'}, ${attempts} nieudanych)`;
+            }
+            if (attempts > 0) {
+                return `${attempts} nieudanych prób (brak aktywnej blokady)`;
+            }
+            return '—';
+        }
+
+        let currentView = 'users';
+
+        function setView(view) {
+            currentView = view;
+            document.getElementById('tabUsers').classList.toggle('active', view === 'users');
+            document.getElementById('tabMulti').classList.toggle('active', view === 'multi');
+            document.getElementById('tabLinks').classList.toggle('active', view === 'links');
+            document.getElementById('usersView').style.display = view === 'users' ? 'block' : 'none';
+            document.getElementById('multiView').style.display = view === 'multi' ? 'block' : 'none';
+            document.getElementById('linksView').style.display = view === 'links' ? 'block' : 'none';
+            if (view === 'users') loadAdminUsers();
+            if (view === 'multi') loadMultiAccounts();
+            if (view === 'links') loadSuspiciousLinks();
+        }
+
+        // --- Lista graczy ---------------------------------------------------------------------
+
+        let allAdminUsers = [];
+        let blockedOnlyFilterActive = false;
+
+        function createUserRow(user) {
+            const tr = document.createElement('tr');
+            tr.style.cursor = 'pointer';
+            tr.title = 'Kliknij, aby zobaczyć pełny profil gracza';
+            tr.onclick = () => openPlayerDetails(user._id);
+            const blockText = user.isBlocked ? 'TAK' : 'NIE';
+            const dotClass = user.isOnline ? 'online' : 'offline';
+            const dotTitle = user.isOnline ? 'Online' : 'Offline';
+            tr.innerHTML = `
+                <td>${user._creationOrder || '—'}</td>
+                <td><span class="status-dot ${dotClass}" title="${dotTitle}"></span>${user.username}</td>
+                <td style="white-space:nowrap; font-size:13px; color:#cbd5e1;">${formatCreatedAt(user.createdAt)}</td>
+                <td>${formatNumber(user.skillPoints || 0)}</td>
+                <td>${blockText}</td>
+                <td style="max-width:220px; font-size:12px; color:#fca5a5;">${user.isBlocked ? escapeHtml(user.blockReason || '—') : '—'}</td>
+                <td style="max-width:240px; font-size:12px; color:${user.loginLockedUntil && new Date(user.loginLockedUntil) > new Date() ? '#fca5a5' : '#94a3b8'};">${escapeHtml(formatLoginLockoutStatus(user))}</td>
+                <td style="display:flex; flex-wrap:wrap; gap:8px;">
+                    <button class="btn-small" onclick="event.stopPropagation(); toggleUserBlock('${user._id}', ${!user.isBlocked})">${user.isBlocked ? 'Odblokuj' : 'Zablokuj'}</button>
+                </td>
+            `;
+            return tr;
+        }
+
+        function toggleBlockedOnlyFilter() {
+            blockedOnlyFilterActive = !blockedOnlyFilterActive;
+            document.getElementById('blockedOnlyToggle').classList.toggle('btn-red', blockedOnlyFilterActive);
+            document.getElementById('blockedOnlyToggle').textContent = blockedOnlyFilterActive ? 'Pokaż wszystkich graczy' : 'Pokaż tylko zablokowanych';
+            filterAdminUsers();
+        }
+
+        function renderUsersTable(users) {
+            const container = document.getElementById('usersContainer');
+            if (!users.length) {
+                container.innerHTML = '<p style="color:#cbd5e1;">Brak graczy pasujących do wyszukiwania.</p>';
+                return;
+            }
+            const table = document.createElement('table');
+            table.className = 'admin-table';
+            table.innerHTML = `<thead><tr><th>#</th><th>Nick</th><th>Data utworzenia konta</th><th>MMR</th><th>Zablokowany</th><th>Powód blokady</th><th>Blokada logowania</th><th>Akcje</th></tr></thead>`;
+            const tbody = document.createElement('tbody');
+            users.forEach((user) => tbody.appendChild(createUserRow(user)));
+            table.appendChild(tbody);
+            container.innerHTML = '';
+            container.appendChild(table);
+        }
+
+        function filterAdminUsers() {
+            const query = document.getElementById('userSearchInput').value.trim().toLowerCase();
+            let filtered = query ? allAdminUsers.filter((user) => (user.username || '').toLowerCase().includes(query)) : allAdminUsers;
+            if (blockedOnlyFilterActive) filtered = filtered.filter((user) => user.isBlocked);
+            renderUsersTable(filtered);
+        }
+
+        async function loadAdminUsers() {
+            const container = document.getElementById('usersContainer');
+            if (!allAdminUsers.length) container.innerHTML = '<p style="color:#cbd5e1;">Ładowanie graczy...</p>';
+            try {
+                const response = await fetch('/api/admin/users', { headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Błąd przy pobieraniu użytkowników.');
+                const users = Array.isArray(result) ? result : [];
+                allAdminUsers = users.map((user, index) => ({ ...user, _creationOrder: index + 1 }));
+                const countPill = document.getElementById('playerCountPill');
+                if (countPill) countPill.querySelector('strong').textContent = formatNumber(allAdminUsers.length);
+                if (!allAdminUsers.length) {
+                    container.innerHTML = '<p style="color:#cbd5e1;">Brak zarejestrowanych użytkowników.</p>';
+                    return;
+                }
+                filterAdminUsers();
+            } catch (err) {
+                container.innerHTML = `<p style="color:#f87171;">${err.message || 'Błąd.'}</p>`;
+            }
+        }
+
+        async function toggleUserBlock(userId, blocked) {
+            let reason = null;
+            if (blocked) {
+                reason = window.prompt('Podaj powód blokady (zobaczy go gracz):', 'Naruszenie regulaminu.');
+                if (reason === null) return;
+            }
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/block`, { method: 'PUT', headers, body: JSON.stringify({ blocked, reason }) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zaktualizować blokady.');
+                await loadAdminUsers();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd aktualizacji blokady.');
+            }
+        }
+
+        // --- Modal profilu gracza --------------------------------------------------------------
+
+        const accountStatusLabels = { true: 'Zablokowane', false: 'Aktywne' };
+
+        function closePlayerModal() {
+            document.getElementById('playerModalBackdrop').style.display = 'none';
+        }
+
+        function renderPlayerModal(data) {
+            const user = data.user;
+            document.getElementById('playerModalTitle').textContent = `Profil gracza — ${user.username}`;
+            const profileRows = [
+                ['Nazwa użytkownika', escapeHtml(user.username)],
+                ['Adres e-mail', escapeHtml(user.email || '—')],
+                ['Data dołączenia', formatCreatedAt(user.createdAt)],
+                ['Status konta', accountStatusLabels[!!user.isBlocked]],
+                ['Powód blokady', user.isBlocked ? escapeHtml(user.blockReason || '—') : '—'],
+                ['Blokada logowania (brute-force)', escapeHtml(formatLoginLockoutStatus(user))],
+                ['Saldo VPLN', formatNumber(user.vplnBalance || 0)],
+                ['MMR (Skill Points)', formatNumber(user.skillPoints || 0)],
+                ['Rozegrane rundy', formatNumber(user.roundsPlayed || 0)],
+                ['Wygrane rundy', formatNumber(user.roundsWon || 0)],
+                ['Bilety turniejowe', formatNumber(user.tournamentTickets || 0)],
+                ['Punkty kwalifikacyjne', formatNumber(user.qualificationPoints || 0)],
+                ['Bezpośredni awans do półfinału', user.semifinalDirectPass ? 'Tak' : 'Nie'],
+                ['Administrator', user.isAdmin ? 'Tak' : 'Nie'],
+                ['Zaakceptował regulamin', user.hasAcceptedRules ? 'Tak' : 'Nie'],
+                ['Zgoda marketingowa', user.marketingOptIn ? 'Tak' : 'Nie'],
+                ['Wykorzystał darmową rundę próbną', user.freeTrialUsed ? 'Tak' : 'Nie']
+            ];
+            const profileHtml = `
+                <h3 style="color:#e8c766; margin:0 0 10px;">Dane profilowe</h3>
+                <table class="admin-table" style="margin-bottom:20px;">
+                    <tbody>${profileRows.map(([label, value]) => `<tr><td style="color:#94a3b8;">${label}</td><td>${value}</td></tr>`).join('')}</tbody>
+                </table>
+            `;
+            const grants = data.vplnGrants || [];
+            const grantVplnHtml = `
+                <h3 style="color:#e8c766; margin:0 0 10px;">Przyznaj VPLN (za różne zasługi)</h3>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin-bottom:14px;">
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <label style="font-size:12px; color:#94a3b8;">Ilość VPLN</label>
+                        <input type="number" id="grantVplnAmount" min="1" step="1" style="padding:10px 12px; border-radius:8px; border:1px solid rgba(212,175,55,0.3); background:#0f172a; color:#f8fafc; font-size:14px; width:140px;">
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:220px;">
+                        <label style="font-size:12px; color:#94a3b8;">Powód (widoczny w rejestrze nagród)</label>
+                        <input type="text" id="grantVplnReason" maxlength="300" placeholder="np. nagroda za zgłoszenie błędu" style="padding:10px 12px; border-radius:8px; border:1px solid rgba(212,175,55,0.3); background:#0f172a; color:#f8fafc; font-size:14px; box-sizing:border-box; width:100%;">
+                    </div>
+                    <button type="button" class="btn-small btn-green" id="grantVplnBtn" onclick="grantVpln('${user._id}')">Przyznaj</button>
+                </div>
+                ${grants.length ? `
+                    <table class="admin-table" style="margin-bottom:20px;">
+                        <thead><tr><th>Data</th><th>Kwota</th><th>Powód</th><th>Przyznał</th></tr></thead>
+                        <tbody>${grants.map((g) => `
+                            <tr>
+                                <td style="white-space:nowrap; font-size:13px;">${formatCreatedAt(g.awardedAt)}</td>
+                                <td>${formatNumber(g.amountVpln)} VPLN</td>
+                                <td>${escapeHtml(g.reason || '—')}</td>
+                                <td>${escapeHtml(g.adminUsername)}</td>
+                            </tr>
+                        `).join('')}</tbody>
+                    </table>
+                ` : '<p class="subtext" style="margin:0 0 20px;">Brak ręcznie przyznanych nagród VPLN.</p>'}
+            `;
+            const orders = data.ticketOrders || [];
+            const purchasesHtml = `
+                <h3 style="color:#e8c766; margin:0 0 10px;">Historia zakupów</h3>
+                ${orders.length ? `
+                    <table class="admin-table" style="margin-bottom:20px;">
+                        <thead><tr><th>Data</th><th>Ilość</th><th>Kwota</th><th>Status</th><th>Opłacono</th></tr></thead>
+                        <tbody>${orders.map((o) => `
+                            <tr>
+                                <td style="white-space:nowrap; font-size:13px;">${formatCreatedAt(o.createdAt)}</td>
+                                <td>${formatNumber(o.quantity)}</td>
+                                <td>${formatNumber(o.grossAmountZl)} ${escapeHtml(o.currency || 'PLN')}</td>
+                                <td>${escapeHtml(o.status)}</td>
+                                <td style="white-space:nowrap; font-size:13px;">${formatCreatedAt(o.paidAt)}</td>
+                            </tr>
+                        `).join('')}</tbody>
+                    </table>
+                ` : '<p class="subtext" style="margin:0 0 20px;">Brak zakupów.</p>'}
+            `;
+            const logins = (user.loginHistory || []).slice(0, 20);
+            const loginsHtml = `
+                <h3 style="color:#e8c766; margin:0 0 10px;">Historia logowań</h3>
+                ${logins.length ? `
+                    <table class="admin-table">
+                        <thead><tr><th>Data</th><th>IP</th><th>Device ID</th></tr></thead>
+                        <tbody>${logins.map((l) => `
+                            <tr>
+                                <td style="white-space:nowrap; font-size:13px;">${formatCreatedAt(l.at)}</td>
+                                <td>${escapeHtml(l.ip || '—')}</td>
+                                <td style="font-size:12px;">${escapeHtml(l.deviceId || '—')}</td>
+                            </tr>
+                        `).join('')}</tbody>
+                    </table>
+                ` : '<p class="subtext" style="margin:0;">Brak zarejestrowanych logowań.</p>'}
+            `;
+            document.getElementById('playerModalContent').innerHTML = profileHtml + grantVplnHtml + purchasesHtml + loginsHtml;
+        }
+
+        async function grantVpln(userId) {
+            const amountInput = document.getElementById('grantVplnAmount');
+            const reasonInput = document.getElementById('grantVplnReason');
+            const btn = document.getElementById('grantVplnBtn');
+            const amount = Number(amountInput.value);
+            if (!Number.isFinite(amount) || amount <= 0) {
+                showAdminError('Podaj dodatnią kwotę VPLN.');
+                return;
+            }
+            btn.disabled = true;
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/grant-vpln`, {
+                    method: 'POST', headers, body: JSON.stringify({ amount, reason: reasonInput.value })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się przyznać VPLN.');
+                await openPlayerDetails(userId);
+                loadAdminUsers();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd przy przyznawaniu VPLN.');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function openPlayerDetails(userId) {
+            document.getElementById('playerModalBackdrop').style.display = 'flex';
+            document.getElementById('playerModalTitle').textContent = 'Profil gracza';
+            document.getElementById('playerModalContent').innerHTML = '<p style="color:#cbd5e1;">Ładowanie...</p>';
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/details`, { headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się pobrać danych gracza.');
+                renderPlayerModal(result);
+            } catch (err) {
+                document.getElementById('playerModalContent').innerHTML = `<p style="color:#f87171;">${err.message || 'Błąd.'}</p>`;
+            }
+        }
+
+        // --- Wykryte Multikonta -----------------------------------------------------------------
+
+        const multiAccountReasonLabels = {
+            device_id_match: 'Wspólne urządzenie (Device ID)',
+            shared_ip_history: 'Wspólny adres IP (7 dni)',
+            pinned_hardware_id_match: 'Trwałe powiązanie kont (wykryte wcześniej)'
+        };
+
+        async function loadMultiAccounts() {
+            const container = document.getElementById('multiAccountsContainer');
+            container.innerHTML = '<p style="color:#cbd5e1;">Ładowanie...</p>';
+            try {
+                const response = await fetch('/api/admin/multi-accounts', { headers });
+                const incidents = await response.json();
+                if (!response.ok) throw new Error(incidents.error || 'Błąd przy pobieraniu incydentów.');
+                if (!incidents.length) {
+                    container.innerHTML = '<p style="color:#cbd5e1;">Brak wykrytych prób multikonta.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                incidents.forEach((incident) => container.appendChild(createMultiAccountCard(incident)));
+            } catch (err) {
+                container.innerHTML = `<p style="color:#f87171;">${err.message || 'Błąd.'}</p>`;
+            }
+        }
+
+        function createMultiAccountCard(incident) {
+            const card = document.createElement('div');
+            card.className = 'panel-card';
+            const evidence = incident.reason === 'device_id_match'
+                ? `Wspólne Device ID: <code>${incident.sharedDeviceId || '—'}</code>`
+                : `Wspólny adres IP: <code>${incident.sharedIp || '—'}</code> (Device ID: <code>${incident.sharedDeviceId || '—'}</code>)`;
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; align-items:center;">
+                    <div style="font-size:16px;">
+                        <strong>${incident.mainUsername}</strong> ${incident.mainUserBlocked ? '<span style="color:#f87171;">(zablokowany)</span>' : ''}
+                        &nbsp;&harr;&nbsp;
+                        <strong>${incident.secondaryUsername}</strong> ${incident.secondaryUserBlocked ? '<span style="color:#f87171;">(zablokowany)</span>' : ''}
+                    </div>
+                    <span style="color:#d4af37; font-size:13px;">${formatDateTime(incident.detectedAt)}</span>
+                </div>
+                <p class="subtext" style="margin:8px 0 0;">${multiAccountReasonLabels[incident.reason] || incident.reason} · ${evidence}${incident.resolved ? ' · <span style="color:#22c55e;">rozwiązane</span>' : ''}</p>
+                <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="btn-small ${incident.mainUserBlocked ? 'btn-green' : 'btn-red'}" onclick="multiAccountAction('${incident._id}', '${incident.mainUserBlocked ? 'unblock_main' : 'block_main'}')">${incident.mainUserBlocked ? 'Odblokuj' : 'Zablokuj'} ${incident.mainUsername}</button>
+                    <button class="btn-small ${incident.secondaryUserBlocked ? 'btn-green' : 'btn-red'}" onclick="multiAccountAction('${incident._id}', '${incident.secondaryUserBlocked ? 'unblock_secondary' : 'block_secondary'}')">${incident.secondaryUserBlocked ? 'Odblokuj' : 'Zablokuj'} ${incident.secondaryUsername}</button>
+                    <button class="btn-small ${(incident.mainUserBlocked && incident.secondaryUserBlocked) ? 'btn-green' : 'btn-red'}" onclick="multiAccountAction('${incident._id}', '${(incident.mainUserBlocked && incident.secondaryUserBlocked) ? 'unblock_both' : 'block_both'}')">${(incident.mainUserBlocked && incident.secondaryUserBlocked) ? 'Odblokuj oba konta' : 'Zbanuj oba konta'}</button>
+                    <button class="btn-small" onclick="multiAccountUnpin('${incident._id}')" title="Czyści pole hardwareId dla obu kont, żeby pinned_hardware_id_match przestał je permanentnie blokować">Odepnij urządzenie</button>
+                </div>
+            `;
+            return card;
+        }
+
+        async function multiAccountAction(incidentId, action) {
+            try {
+                const response = await fetch(`/api/admin/multi-accounts/${incidentId}/action`, { method: 'POST', headers, body: JSON.stringify({ action }) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się wykonać akcji.');
+                await loadMultiAccounts();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd podczas wykonywania akcji.');
+            }
+        }
+
+        async function multiAccountUnpin(incidentId) {
+            try {
+                const response = await fetch(`/api/admin/multi-accounts/${incidentId}/unpin`, { method: 'POST', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się odpiąć urządzenia.');
+                await loadMultiAccounts();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd podczas odpinania urządzenia.');
+            }
+        }
+
+        // --- Podejrzane Powiązania --------------------------------------------------------------
+
+        async function loadSuspiciousLinks() {
+            const container = document.getElementById('suspiciousLinksContainer');
+            container.innerHTML = '<p style="color:#cbd5e1;">Ładowanie...</p>';
+            try {
+                const response = await fetch('/api/admin/suspicious-links', { headers });
+                const pairs = await response.json();
+                if (!response.ok) throw new Error(pairs.error || 'Błąd przy pobieraniu powiązań.');
+                if (!pairs.length) {
+                    container.innerHTML = '<p style="color:#cbd5e1;">Brak wykrytych podejrzanych powiązań.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                pairs.forEach((pair) => container.appendChild(createSuspiciousLinkCard(pair)));
+            } catch (err) {
+                container.innerHTML = `<p style="color:#f87171;">${err.message || 'Błąd.'}</p>`;
+            }
+        }
+
+        function createSuspiciousLinkCard(pair) {
+            const card = document.createElement('div');
+            card.className = 'panel-card';
+            const percentText = pair.gamesTogetherPercent === null ? 'brak danych' : `${pair.gamesTogetherPercent}%`;
+            const logsHtml = pair.oneSidedCaptures.slice(0, 10).map((c) => `
+                <li>${formatDateTime(c.timestamp)} — <strong>${c.aggressorUsername}</strong> przejął wioskę od <strong>${c.defenderUsername}</strong>
+                    przy obronie ${Math.round(c.defensePower)} / ataku ${Math.round(c.attackPower)}
+                    ${c.lateGame ? ' <span style="color:#f59e0b;">(końcówka rundy)</span>' : ''}
+                </li>`).join('');
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; align-items:center;">
+                    <div style="font-size:16px;">
+                        <strong>${pair.usernameA}</strong> ${pair.userABlocked ? '<span style="color:#f87171;">(zablokowany)</span>' : ''}
+                        &nbsp;&harr;&nbsp;
+                        <strong>${pair.usernameB}</strong> ${pair.userBBlocked ? '<span style="color:#f87171;">(zablokowany)</span>' : ''}
+                    </div>
+                    <span style="color:#d4af37; font-size:13px;">Ostatni incydent: ${formatDateTime(pair.lastIncidentAt)}</span>
+                </div>
+                <p class="subtext" style="margin:8px 0 0;">
+                    Wspólne mecze: <strong>${pair.gamesTogether}</strong> (${percentText} rozgrywek jednego z graczy) ·
+                    Jednostronne przejęcia wiosek: <strong>${pair.totalOneSidedCaptures}</strong>
+                    ${pair.warningIssued ? ' · <span style="color:#f59e0b;">ostrzeżenie wydane</span>' : ''}
+                    ${pair.adminReviewed ? ' · <span style="color:#22c55e;">przejrzane</span>' : ''}
+                </p>
+                <details style="margin-top:8px;">
+                    <summary style="cursor:pointer; color:#d4af37;">Zobacz logi anomalii bitewnych (${pair.oneSidedCaptures.length})</summary>
+                    <ul style="margin:8px 0 0; padding-left:18px; color:#cbd5e1; font-size:13px;">${logsHtml}</ul>
+                </details>
+                <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="btn-small" onclick="suspiciousLinkWarn('${pair._id}')">Nadaj ostrzeżenie</button>
+                    <button class="btn-small" onclick="suspiciousLinkReview('${pair._id}')">Oznacz jako przejrzane</button>
+                    <button class="btn-small btn-red" ${pair.userABlocked ? 'disabled' : ''} onclick="suspiciousLinkBan('${pair._id}', 'A')">Zbanuj ${pair.usernameA}</button>
+                    <button class="btn-small btn-red" ${pair.userBBlocked ? 'disabled' : ''} onclick="suspiciousLinkBan('${pair._id}', 'B')">Zbanuj ${pair.usernameB}</button>
+                    <button class="btn-small btn-red" onclick="suspiciousLinkBan('${pair._id}', 'both')">Zbanuj oba konta</button>
+                </div>
+            `;
+            return card;
+        }
+
+        async function suspiciousLinkWarn(pairId) {
+            try {
+                const response = await fetch(`/api/admin/suspicious-links/${pairId}/warn`, { method: 'POST', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się nadać ostrzeżenia.');
+                await loadSuspiciousLinks();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd podczas nadawania ostrzeżenia.');
+            }
+        }
+
+        async function suspiciousLinkReview(pairId) {
+            try {
+                const response = await fetch(`/api/admin/suspicious-links/${pairId}/review`, { method: 'POST', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się oznaczyć jako przejrzane.');
+                await loadSuspiciousLinks();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd.');
+            }
+        }
+
+        async function suspiciousLinkBan(pairId, target) {
+            try {
+                const response = await fetch(`/api/admin/suspicious-links/${pairId}/ban`, { method: 'POST', headers, body: JSON.stringify({ target }) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zbanować konta.');
+                await loadSuspiciousLinks();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd podczas banowania.');
+            }
+        }
+
+        // --- Mailbox (blocked-player messages) ---------------------------------------------------
+
+        async function refreshMailboxBadge() {
+            try {
+                const response = await fetch('/api/admin/mailbox', { headers });
+                const conversations = await response.json();
+                if (!response.ok) return;
+                const unreadCount = conversations.filter((c) => c.hasUnreadFromPlayer).length;
+                const badge = document.getElementById('mailboxUnreadBadge');
+                if (unreadCount > 0) {
+                    badge.textContent = unreadCount;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            } catch (err) {
+                console.error('Błąd odświeżania skrzynki:', err);
+            }
+        }
+
+        function openMailbox() {
+            document.getElementById('mailboxModalBackdrop').style.display = 'flex';
+            loadMailbox();
+        }
+
+        function closeMailbox() {
+            document.getElementById('mailboxModalBackdrop').style.display = 'none';
+        }
+
+        async function loadMailbox() {
+            const container = document.getElementById('mailboxContainer');
+            container.innerHTML = '<p style="color:#cbd5e1;">Ładowanie...</p>';
+            try {
+                const response = await fetch('/api/admin/mailbox', { headers });
+                const conversations = await response.json();
+                if (!response.ok) throw new Error(conversations.error || 'Błąd przy pobieraniu skrzynki.');
+                if (!conversations.length) {
+                    container.innerHTML = '<p style="color:#cbd5e1;">Brak wiadomości od graczy.</p>';
+                    refreshMailboxBadge();
+                    return;
+                }
+                container.innerHTML = '';
+                conversations.forEach((c) => container.appendChild(createMailboxThread(c)));
+                refreshMailboxBadge();
+            } catch (err) {
+                container.innerHTML = `<p style="color:#f87171;">${err.message || 'Błąd.'}</p>`;
+            }
+        }
+
+        function createMailboxThread(conversation) {
+            const wrap = document.createElement('div');
+            wrap.className = 'mailbox-thread';
+            const messagesHtml = (conversation.messages || []).map((m) => `
+                <div class="mailbox-message ${m.sender === 'admin' ? 'admin' : 'player'}">
+                    <div>${escapeHtml(m.text)}</div>
+                    <div class="meta">${m.sender === 'admin' ? 'Ty (admin)' : conversation.username} · ${new Date(m.at).toLocaleString('pl-PL')}</div>
+                </div>
+            `).join('');
+            wrap.innerHTML = `
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; align-items:center;">
+                    <strong>${conversation.username}</strong>
+                    <span style="font-size:12px; color:${conversation.isBlocked ? '#f87171' : '#22c55e'};">${conversation.isBlocked ? 'Zablokowany' : 'Odblokowany'}</span>
+                </div>
+                ${conversation.blockReason ? `<p class="subtext" style="margin:6px 0 0;">Powód: ${escapeHtml(conversation.blockReason)}</p>` : ''}
+                <div class="mailbox-messages">${messagesHtml}</div>
+                <div class="mailbox-reply-form">
+                    <textarea placeholder="Odpowiedz graczowi..." id="mailboxReply_${conversation.userId}"></textarea>
+                    <button class="btn-small" onclick="sendMailboxReply('${conversation.userId}')">Wyślij</button>
+                </div>
+            `;
+            if (conversation.hasUnreadFromPlayer) {
+                fetch(`/api/admin/mailbox/${conversation.userId}/mark-read`, { method: 'POST', headers }).catch(() => {});
+            }
+            return wrap;
+        }
+
+        async function sendMailboxReply(userId) {
+            const textarea = document.getElementById(`mailboxReply_${userId}`);
+            const text = textarea.value.trim();
+            if (!text) return;
+            try {
+                const response = await fetch(`/api/admin/mailbox/${userId}/reply`, { method: 'POST', headers, body: JSON.stringify({ text }) });
+                if (!response.ok) throw new Error('Nie udało się wysłać odpowiedzi.');
+                await loadMailbox();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd podczas wysyłania odpowiedzi.');
+            }
+        }
+
+        async function init() {
+            const response = await fetch('/api/auth/me', { headers });
+            if (!response.ok) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('token');
+                return window.location.href = '/login.html';
+            }
+            const profile = await response.json();
+            if (!profile.isAdmin) return showAdminError('Brak uprawnień administratora.');
+            loadAdminUsers();
+            refreshMailboxBadge();
+            setInterval(refreshMailboxBadge, 15000);
+            setInterval(() => { if (currentView === 'users') loadAdminUsers(); }, 5000);
+        }
+
+        init();
+    </script>
+    <script src="/page-scale.js"></script>
+</body>
+</html>

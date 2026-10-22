@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>War of Lords - Portfel DOGE (admin)</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;
+            background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif;
+            margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; padding-bottom: 60px;
+        }
+        .nav-menu { background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat; width: 100%; padding: 15px 0; text-align: center; margin-bottom: 30px; }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 16px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .shell { width: 100%; max-width: 1300px; padding: 0 20px 40px; box-sizing: border-box; }
+        .back-link { display: inline-block; margin-bottom: 18px; color: #94a3b8; text-decoration: none; font-size: 14px; }
+        .back-link:hover { color: #e8c766; }
+        .page-header { text-align: center; margin-bottom: 24px; }
+        .page-header h1 { margin: 0; font-size: 30px; color: #e8c766; letter-spacing: 1px; text-transform: uppercase; }
+        .page-header p { margin: 10px auto 0; max-width: 860px; color: #cbd5e1; font-size: 15px; line-height: 1.6; }
+        .panel-alert { background: rgba(248, 113, 113, 0.15); border: 1px solid #f87171; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; color: #f8fafc; }
+        .panel-card { background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96)); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 18px; padding: 20px; margin-bottom: 18px; }
+        .panel-card h2 { margin: 0 0 12px; color: #e8c766; font-size: 18px; text-transform: uppercase; letter-spacing: 0.03em; }
+        .subtext { color: #cbd5e1; font-size: 13px; line-height: 1.5; }
+        code { background: rgba(15, 23, 42, 0.8); padding: 3px 6px; border-radius: 6px; font-size: 12px; color: #fbbf24; word-break: break-all; }
+
+        .filters-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+        .filters-row .field { display: flex; flex-direction: column; gap: 4px; }
+        .filters-row label { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.03em; }
+        .filters-row select, .filters-row input { padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.28); background: #0f172a; color: #f8fafc; font-size: 14px; }
+        .btn { border-radius: 10px; cursor: pointer; font-weight: bold; padding: 11px 18px; font-size: 14px; background: #1e293b; color: #f8fafc; border: 1px solid rgba(212, 175, 55, 0.28); }
+        .btn:hover { background: #334155; }
+        .btn-gold { background: linear-gradient(180deg, #e8c766, #b8901f); color: #1c1408; border-color: transparent; }
+        .btn-green { background: linear-gradient(180deg, #4ade80, #16a34a); color: #052e12; border-color: transparent; }
+        .btn-red { background: linear-gradient(180deg, #f87171, #b91c1c); color: #2b0505; border-color: transparent; }
+        .btn-tiny { padding: 6px 12px; font-size: 12px; }
+
+        .table-wrap { overflow-x: auto; }
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table th, .admin-table td { border: 1px solid rgba(212, 175, 55, 0.24); padding: 9px 8px; font-size: 13px; text-align: left; vertical-align: top; }
+        .admin-table th { color: #e8c766; white-space: nowrap; }
+        .status-pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: bold; white-space: nowrap; }
+        .status-pill.pending { background: rgba(234, 179, 8, 0.18); color: #eab308; }
+        .status-pill.completed { background: rgba(52, 211, 153, 0.18); color: #34d399; }
+        .status-pill.failed { background: rgba(239, 68, 68, 0.18); color: #f87171; }
+        .action-cell { display: flex; gap: 6px; flex-wrap: wrap; }
+        a.explorer { color: #e8c766; }
+    </style>
+</head>
+<body>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="/index.html">Główna</a>
+        <a id="navRooms" href="/pokoje.html">Pokoje Bitewne</a>
+        <a id="navTournaments" href="/turnieje.html">Turnieje</a>
+        <a id="navShop" href="/sklep.html">Sklep</a>
+        <a id="navRanking" href="/ranking.html">Ranking Ogólny</a>
+        <a id="navProfile" href="/profile.html">Profil</a>
+        <a id="navRules" href="/zasady.html">Zasady</a>
+        <a id="navAdmin" href="/admin.html" class="active">Panel Admina</a>
+    </div>
+
+    <div class="shell">
+        <a class="back-link" href="/admin.html">&larr; Wróć do Panelu Admina</a>
+        <div class="page-header">
+            <h1>🪙 Portfel DOGE</h1>
+            <p>Wpłaty i wypłaty DOGE graczy. Każdą transakcję sprawdź w sieci Dogecoin (link „eksplorator”) zanim ją potwierdzisz.
+               <strong>Wpłata</strong>: wpisz kwotę faktycznie widoczną w sieci — dopiero wtedy saldo gracza rośnie.
+               <strong>Wypłata</strong>: kwota jest już pobrana z salda; wyślij DOGE ze swojego portfela i wpisz hash wysłanej transakcji. Odrzucenie wypłaty zwraca kwotę na saldo.</p>
+        </div>
+
+        <div id="adminWarning" class="panel-alert" style="display:none;"></div>
+
+        <div class="panel-card">
+            <h2>Adres portfela gry</h2>
+            <p class="subtext" id="depositAddressInfo">Wczytywanie...</p>
+        </div>
+
+        <div class="panel-card">
+            <h2>Transakcje</h2>
+            <div class="filters-row">
+                <div class="field">
+                    <label for="statusFilter">Status</label>
+                    <select id="statusFilter">
+                        <option value="pending" selected>Oczekujące</option>
+                        <option value="completed">Zrealizowane</option>
+                        <option value="failed">Odrzucone</option>
+                        <option value="">Wszystkie</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="typeFilter">Rodzaj</label>
+                    <select id="typeFilter">
+                        <option value="">Wpłaty i wypłaty</option>
+                        <option value="deposit">Wpłaty</option>
+                        <option value="withdrawal">Wypłaty</option>
+                    </select>
+                </div>
+                <button type="button" class="btn" id="refreshBtn">Odśwież</button>
+            </div>
+            <div class="table-wrap" style="margin-top:14px;">
+                <table class="admin-table">
+                    <thead>
+                        <tr><th>Data</th><th>Gracz</th><th>Rodzaj</th><th>Kwota (DOGE)</th><th>Adres / hash</th><th>Status</th><th>Akcje</th></tr>
+                    </thead>
+                    <tbody id="txBody"><tr><td colspan="7">Wczytywanie...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (!token) { window.location.href = '/login.html'; }
+        const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+        const EXPLORER_TX = 'https://blockchair.com/dogecoin/transaction/';
+        const EXPLORER_ADDRESS = 'https://blockchair.com/dogecoin/address/';
+        const STATUS_LABELS = { pending: 'Oczekuje', completed: 'Zrealizowana', failed: 'Odrzucona' };
+        const AGE_LABELS = { ADULT: 'pełnoletni', GUARDIAN_CONSENT: 'zgoda opiekuna' };
+
+        function showAdminError(message) {
+            const warning = document.getElementById('adminWarning');
+            warning.style.display = message ? 'block' : 'none';
+            warning.textContent = message || '';
+        }
+
+        function el(tag, props, children) {
+            const node = document.createElement(tag);
+            Object.assign(node, props || {});
+            (children || []).forEach((c) => node.appendChild(typeof c === 'string' ? document.createTextNode(c) : c));
+            return node;
+        }
+
+        function explorerLink(base, value, label) {
+            return el('a', { className: 'explorer', href: base + encodeURIComponent(value), target: '_blank', rel: 'noopener noreferrer', textContent: label });
+        }
+
+        async function api(url, options) {
+            const res = await fetch(url, { headers, ...(options || {}) });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || `Błąd ${res.status}`);
+            return data;
+        }
+
+        async function loadTransactions() {
+            showAdminError('');
+            const params = new URLSearchParams();
+            const status = document.getElementById('statusFilter').value;
+            const type = document.getElementById('typeFilter').value;
+            if (status) params.set('status', status);
+            if (type) params.set('type', type);
+            try {
+                const data = await api('/api/admin/doge/transactions?' + params.toString());
+                renderDepositAddress(data.depositAddress);
+                renderRows(data.transactions || []);
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        function renderDepositAddress(address) {
+            const box = document.getElementById('depositAddressInfo');
+            box.textContent = '';
+            if (!address) {
+                box.appendChild(document.createTextNode('Brak poprawnego adresu. Wpisz adres portfela gry (D...) w pliku .env jako DOGE_DEPOSIT_ADDRESS i uruchom serwer ponownie — do tego czasu gracze nie mogą zgłaszać wpłat.'));
+                return;
+            }
+            box.appendChild(document.createTextNode('Gracze wpłacają na: '));
+            box.appendChild(el('code', { textContent: address }));
+            box.appendChild(document.createTextNode(' — '));
+            box.appendChild(explorerLink(EXPLORER_ADDRESS, address, 'eksplorator'));
+        }
+
+        function renderRows(list) {
+            const body = document.getElementById('txBody');
+            body.textContent = '';
+            if (!list.length) {
+                body.appendChild(el('tr', {}, [el('td', { colSpan: 7, textContent: 'Brak transakcji.' })]));
+                return;
+            }
+            for (const tx of list) {
+                const isDeposit = tx.type === 'deposit';
+                const details = el('td');
+                if (tx.address && !isDeposit) {
+                    details.appendChild(el('div', {}, ['na: ', el('code', { textContent: tx.address }), ' ', explorerLink(EXPLORER_ADDRESS, tx.address, 'adres')]));
+                }
+                if (tx.txHash) {
+                    details.appendChild(el('div', {}, ['tx: ', el('code', { textContent: tx.txHash }), ' ', explorerLink(EXPLORER_TX, tx.txHash, 'eksplorator')]));
+                }
+                if (!isDeposit && tx.ageConfirmationType) {
+                    details.appendChild(el('div', { className: 'subtext', textContent: `oświadczenia: ${AGE_LABELS[tx.ageConfirmationType] || tx.ageConfirmationType}, PIT — tak` }));
+                }
+                if (tx.adminNote) details.appendChild(el('div', { className: 'subtext', textContent: `powód: ${tx.adminNote}` }));
+
+                const actions = el('td', { className: 'action-cell' });
+                if (tx.status === 'pending') {
+                    const ok = el('button', { className: 'btn btn-green btn-tiny', textContent: isDeposit ? 'Potwierdź wpłatę' : 'Wysłano — wpisz hash' });
+                    ok.addEventListener('click', () => completeTx(tx));
+                    const no = el('button', { className: 'btn btn-red btn-tiny', textContent: 'Odrzuć' });
+                    no.addEventListener('click', () => rejectTx(tx));
+                    actions.appendChild(ok);
+                    actions.appendChild(no);
+                }
+                body.appendChild(el('tr', {}, [
+                    el('td', { textContent: new Date(tx.createdAt).toLocaleString('pl-PL') }),
+                    el('td', { textContent: tx.username }),
+                    el('td', { textContent: isDeposit ? 'Wpłata' : 'Wypłata' }),
+                    el('td', { textContent: Number(tx.amount).toLocaleString('pl-PL', { maximumFractionDigits: 2 }) }),
+                    details,
+                    el('td', {}, [el('span', { className: 'status-pill ' + tx.status, textContent: STATUS_LABELS[tx.status] || tx.status })]),
+                    actions
+                ]));
+            }
+        }
+
+        async function completeTx(tx) {
+            let body;
+            if (tx.type === 'deposit') {
+                const amount = window.prompt(`Kwota wpłaty widoczna w sieci (DOGE) dla gracza ${tx.username}.\nZgłoszona przez gracza: ${tx.amount}`, String(tx.amount));
+                if (amount === null) return;
+                body = { amount: Number(String(amount).replace(',', '.')) };
+            } else {
+                const txHash = window.prompt(`Hash transakcji, którą wysłałeś ${tx.amount} DOGE na adres:\n${tx.address}`, '');
+                if (txHash === null) return;
+                body = { txHash: txHash.trim() };
+            }
+            try {
+                await api(`/api/admin/doge/transactions/${tx._id}/complete`, { method: 'PUT', body: JSON.stringify(body) });
+                loadTransactions();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        async function rejectTx(tx) {
+            const note = window.prompt(tx.type === 'withdrawal'
+                ? 'Powód odrzucenia (zobaczy go gracz). Kwota wróci na jego saldo:'
+                : 'Powód odrzucenia wpłaty (zobaczy go gracz):', '');
+            if (note === null || !note.trim()) return;
+            try {
+                await api(`/api/admin/doge/transactions/${tx._id}/reject`, { method: 'PUT', body: JSON.stringify({ adminNote: note.trim() }) });
+                loadTransactions();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        document.getElementById('refreshBtn').addEventListener('click', loadTransactions);
+        document.getElementById('statusFilter').addEventListener('change', loadTransactions);
+        document.getElementById('typeFilter').addEventListener('change', loadTransactions);
+        loadTransactions();
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/page-scale.js"></script>
+</body>
+</html>

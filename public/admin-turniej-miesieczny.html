@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>War of Lords - Turniej Miesięczny</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+        .nav-menu {
+            background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat;
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 16px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        .admin-shell { width: 100%; max-width: 1000px; padding: 0 20px 40px; box-sizing: border-box; }
+        .admin-header { position: relative; text-align: center; margin-bottom: 28px; }
+        .admin-header h1 { margin: 0; font-size: 32px; color: #e8c766; letter-spacing: 1px; text-transform: uppercase; }
+        .admin-header p { margin: 10px auto 0; max-width: 780px; color: #cbd5e1; font-size: 15px; line-height: 1.6; }
+        .back-link { display: inline-block; margin-bottom: 18px; color: #94a3b8; text-decoration: none; font-size: 14px; }
+        .back-link:hover { color: #e8c766; }
+        .dashboard-grid { display: flex; flex-direction: column; gap: 24px; width: 100%; box-sizing: border-box; }
+        .panel-card {
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96));
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 18px 40px rgba(0,0,0,0.25);
+        }
+        .panel-card h2 { margin: 0 0 14px; font-size: 20px; color: #e8c766; text-transform: uppercase; letter-spacing: 0.03em; }
+        .panel-card .subtext { margin: 0 0 18px; color: #cbd5e1; font-size: 14px; line-height: 1.5; }
+        .panel-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px; }
+        .panel-row label { color: #cbd5e1; font-size: 13px; display: block; margin-bottom: 8px; }
+        .panel-row input {
+            width: 100%; padding: 12px 14px; border-radius: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.28); background: #0f172a; color: #f8fafc; font-size: 14px;
+            box-sizing: border-box;
+        }
+        .panel-row input:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-action, .btn-small { border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: transform 0.2s, background-color 0.2s; }
+        .btn-action { padding: 14px 18px; background: linear-gradient(180deg, #e8c766, #b8901f); color: #1c1408; }
+        .btn-action:hover { transform: translateY(-1px); background: linear-gradient(180deg, #f0d78c, #c9a227); }
+        .btn-action:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; transform: none; }
+        .btn-small { padding: 10px 12px; font-size: 13px; min-width: 110px; background: #1e293b; color: #f8fafc; border: 1px solid rgba(212, 175, 55, 0.28); }
+        .btn-small:hover { background: #334155; }
+        .btn-red { background: #ef4444; color: #fff; }
+        .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: bold; }
+        .status-pill.active { background: rgba(52,211,153,0.18); color: #34d399; }
+        .status-pill.lobby { background: rgba(212, 175, 55, 0.18); color: #e8c766; }
+        .status-pill.finished { background: rgba(248,113,113,0.18); color: #f87171; }
+        .lock-banner { background: rgba(248, 113, 113, 0.15); border: 1px solid #f87171; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; color: #f8fafc; font-size: 13px; display: none; }
+        .panel-alert { background: rgba(248, 113, 113, 0.15); border: 1px solid #f87171; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; color: #f8fafc; }
+        .success-alert { background: rgba(52,211,153,0.15); border: 1px solid #34d399; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; color: #f8fafc; display: none; }
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table th, .admin-table td { border: 1px solid rgba(212, 175, 55, 0.24); padding: 10px 8px; font-size: 13px; text-align: left; }
+        .admin-table th { color: #e8c766; }
+    </style>
+</head>
+<body>
+    <script>
+        window.alert = function () {};
+        window.confirm = function () { return true; };
+    </script>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Główna</a>
+        <a id="navRooms" href="pokoje.html">Pokoje Bitewne</a>
+        <a id="navTournaments" href="turnieje.html">Turnieje</a>
+        <a id="navShop" href="sklep.html">Sklep</a>
+        <a id="navRanking" href="ranking.html">Ranking Ogólny</a>
+        <a id="navProfile" href="profile.html">Profil</a>
+        <a id="navRules" href="zasady.html">Zasady</a>
+        <a id="navAdmin" href="admin.html" class="active">Panel Admina</a>
+    </div>
+
+    <div class="admin-shell">
+        <a class="back-link" href="admin.html">&larr; Wróć do panelu administratora</a>
+        <div class="admin-header">
+            <h1>🗓️ Turniej Miesięczny</h1>
+            <p>Harmonogram, pula biletów, cena biletu i gwarantowana pula nagród VPLN dla bieżącej edycji Turnieju Miesięcznego.</p>
+        </div>
+
+        <div id="adminWarning" class="panel-alert" style="display:none;"></div>
+        <div id="adminSuccess" class="success-alert"></div>
+
+        <div class="dashboard-grid">
+            <div class="panel-card">
+                <h2>Edycja / harmonogram</h2>
+                <p class="subtext">Utwórz nową edycję lub edytuj bieżącą (dopóki nie zakończyła się kwalifikacja). Podanie daty startu ustawia jednocześnie termin Rundy 1.</p>
+                <div class="panel-row">
+                    <div>
+                        <label for="fMonthKey">Miesiąc edycji (YYYY-MM)</label>
+                        <input type="text" id="fMonthKey" placeholder="2026-09" />
+                    </div>
+                    <div>
+                        <label for="fTitle">Nazwa edycji</label>
+                        <input type="text" id="fTitle" placeholder="Sezon 1 - Mistrzostwa" />
+                    </div>
+                    <div>
+                        <label for="fMaxParticipants">Pula biletów (wielokrotność 10)</label>
+                        <input type="number" id="fMaxParticipants" step="10" min="10" value="350" />
+                    </div>
+                    <div>
+                        <label for="fRoundDuration">Czas trwania rundy (min)</label>
+                        <input type="number" id="fRoundDuration" min="1" value="60" />
+                    </div>
+                    <div>
+                        <label for="fScheduledStartAt">Start Rundy 1</label>
+                        <input type="datetime-local" id="fScheduledStartAt" />
+                    </div>
+                    <div>
+                        <label for="fDay2StartAt">Start Rundy 3 (dzień 2)</label>
+                        <input type="datetime-local" id="fDay2StartAt" />
+                    </div>
+                    <div>
+                        <label for="fSemifinalScheduledAt">Zapowiadany start Półfinału (informacyjnie dla graczy)</label>
+                        <input type="datetime-local" id="fSemifinalScheduledAt" />
+                    </div>
+                    <div>
+                        <label for="fFinalScheduledAt">Zapowiadany start Finału (informacyjnie dla graczy)</label>
+                        <input type="datetime-local" id="fFinalScheduledAt" />
+                    </div>
+                </div>
+                <p class="subtext">Poniższe przerwy sterują faktycznym, automatycznym przebiegiem turnieju — półfinał i finał startują SAME, bez ręcznego odpauzowania, po upływie ustawionego opóźnienia.</p>
+                <div class="panel-row">
+                    <div>
+                        <label for="fBreakBetweenQualRounds">Przerwa między rundami kwalifikacyjnymi (min)</label>
+                        <input type="number" id="fBreakBetweenQualRounds" min="0" max="10080" value="30" />
+                    </div>
+                    <div>
+                        <label for="fCalculationBreak">Przerwa po Rundzie 4 przed wynikami (min)</label>
+                        <input type="number" id="fCalculationBreak" min="0" max="10080" value="120" />
+                    </div>
+                    <div>
+                        <label for="fDelayToSemifinal">Opóźnienie startu Półfinału po kwalifikacjach (min)</label>
+                        <input type="number" id="fDelayToSemifinal" min="0" max="10080" value="0" />
+                    </div>
+                    <div>
+                        <label for="fDelayToFinal">Opóźnienie startu Finału po Półfinale (min)</label>
+                        <input type="number" id="fDelayToFinal" min="0" max="10080" value="0" />
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+                    <span id="tournamentStatusPill" class="status-pill lobby">Status: —</span>
+                    <button type="button" class="btn-action" style="width:auto;" onclick="saveSchedule()">Zapisz harmonogram</button>
+                    <button type="button" class="btn-small btn-red" onclick="deleteTournament()">Usuń edycję</button>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <h2>Cena biletu i pula nagród VPLN</h2>
+                <p class="subtext">Gwarantowana, widoczna dla graczy przed zakupem biletu rozpiska nagród. Zablokowana po sprzedaniu pierwszego biletu tej edycji — nie da się jej wtedy zmienić.</p>
+                <p class="subtext">⚠️ Podane kwoty wypłacane są zwycięzcom w 100% (bez potrącenia podatku) — Organizator nie jest płatnikiem podatku dochodowego, zob. Regulamin §5b.</p>
+                <div id="prizesLockBanner" class="lock-banner">🔒 Pula nagród jest zablokowana — sprzedano już bilety na tę edycję.</div>
+                <div class="panel-row">
+                    <div>
+                        <label for="fTicketPrice">Cena biletu (PLN)</label>
+                        <input type="number" id="fTicketPrice" min="1" step="0.01" value="10" />
+                    </div>
+                    <div>
+                        <label for="fPlace1">Miejsce 1 (VPLN)</label>
+                        <input type="number" id="fPlace1" min="0" value="550" />
+                    </div>
+                    <div>
+                        <label for="fPlace2">Miejsce 2 (VPLN)</label>
+                        <input type="number" id="fPlace2" min="0" value="230" />
+                    </div>
+                    <div>
+                        <label for="fPlace3">Miejsce 3 (VPLN)</label>
+                        <input type="number" id="fPlace3" min="0" value="150" />
+                    </div>
+                    <div>
+                        <label for="fPlace4to10">Miejsca 4-10, nagroda za każde (VPLN)</label>
+                        <input type="number" id="fPlace4to10" min="0" value="10" />
+                    </div>
+                </div>
+                <button type="button" class="btn-action" style="width:auto;" id="savePrizesBtn" onclick="savePrizes()">Zapisz cenę i nagrody</button>
+            </div>
+
+            <div class="panel-card">
+                <h2>Uczestnicy</h2>
+                <p class="subtext" id="participantsSubtext">Ładowanie...</p>
+                <div style="max-height:360px; overflow-y:auto;">
+                    <table class="admin-table">
+                        <thead><tr><th>Gracz</th><th>Bilet kupiony</th><th>Total TP</th><th>Zniszczone jednostki</th></tr></thead>
+                        <tbody id="participantsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <h2>Pokoje rund kwalifikacyjnych</h2>
+                <div class="panel-row" style="margin-bottom:12px;">
+                    <div>
+                        <label for="fRoundNumber">Runda</label>
+                        <input type="number" id="fRoundNumber" min="1" max="4" value="1" />
+                    </div>
+                </div>
+                <button type="button" class="btn-small" onclick="loadRooms()">Wczytaj pokoje</button>
+                <div style="max-height:360px; overflow-y:auto; margin-top:14px;">
+                    <table class="admin-table">
+                        <thead><tr><th>Pokój</th><th>Status</th><th>Gracze</th></tr></thead>
+                        <tbody id="roomsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (!token) { window.location.href = '/login.html'; }
+        const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        let currentTournament = null;
+
+        function showAdminError(message) {
+            const warning = document.getElementById('adminWarning');
+            warning.style.display = 'block';
+            warning.innerText = message;
+        }
+        function hideAdminError() {
+            const warning = document.getElementById('adminWarning');
+            warning.style.display = 'none';
+            warning.innerText = '';
+        }
+        function showAdminSuccess(message) {
+            const el = document.getElementById('adminSuccess');
+            el.style.display = 'block';
+            el.innerText = message;
+            setTimeout(() => { el.style.display = 'none'; }, 4000);
+        }
+        function toDatetimeLocal(iso) {
+            if (!iso) return '';
+            const d = new Date(iso);
+            const pad = (n) => String(n).padStart(2, '0');
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        }
+
+        async function fetchAdminProfile() {
+            try {
+                const response = await fetch('/api/auth/me', { headers });
+                if (!response.ok) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('token');
+                    return window.location.href = '/login.html';
+                }
+                const profile = await response.json();
+                if (!profile.isAdmin) return showAdminError('Brak uprawnień administratora.');
+                await loadTournament();
+            } catch (err) {
+                console.error(err);
+                showAdminError('Błąd ładowania panelu turnieju.');
+            }
+        }
+
+        async function loadTournament() {
+            try {
+                const response = await fetch('/api/admin/tournament/participants', { headers });
+                const data = await response.json();
+                currentTournament = data.tournament === null ? null : data;
+                renderTournament();
+            } catch (err) {
+                console.error(err);
+                showAdminError('Błąd ładowania danych turnieju.');
+            }
+        }
+
+        function renderTournament() {
+            const pill = document.getElementById('tournamentStatusPill');
+            const t = currentTournament;
+            if (!t || !t.monthKey) {
+                pill.textContent = 'Status: brak zaplanowanej edycji';
+                pill.className = 'status-pill finished';
+                document.getElementById('participantsSubtext').textContent = 'Brak aktualnej edycji — utwórz nową w karcie „Edycja / harmonogram”.';
+                document.getElementById('participantsTableBody').innerHTML = '';
+                document.getElementById('prizesLockBanner').style.display = 'none';
+                setPrizeFieldsDisabled(false);
+                return;
+            }
+            pill.textContent = `Status: ${t.simplifiedStatus || t.status}`;
+            pill.className = 'status-pill ' + (t.status === 'SCHEDULED' ? 'lobby' : t.status === 'COMPLETED' ? 'finished' : 'active');
+
+            document.getElementById('fMonthKey').value = t.monthKey || '';
+            document.getElementById('fTitle').value = t.title || '';
+            document.getElementById('fMaxParticipants').value = t.maxParticipants || 350;
+            document.getElementById('fRoundDuration').value = t.roundDurationMinutes || 60;
+            document.getElementById('fScheduledStartAt').value = toDatetimeLocal(t.scheduledStartAt);
+            document.getElementById('fDay2StartAt').value = toDatetimeLocal(t.day2StartAt);
+            document.getElementById('fSemifinalScheduledAt').value = toDatetimeLocal(t.semifinalScheduledAt);
+            document.getElementById('fFinalScheduledAt').value = toDatetimeLocal(t.finalScheduledAt);
+            document.getElementById('fBreakBetweenQualRounds').value = t.breakBetweenQualRoundsMinutes ?? 30;
+            document.getElementById('fCalculationBreak').value = t.calculationBreakMinutes ?? 120;
+            document.getElementById('fDelayToSemifinal').value = t.delayToSemifinalMinutes ?? 0;
+            document.getElementById('fDelayToFinal').value = t.delayToFinalMinutes ?? 0;
+            document.getElementById('fTicketPrice').value = t.ticketPricePLN || 10;
+            if (t.prizesConfig) {
+                document.getElementById('fPlace1').value = t.prizesConfig.place1VPLN || 0;
+                document.getElementById('fPlace2').value = t.prizesConfig.place2VPLN || 0;
+                document.getElementById('fPlace3').value = t.prizesConfig.place3VPLN || 0;
+                document.getElementById('fPlace4to10').value = t.prizesConfig.place4to10VPLN || 0;
+            }
+
+            const locked = (t.participants || []).length > 0;
+            document.getElementById('prizesLockBanner').style.display = locked ? 'block' : 'none';
+            setPrizeFieldsDisabled(locked);
+
+            document.getElementById('participantsSubtext').textContent = `${(t.participants || []).length} / ${t.maxParticipants} biletów sprzedanych.`;
+            const tbody = document.getElementById('participantsTableBody');
+            tbody.innerHTML = (t.participants || []).map((p) => `
+                <tr>
+                    <td>${p.username}</td>
+                    <td>${p.ticketPurchasedAt ? new Date(p.ticketPurchasedAt).toLocaleString('pl-PL') : '—'}</td>
+                    <td>${p.totalTP || 0}</td>
+                    <td>${p.totalUnitsDestroyed || 0}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="4">Brak uczestników.</td></tr>';
+        }
+
+        function setPrizeFieldsDisabled(disabled) {
+            ['fTicketPrice', 'fPlace1', 'fPlace2', 'fPlace3', 'fPlace4to10'].forEach((id) => {
+                document.getElementById(id).disabled = disabled;
+            });
+            document.getElementById('savePrizesBtn').disabled = disabled;
+        }
+
+        async function saveSchedule() {
+            hideAdminError();
+            const monthKey = document.getElementById('fMonthKey').value.trim();
+            if (!monthKey) return showAdminError('Podaj miesiąc edycji (YYYY-MM).');
+            const body = {
+                monthKey,
+                title: document.getElementById('fTitle').value.trim() || undefined,
+                maxParticipants: Number(document.getElementById('fMaxParticipants').value) || undefined,
+                roundDurationMinutes: Number(document.getElementById('fRoundDuration').value) || undefined
+            };
+            const startAt = document.getElementById('fScheduledStartAt').value;
+            const day2At = document.getElementById('fDay2StartAt').value;
+            const semifinalAt = document.getElementById('fSemifinalScheduledAt').value;
+            const finalAt = document.getElementById('fFinalScheduledAt').value;
+            if (startAt) body.scheduledStartAt = new Date(startAt).toISOString();
+            if (day2At) body.day2StartAt = new Date(day2At).toISOString();
+            body.semifinalScheduledAt = semifinalAt ? new Date(semifinalAt).toISOString() : null;
+            body.finalScheduledAt = finalAt ? new Date(finalAt).toISOString() : null;
+            body.breakBetweenQualRoundsMinutes = Number(document.getElementById('fBreakBetweenQualRounds').value);
+            body.calculationBreakMinutes = Number(document.getElementById('fCalculationBreak').value);
+            body.delayToSemifinalMinutes = Number(document.getElementById('fDelayToSemifinal').value);
+            body.delayToFinalMinutes = Number(document.getElementById('fDelayToFinal').value);
+            try {
+                const response = await fetch('/api/admin/tournament/schedule', { method: 'POST', headers, body: JSON.stringify(body) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zapisać harmonogramu.');
+                showAdminSuccess('Harmonogram zapisany.');
+                await loadTournament();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        async function savePrizes() {
+            hideAdminError();
+            const monthKey = document.getElementById('fMonthKey').value.trim();
+            if (!monthKey) return showAdminError('Podaj miesiąc edycji (YYYY-MM) w karcie harmonogramu i zapisz ją najpierw.');
+            const body = {
+                monthKey,
+                ticketPricePLN: Number(document.getElementById('fTicketPrice').value),
+                prizes: {
+                    place1VPLN: Number(document.getElementById('fPlace1').value),
+                    place2VPLN: Number(document.getElementById('fPlace2').value),
+                    place3VPLN: Number(document.getElementById('fPlace3').value),
+                    place4to10VPLN: Number(document.getElementById('fPlace4to10').value)
+                }
+            };
+            try {
+                const response = await fetch('/api/admin/tournament/schedule', { method: 'POST', headers, body: JSON.stringify(body) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zapisać ceny/nagród.');
+                showAdminSuccess('Cena biletu i pula nagród zapisane.');
+                await loadTournament();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        async function deleteTournament() {
+            hideAdminError();
+            const monthKey = document.getElementById('fMonthKey').value.trim();
+            if (!monthKey) return;
+            try {
+                const response = await fetch(`/api/admin/tournament/${encodeURIComponent(monthKey)}`, { method: 'DELETE', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się usunąć edycji.');
+                showAdminSuccess('Edycja usunięta.');
+                await loadTournament();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        async function loadRooms() {
+            hideAdminError();
+            const roundNumber = Number(document.getElementById('fRoundNumber').value) || 1;
+            try {
+                const response = await fetch(`/api/admin/tournament/rooms?roundNumber=${roundNumber}`, { headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się wczytać pokoi.');
+                const tbody = document.getElementById('roomsTableBody');
+                tbody.innerHTML = (result.rooms || []).map((r) => `
+                    <tr>
+                        <td>Pokój ${r.roomNumber}</td>
+                        <td>${r.status}</td>
+                        <td>${(r.players || []).map((p) => p.username).join(', ')}</td>
+                    </tr>
+                `).join('') || '<tr><td colspan="3">Brak pokoi.</td></tr>';
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        fetchAdminProfile();
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/page-scale.js"></script>
+</body>
+</html>

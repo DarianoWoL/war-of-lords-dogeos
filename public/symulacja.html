@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>War of Lords - Monthly Tournament Simulation</title>
+<style>
+  :root { --gold:#e8c766; --bg:#0b1020; --card:rgba(10,16,33,.92); --line:rgba(212,175,55,.35); --muted:#94a3b8; --good:#34d399; --bad:#f87171; --blue:#60a5fa; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#0b1020 url('/assets/background.png') center/cover fixed; color:#f8fafc; font-family:'Segoe UI',system-ui,sans-serif; }
+  .banner { background:#7c2d12; color:#ffedd5; text-align:center; padding:7px 12px; font-size:13px; font-weight:600; letter-spacing:.03em; }
+  header { max-width:1240px; margin:0 auto; padding:14px 20px 4px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  h1 { margin:0; color:var(--gold); text-transform:uppercase; letter-spacing:.05em; font-size:24px; text-shadow:0 3px 8px rgba(0,0,0,.8); }
+  h1 small { display:block; font-size:12.5px; color:var(--muted); text-transform:none; letter-spacing:0; margin-top:3px; }
+  a.back { color:var(--gold); text-decoration:none; font-weight:600; font-size:14px; }
+  main { max-width:1240px; margin:0 auto; padding:6px 20px 50px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; box-shadow:0 8px 24px rgba(0,0,0,.45); }
+  /* pipeline */
+  .pipeline { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+  .pipe { flex:1 1 130px; padding:9px 10px; border-radius:8px; background:rgba(15,23,42,.8); border:1px solid #1f2a44; color:#64748b; font-size:12.5px; text-align:center; transition:all .3s; }
+  .pipe b { display:block; font-size:15px; color:#94a3b8; }
+  .pipe.done { color:#86efac; border-color:#14532d; } .pipe.done b { color:#86efac; }
+  .pipe.active { background:rgba(232,199,102,.14); border-color:var(--gold); color:#fde68a; box-shadow:0 0 14px rgba(232,199,102,.25); } .pipe.active b { color:var(--gold); }
+  /* controls */
+  .controls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:0 0 12px; }
+  button { background:linear-gradient(#e8c766,#b8932f); color:#1a1405; border:0; border-radius:7px; padding:8px 14px; font-weight:800; cursor:pointer; font-size:13.5px; }
+  button.s { background:#1e293b; color:#e2e8f0; border:1px solid #334155; font-weight:600; }
+  button.s.on { border-color:var(--gold); color:var(--gold); }
+  input[type=range] { flex:1 1 260px; accent-color:#e8c766; }
+  .time { font-variant-numeric:tabular-nums; color:var(--muted); font-size:13px; min-width:92px; text-align:right; }
+  /* stage */
+  .grid { display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:14px; }
+  @media (max-width:980px) { .grid { grid-template-columns:1fr; } }
+  .stagehead { display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:6px; }
+  .stagehead h2 { margin:0; color:var(--gold); font-size:19px; text-transform:uppercase; letter-spacing:.03em; }
+  .stagehead span { color:var(--muted); font-size:13.5px; }
+  canvas { width:100%; display:block; border-radius:8px; background:rgba(5,8,18,.55); }
+  .panel h3 { margin:0 0 8px; font-size:14px; color:var(--gold); text-transform:uppercase; letter-spacing:.04em; }
+  /* leaderboard */
+  #lb { position:relative; height:calc(13 * 29px); }
+  .row { position:absolute; left:0; right:0; height:26px; display:flex; align-items:center; gap:8px; padding:0 8px; border-radius:6px; background:rgba(15,23,42,.75); transition:transform .45s ease, background .3s; font-size:13px; }
+  .row .rk { width:22px; color:var(--muted); font-variant-numeric:tabular-nums; } .row .nm { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; } .row .sc { color:#fde68a; font-variant-numeric:tabular-nums; }
+  .row.top1 { background:rgba(232,199,102,.2); } .row.cut { box-shadow:0 2px 0 #f87171; }
+  /* ticker */
+  #ticker { min-height:118px; font-size:13px; line-height:1.55; } #ticker div { color:#cbd5e1; animation:fade .5s; } #ticker div b { color:var(--gold); }
+  @keyframes fade { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+  /* overlay panels (intro / money) */
+  .big { text-align:center; padding:26px 10px; }
+  .big .t { font-size:34px; font-weight:800; color:var(--gold); letter-spacing:.03em; text-shadow:0 3px 10px rgba(0,0,0,.7); }
+  .big .st { color:#cbd5e1; margin:8px 0 18px; font-size:16px; }
+  .counters { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .counter { min-width:170px; padding:12px 16px; border-radius:10px; background:rgba(15,23,42,.8); border:1px solid #1f2a44; } .counter b { display:block; font-size:28px; color:var(--gold); font-variant-numeric:tabular-nums; } .counter span { color:var(--muted); font-size:13px; }
+  table { width:100%; border-collapse:collapse; font-size:13.5px; } td, th { text-align:left; padding:6px 8px; border-bottom:1px solid #1f2a44; } th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; }
+  td.n { text-align:right; font-variant-numeric:tabular-nums; } .w { color:var(--good); font-weight:700; } .l { color:var(--bad); } .g { color:var(--gold); font-weight:700; }
+  .money { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px; }
+  .money .card { opacity:0; transform:translateY(8px); transition:all .5s; } .money .card.in { opacity:1; transform:none; }
+  .podium { display:flex; gap:14px; justify-content:center; align-items:flex-end; margin:10px 0 4px; }
+  .pod { text-align:center; padding:10px 12px; border-radius:10px 10px 0 0; min-width:140px; background:rgba(15,23,42,.85); border:1px solid #1f2a44; } .pod .nm { font-weight:800; } .pod.p1 { height:130px; border-color:var(--gold); background:rgba(232,199,102,.16); } .pod.p2 { height:104px; } .pod.p3 { height:86px; }
+  details.set { margin-top:12px; } details.set summary { cursor:pointer; color:var(--gold); font-weight:700; }
+  .setgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin-top:10px; } .setgrid label { font-size:12.5px; color:var(--muted); display:flex; flex-direction:column; gap:4px; } .setgrid input { background:#0f172a; color:#f8fafc; border:1px solid #334155; border-radius:6px; padding:7px 9px; font-size:14px; }
+  .hidden { display:none !important; }
+</style>
+</head>
+<body>
+<div class="banner">SIMULATION &mdash; virtual players and test DOGE on the DogeOS testnet. Nothing here is real money.</div>
+<header>
+  <h1>Monthly Tournament<small>350 players &middot; 4 qualification rounds &middot; semifinals &middot; final &middot; live bets on the final</small></h1>
+  <a class="back" href="/">&larr; Back to the game</a>
+</header>
+<main>
+  <div class="pipeline" id="pipeline"></div>
+  <div class="controls">
+    <button id="play">&#10074;&#10074; Pause</button>
+    <button class="s" id="restart">&#8635; Restart</button>
+    <input type="range" id="seek" min="0" max="1000" value="0">
+    <span class="time" id="time">0:00 / 0:00</span>
+    <button class="s" data-speed="0.5">0.5x</button><button class="s on" data-speed="1">1x</button><button class="s" data-speed="2">2x</button><button class="s" data-speed="4">4x</button>
+    <button class="s" id="short">Short version</button>
+  </div>
+
+  <div class="card" id="intro" style="display:none"></div>
+
+  <div class="grid" id="stage">
+    <div class="card">
+      <div class="stagehead"><h2 id="stTitle">-</h2><span id="stSub"></span></div>
+      <canvas id="cv" width="900" height="440"></canvas>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card panel"><h3 id="lbTitle">Leaderboard</h3><div id="lb"></div></div>
+      <div class="card panel"><h3>Live feed</h3><div id="ticker"></div></div>
+    </div>
+  </div>
+
+  <div id="betbox" class="card hidden" style="margin-top:14px"></div>
+  <div id="money" class="hidden" style="margin-top:14px"></div>
+
+  <details class="set card" id="settings">
+    <summary>Settings &mdash; run your own simulation</summary>
+    <div class="setgrid">
+      <label>Players (multiple of 10)<input id="cPlayers" type="number" value="350" min="100" max="350" step="10"></label>
+      <label>Ticket price (DOGE)<input id="cPrice" type="number" value="20" min="1"></label>
+      <label>Prize 1st<input id="cP1" type="number" value="1500"></label>
+      <label>Prize 2nd<input id="cP2" type="number" value="1000"></label>
+      <label>Prize 3rd<input id="cP3" type="number" value="700"></label>
+      <label>Prize 4th-10th (each)<input id="cP4" type="number" value="200"></label>
+      <label>Winner bonus cap (% of 1st prize)<input id="cCap" type="number" value="50" min="0" max="100"></label>
+      <label>Spectators betting<input id="cSpec" type="number" value="300" min="0" max="2000"></label>
+      <label>Bet stake (DOGE)<input id="cStake" type="number" value="20" min="1"></label>
+      <label>Seed (change for a different story)<input id="cSeed" type="number" value="2026"></label>
+    </div>
+    <div class="controls" style="margin-top:12px"><button id="apply">Run this simulation</button></div>
+  </details>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const fmt = (v, d = 0) => Number(v).toLocaleString('en-US', { maximumFractionDigits: d });
+
+  // ------------------------------------------------------------------ seeded random + names
+  function rng(seed) { let a = seed >>> 0; return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  const ADJ = ['Iron', 'Silent', 'Grim', 'Royal', 'Wild', 'Swift', 'Dark', 'Golden', 'Storm', 'Ember', 'Frost', 'Crimson', 'Stone', 'Lone', 'Bold', 'Rogue', 'Noble', 'Ashen', 'Savage', 'Brave'];
+  const NOUN = ['Fox', 'Wolf', 'Hawk', 'Lord', 'Baron', 'Knight', 'Raven', 'Bear', 'Duke', 'Viper', 'Lion', 'Rook', 'Falcon', 'Smith', 'Archer', 'Warden', 'Jarl', 'Drake', 'Stag', 'Boar'];
+  function gauss(r) { let u = 0, v = 0; while (!u) u = r(); while (!v) v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function shuffle(arr, r) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+  // ------------------------------------------------------------------ simulation model (all results computed up front)
+  function simulate(cfg) {
+    const r = rng(cfg.seed);
+    const N = cfg.players;
+    const names = shuffle(ADJ.flatMap((a) => NOUN.map((n) => a + n)), r).slice(0, N).map((n, i) => n + '_' + String(10 + ((i * 7 + 3) % 90)));
+    const P = names.map((name, i) => ({ id: i, name, skill: gauss(r) * 0.9, total: 0 }));
+    const score = (p, scale = 1) => Math.max(10, Math.round((120 + p.skill * 32 + gauss(r) * 38) * scale));
+
+    // qualification: 4 rounds, N/10 rooms each
+    const rounds = [];
+    for (let k = 0; k < 4; k++) {
+      const order = shuffle(P.map((p) => p.id), r);
+      const rooms = [];
+      for (let i = 0; i < N / 10; i++) {
+        const members = order.slice(i * 10, i * 10 + 10).map((id) => ({ id, s: score(P[id]) }));
+        const ranked = members.slice().sort((a, b) => b.s - a.s).map((m, idx) => ({ ...m, place: idx + 1 }));
+        rooms.push({ members, ranked });
+      }
+      const before = P.map((p) => p.total);
+      rooms.forEach((rm) => rm.members.forEach((m) => { P[m.id].total += m.s; }));
+      rounds.push({ rooms, before, after: P.map((p) => p.total) });
+    }
+    const standing = P.slice().sort((a, b) => b.total - a.total || a.id - b.id);
+    const semi = standing.slice(0, 40).map((p) => p.id);
+    // semifinal rooms: snake seeding of the 40 qualified players
+    const sRooms = [[], [], [], []];
+    semi.forEach((id, i) => { const row = Math.floor(i / 4), col = i % 4; sRooms[row % 2 === 0 ? col : 3 - col].push(id); });
+    const semiRooms = sRooms.map((ids) => {
+      const members = ids.map((id) => ({ id, s: score(P[id], 1.15) }));
+      const ranked = members.slice().sort((a, b) => b.s - a.s).map((m, idx) => ({ ...m, place: idx + 1 }));
+      return { members, ranked };
+    });
+    // final: top 2 of every semifinal room + the 2 best remaining scores (wildcards)
+    const direct = semiRooms.flatMap((rm) => rm.ranked.slice(0, 2));
+    const rest = semiRooms.flatMap((rm) => rm.ranked.slice(2)).sort((a, b) => b.s - a.s).slice(0, 2);
+    const finalists = direct.concat(rest).map((m) => m.id);
+    const wild = rest.map((m) => m.id);
+    const finalMembers = finalists.map((id) => ({ id, s: score(P[id], 1.3) }));
+    const finalRanked = finalMembers.slice().sort((a, b) => b.s - a.s).map((m, idx) => ({ ...m, place: idx + 1 }));
+    const winnerId = finalRanked[0].id;
+
+    // betting on the final: each spectator picks a favourite (skill + noise), fixed stake
+    const counts = finalists.map(() => 0);
+    for (let i = 0; i < cfg.spectators; i++) {
+      let best = 0, bv = -1e9;
+      finalists.forEach((id, k) => { const v = P[id].skill * 1.1 + gauss(r) * 1.0; if (v > bv) { bv = v; best = k; } });
+      counts[best]++;
+    }
+    const total = cfg.spectators * cfg.stake;
+    const winIdx = finalists.indexOf(winnerId);
+    const backers = counts[winIdx];
+    let bet;
+    const MIN_BETS = 3;
+    const cap = cfg.p1 * cfg.cap; // bonus zwyciezcy nie moze przekroczyc 50% pierwszej nagrody
+    if (cfg.spectators < MIN_BETS || backers === 0 || backers === cfg.spectators) {
+      bet = { refund: true, total, backers, perBacker: cfg.stake, bonus: 0, house: 0, sharePool: total, capped: false };
+    } else {
+      const winnersStake = backers * cfg.stake;
+      let house = total * 0.2, bonus = Math.min(total * 0.2, cap), sharePool = total - house - bonus;
+      if (sharePool < winnersStake) { sharePool = winnersStake; const rest2 = total - winnersStake; bonus = Math.min(rest2 / 2, cap); house = rest2 - bonus; }
+      bet = { refund: false, total, backers, sharePool, perBacker: sharePool / backers, bonus, house, capped: bonus < total * 0.2 - 0.001 };
+    }
+    // money
+    const revenue = N * cfg.price;
+    const treasury = revenue * 0.1;
+    const pool = revenue - treasury;
+    const prizeFor = (place) => (place === 1 ? cfg.p1 : place === 2 ? cfg.p2 : place === 3 ? cfg.p3 : place <= 10 ? cfg.p4 : 0);
+    const prizes = finalRanked.map((m) => ({ id: m.id, place: m.place, amount: prizeFor(m.place) + (m.place === 1 ? bet.bonus : 0), prize: prizeFor(m.place), bonus: m.place === 1 ? bet.bonus : 0 }));
+    const prizeTotal = prizes.reduce((s, x) => s + x.prize, 0);
+    return { cfg, P, rounds, standing, semi, semiRooms, finalists, wild, finalRanked, counts, bet, winnerId, money: { revenue, treasury, pool, prizeTotal, prizes, carry: pool - prizeTotal } };
+  }
+
+  // ------------------------------------------------------------------ timeline (seconds at 1x)
+  const FULL = { intro: 18, qual: 24, cut: 9, semi: 40, final: 62, money: 78 };
+  const SHORT = { intro: 8, qual: 11, cut: 4, semi: 18, final: 28, money: 38 };
+  function buildTimeline(durs) {
+    const ph = [];
+    const add = (kind, dur, extra) => ph.push({ kind, dur, ...extra });
+    add('intro', durs.intro, { label: 'Ticket sales' });
+    for (let k = 0; k < 4; k++) add('qual', durs.qual, { round: k, label: 'Qualification ' + (k + 1) });
+    add('cut', durs.cut, { label: 'Top 40' });
+    add('semi', durs.semi, { label: 'Semifinals' });
+    add('final', durs.final, { label: 'Final' });
+    add('money', durs.money, { label: 'Results' });
+    let t = 0; ph.forEach((p) => { p.start = t; t += p.dur; });
+    return { phases: ph, total: t };
+  }
+
+  // ------------------------------------------------------------------ state
+  let sim, tl, T = 0, playing = true, speed = 1, short = false, last = 0;
+  const cv = $('cv'), cx = cv.getContext('2d');
+  function fit() { const w = cv.clientWidth || 900; const dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = Math.round(w * dpr); cv.height = Math.round(Math.min(480, Math.max(300, w * 0.5)) * dpr); cv.style.height = (cv.height / dpr) + 'px'; cx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  const W = () => cv.clientWidth, H = () => cv.clientHeight;
+  const ease = (x) => (x < 0 ? 0 : x > 1 ? 1 : x * x * (3 - 2 * x));
+  const seg = (p, a, b) => ease((p - a) / (b - a));
+
+  function cfgFromInputs() {
+    return { players: Math.round(Math.min(350, Math.max(100, Number($('cPlayers').value) || 350)) / 10) * 10, price: Number($('cPrice').value) || 20, p1: Number($('cP1').value) || 0, p2: Number($('cP2').value) || 0, p3: Number($('cP3').value) || 0, p4: Number($('cP4').value) || 0, spectators: Math.max(0, Number($('cSpec').value) || 0), stake: Number($('cStake').value) || 20, cap: Math.max(0, Number($('cCap').value)) / 100, seed: Number($('cSeed').value) || 1 };
+  }
+  function start() {
+    sim = simulate(cfgFromInputs());
+    tl = buildTimeline(short ? SHORT : FULL);
+    T = 0; lastTickerCount = -1; buildPipeline(); fit();
+  }
+
+  // ------------------------------------------------------------------ pipeline bar
+  const STAGES = [['Tickets', 'intro'], ['Qualification', 'qual'], ['Top 40', 'cut'], ['Semifinals', 'semi'], ['Final + bets', 'final'], ['Results', 'money']];
+  function buildPipeline() {
+    $('pipeline').innerHTML = STAGES.map(([n], i) => `<div class="pipe" data-i="${i}"><b>${n}</b><span class="sub"></span></div>`).join('');
+  }
+  function updatePipeline(ph) {
+    const idx = STAGES.findIndex(([, k]) => k === ph.kind);
+    document.querySelectorAll('.pipe').forEach((el, i) => {
+      el.classList.toggle('active', i === idx); el.classList.toggle('done', i < idx);
+      const sub = el.querySelector('.sub');
+      if (i === 0) sub.textContent = sim.cfg.players + ' tickets';
+      else if (i === 1) sub.textContent = idx === 1 ? 'round ' + (ph.round + 1) + ' of 4' : '4 rounds';
+      else if (i === 2) sub.textContent = sim.cfg.players + ' → 40';
+      else if (i === 3) sub.textContent = '4 rooms × 10';
+      else if (i === 4) sub.textContent = '10 finalists';
+      else sub.textContent = 'who earned what';
+    });
+  }
+
+  // ------------------------------------------------------------------ drawing helpers
+  const medal = (place) => (place === 1 ? '#e8c766' : place === 2 ? '#cbd5e1' : place === 3 ? '#d19a66' : null);
+  function roomTile(x, y, w, h, title, members, prog, opts = {}) {
+    cx.fillStyle = 'rgba(15,23,42,.85)'; cx.fillRect(x, y, w, h);
+    cx.strokeStyle = opts.hot ? '#e8c766' : '#1f2a44'; cx.lineWidth = 1; cx.strokeRect(x + .5, y + .5, w - 1, h - 1);
+    cx.fillStyle = '#94a3b8'; cx.font = '10px Segoe UI'; cx.fillText(title, x + 5, y + 11);
+    const top = 15, bh = Math.max(2, Math.floor((h - top - 4) / members.length) - 1);
+    const maxS = opts.max || 260;
+    members.forEach((m, i) => {
+      const bw = Math.max(1, (w - 10) * Math.min(1, (m.s * prog) / maxS));
+      const done = prog > 0.97;
+      cx.fillStyle = done && medal(m.place) ? medal(m.place) : (opts.color || '#3b82f6');
+      cx.fillRect(x + 5, y + top + i * (bh + 1), bw, bh);
+    });
+  }
+  function bigRoom(x, y, w, h, title, members, names, prog, opts = {}) {
+    cx.fillStyle = 'rgba(15,23,42,.85)'; cx.fillRect(x, y, w, h);
+    cx.strokeStyle = '#1f2a44'; cx.strokeRect(x + .5, y + .5, w - 1, h - 1);
+    cx.fillStyle = '#e8c766'; cx.font = 'bold 13px Segoe UI'; cx.fillText(title, x + 8, y + 17);
+    const top = 26, rowH = (h - top - 6) / members.length, maxS = opts.max || 320;
+    members.forEach((m, i) => {
+      const yy = y + top + i * rowH;
+      const bw = Math.max(1, (w - 120) * Math.min(1, (m.s * prog) / maxS));
+      const adv = opts.adv && prog > 0.97 ? opts.adv(m) : null;
+      cx.fillStyle = adv === 'direct' ? '#34d399' : adv === 'wild' ? '#60a5fa' : (opts.color || '#3b82f6');
+      cx.fillRect(x + 96, yy + 2, bw, Math.max(3, rowH - 5));
+      cx.fillStyle = adv ? '#f8fafc' : '#cbd5e1'; cx.font = (adv ? 'bold ' : '') + '11.5px Segoe UI'; cx.fillText(names[m.id], x + 8, yy + rowH / 2 + 4);
+      if (prog > 0.5) { cx.fillStyle = '#fde68a'; cx.font = '11px Segoe UI'; cx.fillText(String(Math.round(m.s * prog)), x + 100 + bw + 4, yy + rowH / 2 + 4); }
+    });
+  }
+
+  // ------------------------------------------------------------------ leaderboard + ticker (DOM)
+  const lbRows = [];
+  function buildLb() { $('lb').innerHTML = ''; lbRows.length = 0; for (let i = 0; i < 13; i++) { const d = document.createElement('div'); d.className = 'row'; d.style.transform = `translateY(${i * 29}px)`; d.innerHTML = '<span class="rk"></span><span class="nm"></span><span class="sc"></span>'; $('lb').appendChild(d); lbRows.push(d); } }
+  function setLb(title, list, cutAfter) { // list = [{name, score}] sorted
+    $('lbTitle').textContent = title;
+    list.slice(0, 13).forEach((e, i) => { const d = lbRows[i]; d.style.display = ''; d.querySelector('.rk').textContent = i + 1; d.querySelector('.nm').textContent = e.name; d.querySelector('.sc').textContent = fmt(e.score); d.classList.toggle('top1', i === 0); d.classList.toggle('cut', cutAfter === i + 1); });
+    for (let i = list.length; i < 13; i++) lbRows[i].style.display = 'none';
+  }
+  let lastTickerCount = -1;
+  function setTicker(events, T0) {
+    const shown = events.filter((e) => e.t <= T0).slice(-6);
+    if (shown.length === lastTickerCount && lastTickerCount !== -1) return;
+    lastTickerCount = shown.length;
+    $('ticker').innerHTML = shown.map((e) => `<div>${e.html}</div>`).join('');
+  }
+  function eventsFor(ph) {
+    const ev = [], P = sim.P, nm = (i) => P[i].name;
+    if (ph.kind === 'qual') {
+      const rd = sim.rounds[ph.round];
+      const picks = [0, 6, 13, 21, 28, 33].filter((i) => i < rd.rooms.length);
+      picks.forEach((ri, j) => { const w = rd.rooms[ri].ranked[0]; ev.push({ t: ph.start + ph.dur * (0.52 + j * 0.07), html: `Room ${ri + 1}: <b>${nm(w.id)}</b> wins with ${w.s} points` }); });
+      const top = sim.P.map((p, id) => ({ id, v: rd.after[id] })).sort((a, b) => b.v - a.v)[0];
+      ev.push({ t: ph.start + ph.dur * 0.94, html: `Overall leader: <b>${nm(top.id)}</b> (${fmt(top.v)})` });
+    } else if (ph.kind === 'semi') {
+      sim.semiRooms.forEach((rm, j) => ev.push({ t: ph.start + ph.dur * (0.3 + j * 0.2), html: `Semifinal ${j + 1}: <b>${nm(rm.ranked[0].id)}</b> takes the room, ${nm(rm.ranked[1].id)} follows` }));
+      ev.push({ t: ph.start + ph.dur * 0.92, html: `Wildcards: <b>${sim.wild.map(nm).join(', ')}</b>` });
+    } else if (ph.kind === 'final') {
+      ev.push({ t: ph.start + ph.dur * 0.08, html: `Betting is open: <b>${fmt(sim.cfg.spectators)}</b> spectators, ${sim.cfg.stake} DOGE each` });
+      ev.push({ t: ph.start + ph.dur * 0.34, html: `Betting closed. Pool: <b>${fmt(sim.bet.total)} DOGE</b>` });
+      ev.push({ t: ph.start + ph.dur * 0.5, html: 'The final has started — 10 lords fight for the crown' });
+      ev.push({ t: ph.start + ph.dur * 0.86, html: `<b>${nm(sim.winnerId)}</b> wins the Monthly Tournament!` });
+    }
+    return ev;
+  }
+
+  // ------------------------------------------------------------------ phase renderers
+  function show(which) { $('intro').style.display = which === 'intro' ? 'block' : 'none'; $('stage').classList.toggle('hidden', which === 'intro' || which === 'money'); $('betbox').classList.toggle('hidden', which !== 'final'); $('money').classList.toggle('hidden', which !== 'money'); }
+
+  function drawIntro(ph, p) {
+    show('intro');
+    const n = Math.round(sim.cfg.players * seg(p, 0.1, 0.65)), rev = n * sim.cfg.price;
+    $('intro').innerHTML = `<div class="big"><div class="t">Monthly Tournament</div><div class="st">Players buy tickets with their DogeOS wallets &mdash; the money goes straight into the tournament contract.</div>
+      <div class="counters"><div class="counter"><b>${fmt(n)}</b><span>tickets sold</span></div><div class="counter"><b>${fmt(rev)} DOGE</b><span>paid into the contract</span></div><div class="counter"><b>${fmt(rev * 0.9)} DOGE</b><span>prize pool (90%)</span></div><div class="counter"><b>${fmt(rev * 0.1)} DOGE</b><span>game treasury (10%)</span></div></div>
+      <div class="st" style="margin-top:18px">Next: ${sim.cfg.players / 10} rooms &times; 4 qualification rounds &rarr; the best 40 &rarr; 4 semifinal rooms &rarr; the final.</div></div>`;
+    setTicker([], 0);
+  }
+
+  function drawQual(ph, p) {
+    show('stage');
+    const k = ph.round, rd = sim.rounds[k], rooms = rd.rooms, N = sim.cfg.players / 10;
+    $('stTitle').textContent = `Qualification round ${k + 1} of 4`;
+    $('stSub').textContent = p < 0.12 ? 'Matchmaking: players are drawn into rooms…' : p < 0.88 ? `${N} rooms play at the same time` : 'Round finished — points added up';
+    cx.clearRect(0, 0, W(), H());
+    const cols = 7, rowsN = Math.ceil(N / cols), gap = 6, tw = (W() - gap * (cols + 1)) / cols, th = (H() - gap * (rowsN + 1)) / rowsN;
+    const shuffleP = seg(p, 0, 0.12), prog = seg(p, 0.12, 0.85);
+    rooms.forEach((rm, i) => {
+      const c = i % cols, rr = Math.floor(i / cols);
+      const appear = Math.min(1, Math.max(0, shuffleP * 1.6 - (i / rooms.length) * 0.6));
+      cx.globalAlpha = appear;
+      roomTile(gap + c * (tw + gap), gap + rr * (th + gap), tw, th, 'Room ' + (i + 1), rm.members, prog, { max: 250 });
+    });
+    cx.globalAlpha = 1;
+    // leaderboard: cumulative points moving during the round
+    const cur = sim.P.map((pl, id) => ({ name: pl.name, score: rd.before[id] + (rd.after[id] - rd.before[id]) * prog })).sort((a, b) => b.score - a.score);
+    setLb(k === 0 && prog < 0.05 ? 'Leaderboard' : `Leaderboard after ${k + 1 - (p < 0.85 ? 1 : 0)} round(s)`, cur, 0);
+  }
+
+  function drawCut(ph, p) {
+    show('stage');
+    $('stTitle').textContent = 'The best 40 go to the semifinals';
+    $('stSub').textContent = `${sim.cfg.players - 40} players are out`;
+    cx.clearRect(0, 0, W(), H());
+    const cols = 10, rowsN = Math.ceil(sim.cfg.players / cols), cell = Math.min(W() / cols, (H() - 20) / rowsN);
+    const dotR = Math.max(2, Math.min(7, cell * 0.36)), ox = (W() - cell * cols) / 2 + cell / 2;
+    const rank = {}; sim.standing.forEach((pl, i) => { rank[pl.id] = i; });
+    const reveal = seg(p, 0.1, 0.8);
+    sim.standing.forEach((pl, i) => {
+      const c = i % cols, rr = Math.floor(i / cols);
+      const ok = i < 40;
+      cx.globalAlpha = ok ? 1 : 1 - 0.78 * reveal;
+      cx.fillStyle = ok ? (i < 3 ? medal(i + 1) : '#34d399') : '#475569';
+      cx.beginPath(); cx.arc(ox + c * cell, 14 + rr * cell, dotR * (ok ? 1 : 1 - 0.3 * reveal), 0, 7); cx.fill();
+    });
+    cx.globalAlpha = 1;
+    setLb('Final standing after 4 rounds', sim.standing.slice(0, 13).map((pl) => ({ name: pl.name, score: pl.total })), 0);
+  }
+
+  function drawSemi(ph, p) {
+    show('stage');
+    $('stTitle').textContent = 'Semifinals';
+    $('stSub').textContent = p < 0.1 ? 'Seeding: the best 40, 10 per room' : p < 0.82 ? '4 rooms, top 2 of each + 2 wildcards go to the final' : 'Finalists decided';
+    cx.clearRect(0, 0, W(), H());
+    const gap = 8, tw = (W() - gap * 3) / 2, th = (H() - gap * 3) / 2, prog = seg(p, 0.1, 0.78), names = sim.P.map((x) => x.name);
+    const direct = new Set(sim.semiRooms.flatMap((rm) => rm.ranked.slice(0, 2).map((m) => m.id))), wild = new Set(sim.wild);
+    sim.semiRooms.forEach((rm, i) => bigRoom(gap + (i % 2) * (tw + gap), gap + Math.floor(i / 2) * (th + gap), tw, th, 'Semifinal ' + (i + 1), rm.members, names, prog, { max: 330, adv: (m) => (direct.has(m.id) ? 'direct' : wild.has(m.id) ? 'wild' : null) }));
+    const base = sim.semi.map((id) => ({ name: names[id], score: sim.P[id].total }));
+    const cur = sim.semiRooms.flatMap((rm) => rm.members).map((m) => ({ name: names[m.id], score: m.s * prog })).sort((a, b) => b.score - a.score);
+    setLb('Semifinal points', cur, 0);
+  }
+
+  function drawFinal(ph, p) {
+    show('final');
+    const names = sim.P.map((x) => x.name), F = sim.finalists, openP = seg(p, 0.04, 0.3), runP = seg(p, 0.5, 0.82);
+    $('stTitle').textContent = p < 0.34 ? 'Final — bets are open' : p < 0.5 ? 'Final — bets closed' : 'Final';
+    $('stSub').textContent = p < 0.34 ? 'Spectators pick the winner (' + sim.cfg.stake + ' DOGE each)' : p < 0.84 ? 'The 10 finalists fight' : 'Result';
+    cx.clearRect(0, 0, W(), H());
+    const members = sim.finalRanked.map((m) => ({ ...m })), order = F.map((id) => members.find((m) => m.id === id));
+    const rowH = (H() - 16) / 10, maxCount = Math.max(...sim.counts, 1), maxS = 420;
+    order.forEach((m, i) => {
+      const y = 8 + i * rowH, betW = (W() * 0.38) * (sim.counts[i] * openP) / maxCount, scW = (W() * 0.5) * Math.min(1, (m.s * runP) / maxS);
+      cx.fillStyle = 'rgba(15,23,42,.8)'; cx.fillRect(4, y, W() - 8, rowH - 3);
+      cx.fillStyle = '#e2e8f0'; cx.font = 'bold 12.5px Segoe UI'; cx.fillText(names[m.id], 12, y + rowH / 2 + 4);
+      // bets (left bar) and score (right bar)
+      cx.fillStyle = '#7c3aed'; cx.fillRect(150, y + 4, betW, rowH - 11);
+      cx.fillStyle = '#c4b5fd'; cx.font = '11px Segoe UI'; cx.fillText(Math.round(sim.counts[i] * openP) + ' bets', 154 + betW, y + rowH / 2 + 4);
+      const done = runP > 0.97, c = done && medal(m.place) ? medal(m.place) : '#3b82f6';
+      cx.fillStyle = c; cx.fillRect(W() * 0.48 + 70, y + 4, scW * 0.9, rowH - 11);
+      if (runP > 0.3) { cx.fillStyle = '#fde68a'; cx.fillText(String(Math.round(m.s * runP)), W() * 0.48 + 74 + scW * 0.9, y + rowH / 2 + 4); }
+      if (done && m.place <= 3) { cx.fillStyle = medal(m.place); cx.font = 'bold 12px Segoe UI'; cx.fillText('#' + m.place, W() - 30, y + rowH / 2 + 4); }
+    });
+    cx.fillStyle = '#94a3b8'; cx.font = '11px Segoe UI'; cx.fillText('bets', 150, 8); cx.fillText('final score', W() * 0.48 + 70, 8);
+    setLb('Final standings', order.map((m) => ({ name: names[m.id], score: m.s * runP })).sort((a, b) => b.score - a.score), 0);
+    // betting panel
+    const n = Math.round(sim.cfg.spectators * openP), pool = n * sim.cfg.stake, b = sim.bet, closed = p >= 0.34, res = p > 0.86;
+    let html = `<div class="counters"><div class="counter"><b>${fmt(n)}</b><span>bets placed</span></div><div class="counter"><b>${fmt(pool)} DOGE</b><span>betting pool</span></div><div class="counter"><b>${closed ? 'closed' : 'open'}</b><span>1/6 of the round</span></div></div>`;
+    if (res) {
+      html += b.refund ? '<p class="st" style="text-align:center;margin-top:12px">Not enough bets or nobody picked the winner &mdash; every bet is refunded.</p>'
+        : `<p style="text-align:center;margin-top:12px;font-size:15px">Winner <b class="g">${names[sim.winnerId]}</b> &mdash; <b class="w">${fmt(b.backers)}</b> spectators picked him and each gets <b class="w">${fmt(b.perBacker, 1)} DOGE</b> (stake ${sim.cfg.stake}). The winner of the game gets a bonus of <b class="g">${fmt(b.bonus, 1)} DOGE</b>, the game keeps <b>${fmt(b.house, 1)} DOGE</b>.</p>`;
+    }
+    $('betbox').innerHTML = html;
+  }
+
+  const shownCards = new Set();
+  function drawMoney(ph, p) {
+    show('money');
+    const M = sim.money, b = sim.bet, names = sim.P.map((x) => x.name), c = sim.cfg, win = names[sim.winnerId];
+    const podium = sim.finalRanked.slice(0, 3);
+    const gameEarn = M.treasury + b.house;
+    const cards = [
+      { at: 0.00, html: `<div class="card" style="grid-column:1/-1"><div class="big" style="padding:10px"><div class="t">🏆 ${win}</div><div class="st">Monthly Tournament champion</div>
+        <div class="podium"><div class="pod p2"><div>🥈</div><div class="nm">${names[podium[1].id]}</div><div class="g">${fmt(M.prizes[1].prize)} DOGE</div></div><div class="pod p1"><div>🥇</div><div class="nm">${win}</div><div class="g">${fmt(M.prizes[0].prize)}${b.bonus ? ' + ' + fmt(b.bonus, 1) : ''} DOGE</div></div><div class="pod p3"><div>🥉</div><div class="nm">${names[podium[2].id]}</div><div class="g">${fmt(M.prizes[2].prize)} DOGE</div></div></div></div></div>` },
+      { at: 0.16, html: `<div class="card panel"><h3>Tickets</h3><table><tr><td>${fmt(c.players)} tickets × ${c.price} DOGE</td><td class="n g">${fmt(M.revenue)} DOGE</td></tr><tr><td>→ game treasury (10%)</td><td class="n">${fmt(M.treasury)}</td></tr><tr><td>→ prize pool (90%)</td><td class="n">${fmt(M.pool)}</td></tr>${M.prizeTotal > M.pool ? '<tr><td colspan="2" class="l">Prizes are higher than the pool from tickets — the rest comes from the reserve.</td></tr>' : ''}</table></div>` },
+      { at: 0.30, html: `<div class="card panel"><h3>Prizes paid to players</h3><table>${M.prizes.map((x) => `<tr><td>#${x.place} ${names[x.id]}</td><td class="n ${x.place <= 3 ? 'g' : ''}">${fmt(x.prize)}${x.bonus ? ' + ' + fmt(x.bonus, 1) + ' bonus' : ''}</td></tr>`).join('')}<tr><td><b>Total prizes</b></td><td class="n g">${fmt(M.prizeTotal)}</td></tr></table></div>` },
+      { at: 0.46, html: `<div class="card panel"><h3>Bets on the final</h3><table><tr><td>${fmt(c.spectators)} bets × ${c.stake} DOGE</td><td class="n g">${fmt(b.total)} DOGE</td></tr>${b.refund ? '<tr><td>Everybody refunded</td><td class="n">&mdash;</td></tr>' : `<tr><td>Game treasury (20%)</td><td class="n">${fmt(b.house, 1)}</td></tr><tr><td>Winner of the game (20%, max ${fmt(c.cap * 100)}% of 1st prize)${b.capped ? ' — capped' : ''}</td><td class="n g">${fmt(b.bonus, 1)}</td></tr><tr><td>${fmt(b.backers)} backers of the winner (the rest)</td><td class="n w">${fmt(b.sharePool)} → ${fmt(b.perBacker, 1)} each</td></tr><tr><td>Spectators who lost</td><td class="n l">${fmt(c.spectators - b.backers)} × −${c.stake}</td></tr>`}</table></div>` },
+      { at: 0.62, html: `<div class="card panel"><h3>What the game earned</h3><table><tr><td>Treasury from tickets</td><td class="n">${fmt(M.treasury)}</td></tr><tr><td>Treasury from bets</td><td class="n">${fmt(b.house, 1)}</td></tr><tr><td><b>Game earned</b></td><td class="n g">${fmt(gameEarn, 1)} DOGE</td></tr><tr><td>Left in the prize pool for the next tournaments</td><td class="n w">${fmt(M.carry)} DOGE</td></tr></table></div>` },
+      { at: 0.78, html: `<div class="card panel"><h3>Who earned what</h3><table><tr><td>Champion ${win}</td><td class="n g">${fmt(M.prizes[0].amount, 1)} − ${c.price} ticket</td></tr><tr><td>Other 9 finalists</td><td class="n w">${fmt(M.prizes.slice(1).reduce((s, x) => s + x.prize, 0))} total</td></tr><tr><td>${fmt(c.players - 10)} other players</td><td class="n l">− ${c.price} each</td></tr><tr><td>Spectators (backers)</td><td class="n w">${b.refund ? '0' : '+' + fmt(b.perBacker - c.stake, 1) + ' each'}</td></tr></table></div>` }
+    ];
+    const box = $('money');
+    if (box.dataset.sim !== String(c.seed) + c.players + c.spectators || !box.children.length) { box.dataset.sim = String(c.seed) + c.players + c.spectators; box.className = 'money'; box.innerHTML = cards.map((x, i) => x.html.replace('<div class="card', `<div data-at="${x.at}" class="card`)).join(''); }
+    box.classList.remove('hidden');
+    box.querySelectorAll('.card').forEach((el) => el.classList.toggle('in', p >= Number(el.dataset.at)));
+  }
+
+  // ------------------------------------------------------------------ main loop
+  function render() {
+    const ph = tl.phases.find((x) => T >= x.start && T < x.start + x.dur) || tl.phases[tl.phases.length - 1];
+    const p = Math.min(1, (T - ph.start) / ph.dur);
+    updatePipeline(ph);
+    if (ph.kind === 'intro') drawIntro(ph, p);
+    else if (ph.kind === 'qual') drawQual(ph, p);
+    else if (ph.kind === 'cut') drawCut(ph, p);
+    else if (ph.kind === 'semi') drawSemi(ph, p);
+    else if (ph.kind === 'final') drawFinal(ph, p);
+    else drawMoney(ph, p);
+    const evs = eventsFor(ph);
+    setTicker(evs, T);
+    $('seek').value = Math.round((T / tl.total) * 1000);
+    const m = (s) => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+    $('time').textContent = m(T) + ' / ' + m(tl.total);
+  }
+  function frame(now) {
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    if (playing) { T += dt * speed; if (T >= tl.total) { T = tl.total - 0.001; playing = false; $('play').innerHTML = '&#9654; Replay'; } }
+    render();
+    requestAnimationFrame(frame);
+  }
+
+  // ------------------------------------------------------------------ controls
+  $('play').onclick = () => { if (T >= tl.total - 0.01) { T = 0; } playing = !playing; $('play').innerHTML = playing ? '&#10074;&#10074; Pause' : '&#9654; Play'; };
+  $('restart').onclick = () => { T = 0; playing = true; $('play').innerHTML = '&#10074;&#10074; Pause'; $('money').innerHTML = ''; };
+  $('seek').oninput = (e) => { T = (Number(e.target.value) / 1000) * tl.total; lastTickerCount = -1; };
+  document.querySelectorAll('[data-speed]').forEach((b) => b.onclick = () => { speed = Number(b.dataset.speed); document.querySelectorAll('[data-speed]').forEach((x) => x.classList.toggle('on', x === b)); });
+  $('short').onclick = () => { short = !short; $('short').classList.toggle('on', short); $('short').textContent = short ? 'Full version' : 'Short version'; tl = buildTimeline(short ? SHORT : FULL); T = 0; playing = true; $('money').innerHTML = ''; $('play').innerHTML = '&#10074;&#10074; Pause'; };
+  $('apply').onclick = () => { $('money').innerHTML = ''; start(); playing = true; $('play').innerHTML = '&#10074;&#10074; Pause'; $('settings').open = false; };
+  window.addEventListener('resize', fit);
+
+  buildLb(); start();
+  window.__sim = { seek: (s) => { T = s; lastTickerCount = -1; playing = false; render(); }, total: () => tl.total, data: () => sim, setSpeed: (x) => { speed = x; } };
+  requestAnimationFrame((t) => { last = t; frame(t); });
+})();
+</script>
+</body>
+</html>

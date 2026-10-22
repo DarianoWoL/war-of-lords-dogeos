@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="legal.privacyTitle">War of Lords - Polityka Prywatności</title>
+    <style>html[lang="en"] .legal-doc[data-doc-lang="pl"], html:not([lang="en"]) .legal-doc[data-doc-lang="en"] { display: none; }
+        .legal-lang-note{margin:0 auto 18px;max-width:900px;padding:12px 16px;border:1px solid #d4af37;border-radius:8px;background:rgba(212,175,55,0.12);color:#f0d78c;font-size:15px;line-height:1.5}
+        .legal-doc ol[type="a"] { list-style-type: lower-alpha; margin-top: 8px; }</style>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+
+        .nav-menu {
+            background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat;
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .nav-menu a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #e8c766;
+        }
+
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { display: none !important; position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .legal-card {
+            width: 100%;
+            max-width: 1000px;
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96));
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 20px;
+            padding: 36px 40px;
+            box-sizing: border-box;
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 16px 45px rgba(0,0,0,0.4);
+            margin: 0 20px 30px;
+        }
+
+        .legal-card h1 {
+            margin: 0 0 8px;
+            color: #e8c766;
+            font-size: 30px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            text-align: center;
+        }
+
+        .legal-card > p.subtitle {
+            text-align: center;
+            color: #cbd5e1;
+            margin: 0 0 30px;
+            font-size: 13px;
+        }
+
+        .legal-card section { margin-bottom: 28px; }
+
+        .legal-card h2 {
+            margin: 0 0 14px;
+            padding-bottom: 10px;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            color: #e8c766;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .legal-card h3 { margin: 18px 0 8px; color: #f0d78c; font-size: 15px; }
+        .legal-card p, .legal-card li { color: #e2e8f0; line-height: 1.65; font-size: 14.5px; }
+        .legal-card ul, .legal-card ol { padding-left: 22px; margin: 8px 0; }
+        .legal-card strong { color: #f8fafc; }
+
+        .legal-provider-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin: 10px 0 18px;
+        }
+
+        .legal-provider-box .legal-label { color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .legal-provider-box .legal-value { color: #f8fafc; font-weight: 600; margin-bottom: 12px; }
+        .legal-provider-details { margin: 28px 0 8px; border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 10px; background: rgba(15, 23, 42, 0.6); }
+        .legal-provider-details > summary { cursor: pointer; padding: 12px 16px; color: #e8c766; font-weight: 600; list-style: none; }
+        .legal-provider-details > summary::-webkit-details-marker { display: none; }
+        .legal-provider-details > summary::before { content: '▸ '; }
+        .legal-provider-details[open] > summary::before { content: '▾ '; }
+        .legal-provider-details .legal-provider-box { margin: 0 16px 16px; }
+
+        .legal-note {
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-top: 12px;
+        }
+
+        .legal-table-wrap { overflow-x: auto; margin: 14px 0; border-radius: 12px; border: 1px solid rgba(212, 175, 55, 0.25); }
+        table.legal-table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 560px; }
+        table.legal-table th {
+            background: rgba(212, 175, 55, 0.1); color: #e8c766; text-transform: uppercase;
+            letter-spacing: 0.02em; font-size: 11.5px; padding: 10px 12px; text-align: left;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        table.legal-table td { padding: 10px 12px; border-bottom: 1px solid rgba(212, 175, 55, 0.12); color: #e2e8f0; vertical-align: top; }
+
+
+        @media (max-width: 640px) {
+            .legal-card { padding: 24px 18px; }
+            .legal-card h1 { font-size: 22px; }
+        }
+        #adminPanelLink { position: absolute; left: 234.44px; top: 41.22px; width: 295.89px; height: 60px; margin: 0; box-sizing: border-box; }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Główna</a>
+        <a id="navRooms" href="pokoje.html">Pokoje Bitewne</a>
+        <a id="navTournaments" href="turnieje.html">Turnieje</a>
+        <a id="navShop" href="sklep.html">Sklep</a>
+        <a id="navRanking" href="ranking.html">Ranking Ogólny</a>
+        <a id="navProfile" href="profile.html">Profil</a>
+        <a id="navRules" href="zasady.html">Zasady</a>
+    </div>
+
+    <div id="adminPanelLink" style="display:none;">
+        <a href="admin.html" style="display:inline-block; background:#f59e0b; color:#111827; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">👑 PANEL ADMINISTRATORA</a>
+    </div>
+
+    <div class="legal-card">
+        <!-- LEGAL:BEGIN - generowane przez scripts/build_legal.py z dokumenty-prawne/zrodla/ -->
+<div class="legal-doc" data-doc-lang="pl" lang="pl">
+        <h1>Polityka Prywatności War of Lords</h1>
+        <p class="subtitle">Wersja z dnia 6 października 2026 r. (projekt) · obowiązuje od: [DO UZUPEŁNIENIA: data publikacji w Serwisie]</p>
+
+        <section>
+            <h2>§1. Administrator danych osobowych</h2>
+            <div class="legal-provider-box">
+                        <div class="legal-label">Adres e-mail w sprawach danych osobowych</div>
+                        <div class="legal-value"><a href="mailto:support@waroflords.pl" style="color:#e8c766;">support@waroflords.pl</a></div>
+                        <div class="legal-label" style="margin-top:12px;">Pełne dane Administratora</div>
+                        <div class="legal-value"><a href="#dane-uslugodawcy" style="color:#e8c766;">na końcu strony (rozwiń)</a></div>
+                    </div>
+            <p>Administrator przetwarza dane osobowe Użytkowników Serwisu <strong>waroflords.pl</strong> zgodnie z Rozporządzeniem Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. (RODO) oraz ustawą z dnia 10 maja 2018 r. o ochronie danych osobowych. Administrator nie wyznaczył inspektora ochrony danych; we wszystkich sprawach dotyczących danych osobowych można kontaktować się pod adresem support@waroflords.pl.</p>
+        </section>
+
+        <section>
+            <h2>§2. Jakie dane przetwarzamy</h2>
+            <div class="legal-table-wrap">
+                <table class="legal-table">
+                    <thead><tr><th>Kategoria danych</th><th>Zakres</th></tr></thead>
+                    <tbody>
+                        <tr><td>Dane Konta</td><td>nazwa użytkownika, adres e-mail, hasło (przechowywane wyłącznie w postaci skrótu kryptograficznego), kod polecający i informacja o osobie polecającej</td></tr>
+                        <tr><td>Dane rozgrywki</td><td>wyniki, punkty umiejętności (MMR), historia Rund, posiadane Bilety, Saldo DOGE, wiadomości wysyłane na czatach Serwisu</td></tr>
+                        <tr><td>Dane techniczne i bezpieczeństwa</td><td>adres IP, identyfikator urządzenia (fingerprint), historia logowań — wykorzystywane do ochrony przed multikontami i nadużyciami</td></tr>
+                        <tr><td>Dane zgód i oświadczeń</td><td>fakt i moment akceptacji Regulaminu i Polityki Prywatności, zgody marketingowej, zgody na natychmiastowe rozpoczęcie świadczenia przy zakupie Biletu, a przy wypłacie — oświadczenie o pełnoletności lub zgodzie opiekuna prawnego oraz potwierdzenie samodzielnego rozliczenia podatku</td></tr>
+                        <tr><td>Dane transakcji DOGE</td><td>adres portfela Dogecoin podany do wypłaty, identyfikatory (hashe) transakcji wpłat i wypłat, kwoty, daty i statusy transakcji, historia zakupów Biletów opłaconych z Salda DOGE</td></tr>
+                        <tr><td>Dane historyczne wypłat VPLN</td><td>numer rachunku bankowego, imię i nazwisko właściciela rachunku oraz historia zgłoszeń wypłat złożonych przed przejściem Serwisu na DOGE</td></tr>
+                        <tr><td>Korespondencja</td><td>treść zgłoszeń reklamacyjnych i kontaktowych przesłanych na support@waroflords.pl oraz wiadomości do administracji wysyłane w Serwisie</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section>
+            <h2>§3. Cele i podstawy prawne przetwarzania</h2>
+            <div class="legal-table-wrap">
+                <table class="legal-table">
+                    <thead><tr><th>Cel przetwarzania</th><th>Podstawa prawna (RODO)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Założenie i prowadzenie Konta, świadczenie usług Serwisu, organizacja rozgrywek i turniejów</td><td>art. 6 ust. 1 lit. b — wykonanie umowy</td></tr>
+                        <tr><td>Prowadzenie Salda DOGE, obsługa wpłat, wypłat i zakupów Biletów</td><td>art. 6 ust. 1 lit. b — wykonanie umowy</td></tr>
+                        <tr><td>Ewidencja transakcji i obowiązki podatkowo-rachunkowe</td><td>art. 6 ust. 1 lit. c — obowiązek prawny</td></tr>
+                        <tr><td>Rejestrowanie oświadczeń składanych przy wypłacie (pełnoletność / zgoda opiekuna, rozliczenie podatku)</td><td>art. 6 ust. 1 lit. c i f — wykazanie zgodności wypłaty z przepisami o zdolności do czynności prawnych oraz obrona roszczeń</td></tr>
+                        <tr><td>Wykrywanie multikont, oszustw i nadużyć, w tym przy wypłatach</td><td>art. 6 ust. 1 lit. f — prawnie uzasadniony interes Administratora (uczciwość rozgrywki i bezpieczeństwo środków)</td></tr>
+                        <tr><td>Rozpatrywanie reklamacji i korespondencja</td><td>art. 6 ust. 1 lit. b i f</td></tr>
+                        <tr><td>Komunikacja marketingowa</td><td>art. 6 ust. 1 lit. a — dobrowolna, odwoływalna zgoda</td></tr>
+                        <tr><td>Pliki cookies analityczne</td><td>art. 6 ust. 1 lit. a — zgoda wyrażona w banerze cookies</td></tr>
+                        <tr><td>Ustalenie, dochodzenie lub obrona roszczeń</td><td>art. 6 ust. 1 lit. f</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Podanie danych Konta jest warunkiem zawarcia umowy; podanie adresu portfela Dogecoin i złożenie oświadczeń jest warunkiem realizacji wypłaty. Administrator nie podejmuje decyzji opartych wyłącznie na zautomatyzowanym przetwarzaniu, które wywoływałyby wobec Użytkownika skutki prawne lub w podobny sposób istotnie na niego wpływały; automatyczne wykrycie możliwego multikonta jest weryfikowane przez Administratora, a Użytkownik może złożyć wyjaśnienia.</p>
+        </section>
+
+        <section>
+            <h2>§4. Transakcje w sieci Dogecoin — dane publiczne</h2>
+            <p>Wpłaty i wypłaty DOGE są realizowane w publicznej sieci blockchain Dogecoin. Adresy portfeli, kwoty i identyfikatory transakcji zapisane w tej sieci są z natury publicznie dostępne dla każdego i nie mogą zostać zmienione ani usunięte — ani przez Administratora, ani przez Użytkownika. Administrator nie publikuje powiązania między adresem portfela a Kontem Użytkownika; powiązanie to przechowuje wyłącznie w Serwisie. Odnośniki „zobacz transakcję” prowadzą do zewnętrznej, publicznej przeglądarki blockchaina (blockchair.com), która działa na własnych zasadach prywatności.</p>
+        </section>
+
+        <section>
+            <h2>§5. Odbiorcy danych</h2>
+            <p>Dane osobowe mogą być przekazywane wyłącznie w zakresie niezbędnym do realizacji wskazanych celów:</p>
+            <ul>
+                <li>dostawcy usług hostingowych i infrastruktury serwerowej, na której działa Serwis — na podstawie umowy powierzenia przetwarzania danych;</li>
+                <li>podmiotom świadczącym na rzecz Administratora usługi wsparcia technicznego — na podstawie umów powierzenia;</li>
+                <li>organom publicznym — wyłącznie gdy obowiązek przekazania danych wynika z przepisów prawa.</li>
+            </ul>
+            <p>Administrator nie sprzedaje danych osobowych. Dane nie są przekazywane poza Europejski Obszar Gospodarczy; w razie zmiany tego stanu Polityka zostanie zaktualizowana. Serwis nie korzysta z zewnętrznych operatorów płatności.</p>
+        </section>
+
+        <section>
+            <h2>§6. Okres przechowywania danych</h2>
+            <ul>
+                <li>Dane Konta i rozgrywki — przez czas istnienia Konta, a po jego usunięciu przez okres przedawnienia ewentualnych roszczeń.</li>
+                <li>Dane transakcji DOGE, ewidencja zakupów oraz dane historycznych wypłat VPLN — przez okres wymagany przepisami prawa podatkowego i rachunkowego (co do zasady 5 lat od końca roku, w którym miała miejsce transakcja).</li>
+                <li>Oświadczenia składane przy wypłacie — przez okres przechowywania danych danej wypłaty.</li>
+                <li>Dane techniczne i bezpieczeństwa — przez okres niezbędny do ochrony przed nadużyciami, z uwzględnieniem konieczności zachowania dowodów w razie sporu.</li>
+                <li>Dane przetwarzane na podstawie zgody — do czasu jej wycofania.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>§7. Prawa Użytkownika</h2>
+            <p>Każdej osobie, której dane dotyczą, przysługuje prawo do:</p>
+            <ul>
+                <li>dostępu do swoich danych i uzyskania ich kopii;</li>
+                <li>sprostowania danych;</li>
+                <li>usunięcia danych („prawo do bycia zapomnianym”) — w zakresie, w jakim nie stoi to w sprzeczności z obowiązkami prawnymi Administratora (np. przechowywania ewidencji transakcji) oraz z zastrzeżeniem, że dane zapisane w publicznej sieci Dogecoin nie mogą zostać usunięte (§4);</li>
+                <li>ograniczenia przetwarzania;</li>
+                <li>przenoszenia danych;</li>
+                <li>wniesienia sprzeciwu wobec przetwarzania opartego na prawnie uzasadnionym interesie Administratora;</li>
+                <li>cofnięcia zgody w dowolnym momencie, bez wpływu na zgodność z prawem przetwarzania dokonanego przed jej cofnięciem;</li>
+                <li>wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2, 00-193 Warszawa).</li>
+            </ul>
+            <p>Uprawnienia te można realizować, kontaktując się z Administratorem pod adresem support@waroflords.pl.</p>
+        </section>
+
+        <section>
+            <h2>§8. Pliki cookies i pamięć przeglądarki</h2>
+            <p>Serwis wykorzystuje:</p>
+            <ul>
+                <li><strong>pliki niezbędne</strong> — konieczne do działania Serwisu: utrzymanie zalogowania (token sesji w pamięci lokalnej przeglądarki), zapamiętanie wybranego języka (plik cookie <code>wol_lang</code>, przekazywany do serwera wyłącznie w celu wyświetlania komunikatów w wybranym języku) oraz zapamiętanie decyzji dotyczącej cookies i układu strony. Nie wymagają zgody Użytkownika;</li>
+                <li><strong>pliki analityczne</strong> — pomagające zrozumieć sposób korzystania z Serwisu; włączane wyłącznie po wyrażeniu zgody w banerze cookies, którą można w każdej chwili zmienić lub wycofać.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>§9. Ochrona przed multikontami (fingerprinting urządzenia)</h2>
+            <p>W celu zapewnienia uczciwości rozgrywki Serwis zbiera techniczny identyfikator urządzenia (tzw. „fingerprint”, oparty m.in. o parametry przeglądarki i sprzętu) oraz historię adresów IP używanych do logowania. Dane te służą wyłącznie do wykrywania prób korzystania z wielu Kont przez tę samą osobę i są przetwarzane na podstawie prawnie uzasadnionego interesu Administratora (art. 6 ust. 1 lit. f RODO).</p>
+        </section>
+
+        <section>
+            <h2>§10. Bezpieczeństwo danych</h2>
+            <p>Administrator stosuje odpowiednie środki techniczne i organizacyjne chroniące dane przed nieuprawnionym dostępem, utratą lub zniszczeniem, w tym szyfrowanie połączeń, przechowywanie haseł wyłącznie w postaci skrótu kryptograficznego oraz ograniczenie dostępu do danych do osób upoważnionych. Klucze prywatne Portfela Serwisu nie są przechowywane na serwerze Serwisu.</p>
+        </section>
+
+        <section>
+            <h2>§11. Zmiany Polityki Prywatności</h2>
+            <p>Administrator może zmieniać niniejszą Politykę, w szczególności w związku ze zmianą przepisów prawa lub funkcjonalności Serwisu. Aktualna wersja jest zawsze dostępna w Serwisie, a o istotnych zmianach Użytkownicy zostaną poinformowani komunikatem w Serwisie.</p>
+            <p>Polityka została sporządzona w języku polskim; wersja w języku angielskim ma charakter informacyjny. W razie rozbieżności wiążąca jest wersja polska.</p>
+        </section>
+
+        <details class="legal-provider-details" id="dane-uslugodawcy">
+            <summary>Dane Administratora danych osobowych</summary>
+            <div class="legal-provider-box">
+                <div class="legal-label">Administrator danych osobowych</div>
+                <div class="legal-value">Ilona Dobrowolska</div>
+                <div class="legal-label">Adres do korespondencji</div>
+                <div class="legal-value">Rzeczyca Księża 227, 23-230 RZECZYCA KSIĘŻA</div>
+                <div class="legal-label">Adres e-mail</div>
+                <div class="legal-value"><a href="mailto:support@waroflords.pl" style="color:#e8c766;">support@waroflords.pl</a></div>
+            </div>
+        </details>
+        </div>
+<div class="legal-doc" data-doc-lang="en" lang="en">
+        <h1>War of Lords Privacy Policy</h1>
+        <p class="subtitle">Version of 6 October 2026 (draft) · in force from: [TO BE COMPLETED: publication date]</p>
+        <p class="legal-lang-note">This is an English translation provided for information. The binding version of this Privacy Policy is the Polish version — in case of any discrepancy, the Polish version prevails.</p>
+
+        <section>
+            <h2>§1. Data controller</h2>
+            <div class="legal-provider-box">
+                        <div class="legal-label">E-mail address for personal data matters</div>
+                        <div class="legal-value"><a href="mailto:support@waroflords.pl" style="color:#e8c766;">support@waroflords.pl</a></div>
+                        <div class="legal-label" style="margin-top:12px;">Full controller details</div>
+                        <div class="legal-value"><a href="#provider-details" style="color:#e8c766;">at the end of the page (expand)</a></div>
+                    </div>
+            <p>The controller processes the personal data of Users of the <strong>waroflords.pl</strong> Service in accordance with Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 (GDPR) and the Polish Act of 10 May 2018 on personal data protection. The controller has not appointed a data protection officer; in all matters concerning personal data please contact support@waroflords.pl.</p>
+        </section>
+
+        <section>
+            <h2>§2. What data we process</h2>
+            <div class="legal-table-wrap">
+                <table class="legal-table">
+                    <thead><tr><th>Data category</th><th>Scope</th></tr></thead>
+                    <tbody>
+                        <tr><td>Account data</td><td>username, e-mail address, password (stored only as a cryptographic hash), referral code and information about the referring person</td></tr>
+                        <tr><td>Game data</td><td>results, skill points (MMR), Round history, Tickets held, DOGE Balance, messages sent in the Service’s chats</td></tr>
+                        <tr><td>Technical and security data</td><td>IP address, device identifier (fingerprint), login history — used to protect against multi-accounting and abuse</td></tr>
+                        <tr><td>Consent and declaration data</td><td>the fact and time of accepting the Terms of Service and Privacy Policy, marketing consent, consent to immediate performance when buying a Ticket, and for withdrawals — the declaration of legal age or guardian consent and the confirmation of settling tax oneself</td></tr>
+                        <tr><td>DOGE transaction data</td><td>the Dogecoin wallet address given for withdrawals, deposit and withdrawal transaction identifiers (hashes), amounts, dates and statuses, history of Tickets bought with the DOGE Balance</td></tr>
+                        <tr><td>Historical VPLN withdrawal data</td><td>bank account number, account holder’s name and the history of withdrawal requests made before the Service switched to DOGE</td></tr>
+                        <tr><td>Correspondence</td><td>complaints and messages sent to support@waroflords.pl and messages to the administrators sent in the Service</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section>
+            <h2>§3. Purposes and legal bases of processing</h2>
+            <div class="legal-table-wrap">
+                <table class="legal-table">
+                    <thead><tr><th>Purpose of processing</th><th>Legal basis (GDPR)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Creating and maintaining the Account, providing the Service, organising games and tournaments</td><td>Art. 6(1)(b) — performance of a contract</td></tr>
+                        <tr><td>Keeping the DOGE Balance, handling deposits, withdrawals and Ticket purchases</td><td>Art. 6(1)(b) — performance of a contract</td></tr>
+                        <tr><td>Transaction records and tax and accounting obligations</td><td>Art. 6(1)(c) — legal obligation</td></tr>
+                        <tr><td>Recording declarations made when withdrawing (legal age / guardian consent, tax settlement)</td><td>Art. 6(1)(c) and (f) — demonstrating that the withdrawal complies with the rules on legal capacity, and defence of claims</td></tr>
+                        <tr><td>Detecting multi-accounting, fraud and abuse, including in withdrawals</td><td>Art. 6(1)(f) — the controller’s legitimate interest (fair play and security of funds)</td></tr>
+                        <tr><td>Handling complaints and correspondence</td><td>Art. 6(1)(b) and (f)</td></tr>
+                        <tr><td>Marketing communication</td><td>Art. 6(1)(a) — voluntary, revocable consent</td></tr>
+                        <tr><td>Analytics cookies</td><td>Art. 6(1)(a) — consent given in the cookie banner</td></tr>
+                        <tr><td>Establishing, pursuing or defending claims</td><td>Art. 6(1)(f)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Providing Account data is required to conclude the contract; providing a Dogecoin wallet address and making the declarations is required to process a withdrawal. The controller does not take decisions based solely on automated processing that produce legal effects concerning the User or similarly significantly affect them; an automatic detection of possible multi-accounting is verified by the controller, and the User may provide an explanation.</p>
+        </section>
+
+        <section>
+            <h2>§4. Transactions on the Dogecoin network — public data</h2>
+            <p>DOGE deposits and withdrawals are made on the public Dogecoin blockchain. Wallet addresses, amounts and transaction identifiers recorded on this network are by nature publicly available to anyone and cannot be changed or deleted — neither by the controller nor by the User. The controller does not publish the link between a wallet address and a User’s Account; this link is stored only in the Service. “View transaction” links lead to an external public blockchain explorer (blockchair.com), which operates under its own privacy rules.</p>
+        </section>
+
+        <section>
+            <h2>§5. Recipients of data</h2>
+            <p>Personal data may be disclosed only to the extent necessary for the stated purposes:</p>
+            <ul>
+                <li>to the provider of hosting and server infrastructure on which the Service runs — under a data processing agreement;</li>
+                <li>to entities providing technical support services to the controller — under data processing agreements;</li>
+                <li>to public authorities — only where required by law.</li>
+            </ul>
+            <p>The controller does not sell personal data. Data is not transferred outside the European Economic Area; should this change, this Policy will be updated. The Service does not use external payment operators.</p>
+        </section>
+
+        <section>
+            <h2>§6. Retention periods</h2>
+            <ul>
+                <li>Account and game data — for as long as the Account exists, and after its deletion for the limitation period of possible claims.</li>
+                <li>DOGE transaction data, the purchase register and historical VPLN withdrawal data — for the period required by tax and accounting law (as a rule 5 years from the end of the year in which the transaction took place).</li>
+                <li>Declarations made when withdrawing — for the retention period of the data of the given withdrawal.</li>
+                <li>Technical and security data — for the period necessary to protect against abuse, taking into account the need to keep evidence in case of a dispute.</li>
+                <li>Data processed on the basis of consent — until the consent is withdrawn.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>§7. Users’ rights</h2>
+            <p>Every data subject has the right to:</p>
+            <ul>
+                <li>access their data and obtain a copy;</li>
+                <li>rectification of data;</li>
+                <li>erasure of data (“right to be forgotten”) — to the extent this does not conflict with the controller’s legal obligations (e.g. keeping transaction records) and subject to the fact that data recorded on the public Dogecoin network cannot be deleted (§4);</li>
+                <li>restriction of processing;</li>
+                <li>data portability;</li>
+                <li>object to processing based on the controller’s legitimate interest;</li>
+                <li>withdraw consent at any time, without affecting the lawfulness of processing carried out before its withdrawal;</li>
+                <li>lodge a complaint with the President of the Polish Personal Data Protection Office (ul. Stawki 2, 00-193 Warsaw).</li>
+            </ul>
+            <p>These rights can be exercised by contacting the controller at support@waroflords.pl.</p>
+        </section>
+
+        <section>
+            <h2>§8. Cookies and browser storage</h2>
+            <p>The Service uses:</p>
+            <ul>
+                <li><strong>necessary items</strong> — required for the Service to work: keeping you logged in (a session token in the browser’s local storage), remembering the chosen language (the <code>wol_lang</code> cookie, sent to the server only to display messages in the chosen language) and remembering your cookie decision and page layout. They do not require the User’s consent;</li>
+                <li><strong>analytics cookies</strong> — helping to understand how the Service is used; enabled only after consent is given in the cookie banner, which can be changed or withdrawn at any time.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>§9. Protection against multi-accounting (device fingerprinting)</h2>
+            <p>To ensure fair play, the Service collects a technical device identifier (a “fingerprint”, based among others on browser and hardware parameters) and the history of IP addresses used to log in. This data is used only to detect attempts to use several Accounts by the same person and is processed on the basis of the controller’s legitimate interest (Art. 6(1)(f) GDPR).</p>
+        </section>
+
+        <section>
+            <h2>§10. Data security</h2>
+            <p>The controller applies appropriate technical and organisational measures to protect data against unauthorised access, loss or destruction, including encrypted connections, storing passwords only as cryptographic hashes and limiting access to data to authorised persons. The private keys of the Service Wallet are not stored on the Service’s server.</p>
+        </section>
+
+        <section>
+            <h2>§11. Changes to the Privacy Policy</h2>
+            <p>The controller may change this Policy, in particular due to changes in the law or in the Service’s functionality. The current version is always available in the Service, and Users will be informed of significant changes by a notice in the Service.</p>
+            <p>This Policy has been drawn up in Polish; the English version is for information only. In case of any discrepancy, the Polish version prevails.</p>
+        </section>
+
+        <details class="legal-provider-details" id="provider-details">
+            <summary>Data controller details</summary>
+            <div class="legal-provider-box">
+                <div class="legal-label">Data controller</div>
+                <div class="legal-value">Ilona Dobrowolska</div>
+                <div class="legal-label">Correspondence address</div>
+                <div class="legal-value">Rzeczyca Księża 227, 23-230 RZECZYCA KSIĘŻA</div>
+                <div class="legal-label">E-mail address</div>
+                <div class="legal-value"><a href="mailto:support@waroflords.pl" style="color:#e8c766;">support@waroflords.pl</a></div>
+            </div>
+        </details>
+        </div>
+        <!-- LEGAL:END -->
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (token) {
+            fetch('/api/auth/me', { headers: { Authorization: `Bearer ${token}` } })
+                .then((r) => r.ok ? r.json() : null)
+                .then((profile) => {
+                    if (!profile) return;
+                    const adminPanelLinkEl = document.getElementById('adminPanelLink');
+                    if (adminPanelLinkEl) adminPanelLinkEl.style.display = (profile.role === 'ADMIN' || profile.isAdmin) ? 'block' : 'none';
+                })
+                .catch(() => {});
+        }
+    </script>
+    <script>
+        // Odnosnik "pelne dane" rozwija sekcje z danymi na koncu strony (w biezacej wersji jezykowej).
+        document.querySelectorAll('a[href="#dane-uslugodawcy"], a[href="#provider-details"]').forEach((link) => link.addEventListener('click', () => {
+            const target = document.getElementById(link.getAttribute('href').slice(1));
+            if (target) target.open = true;
+        }));
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+    <script src="/page-scale.js"></script>
+</body>
+</html>

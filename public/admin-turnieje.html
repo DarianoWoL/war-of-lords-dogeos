@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/doge-theme.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>War of Lords - Rundy Turniejowe</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+        .nav-menu {
+            background: url('/pasek gorny bez ikon.png') top center / 100% auto no-repeat;
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 16px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+        .admin-shell { width: 100%; max-width: 1200px; padding: 0 20px 40px; box-sizing: border-box; }
+        .admin-header { text-align: center; margin-bottom: 28px; }
+        .admin-header h1 { margin: 0; font-size: 34px; color: #e8c766; letter-spacing: 1px; text-transform: uppercase; }
+        .admin-header p { margin: 10px auto 0; max-width: 780px; color: #cbd5e1; font-size: 16px; line-height: 1.6; }
+        .panel-alert { background: rgba(248, 113, 113, 0.15); border: 1px solid #f87171; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; color: #f8fafc; }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 24px; width: 100%; box-sizing: border-box; }
+        .panel-card {
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96));
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 18px 40px rgba(0,0,0,0.25);
+        }
+        .panel-card h2 { margin: 0 0 14px; font-size: 22px; color: #e8c766; text-transform: uppercase; letter-spacing: 0.03em; }
+        .panel-card .subtext { margin: 0 0 18px; color: #cbd5e1; font-size: 14px; line-height: 1.5; }
+        .panel-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 16px; }
+        .panel-row label { color: #cbd5e1; font-size: 13px; display: block; margin-bottom: 8px; }
+        .panel-row input { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.28); background: #0f172a; color: #f8fafc; font-size: 14px; box-sizing: border-box; }
+        .btn-action, .btn-small { border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: transform 0.2s, background-color 0.2s; }
+        .btn-action { width: 100%; padding: 14px 18px; background: linear-gradient(180deg, #e8c766, #b8901f); color: #1c1408; margin-top: 10px; }
+        .btn-action:hover { transform: translateY(-1px); background: linear-gradient(180deg, #f0d78c, #c9a227); }
+        .btn-small { padding: 10px 12px; font-size: 13px; min-width: 110px; background: #1e293b; color: #f8fafc; border: 1px solid rgba(212, 175, 55, 0.28); }
+        .btn-small:hover { background: #334155; }
+        .btn-red { background: #ef4444; color: #fff; }
+        .btn-green { background: #34d399; color: #0f172a; }
+        .admin-view-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+        .admin-view-tab { border: 1px solid rgba(212, 175, 55, 0.28); border-radius: 10px; background: #0f172a; color: #cbd5e1; padding: 10px 16px; font-size: 14px; font-weight: bold; cursor: pointer; }
+        .admin-view-tab:hover { border-color: #d4af37; color: #e8c766; }
+        .admin-view-tab.active { background: linear-gradient(180deg, #e8c766, #b8901f); color: #1c1408; border-color: #f0d78c; }
+        .rooms-tile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .room-tile {
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.92), rgba(10, 16, 33, 0.94));
+            border: 1px solid rgba(212, 175, 55, 0.32);
+            border-radius: 16px;
+            padding: 20px;
+            transition: transform 0.2s, border-color 0.2s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+        }
+        .room-tile:hover { transform: translateY(-2px); border-color: #d4af37; }
+        .room-tile-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+        .room-tile-title { margin: 0 0 6px; color: #e8c766; font-size: 18px; }
+        .room-tile-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px 14px; margin-bottom: 14px; font-size: 13px; color: #e2e8f0; }
+        .room-tile-players { color: #cbd5e1; font-size: 12.5px; line-height: 1.5; margin-bottom: 14px; }
+        .room-tile-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+        .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; font-size: 12px; }
+        .status-pill.active { background: rgba(52,211,153,0.18); color: #34d399; }
+        .status-pill.lobby { background: rgba(212, 175, 55, 0.18); color: #e8c766; }
+        .status-pill.paused { background: rgba(248,113,113,0.18); color: #f87171; }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+    <script>
+        window.alert = function () {};
+        window.confirm = function () { return true; };
+    </script>
+
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Główna</a>
+        <a id="navAdmin" href="admin.html">Panel Admina</a>
+        <a id="navTourneyRounds" href="admin-turnieje.html" class="active">Rundy Turniejowe</a>
+        <a id="navMonthlyTourney" href="admin-turniej-miesieczny.html">Turniej Miesięczny</a>
+    </div>
+
+    <div class="admin-shell">
+        <div class="admin-header">
+            <h1>🏆 Rundy Turniejowe</h1>
+            <p>Osobna pula pokoi wyłącznie dla rund turniejowych — nie pojawiają się w zwykłych „Pokojach Bitewnych" ani na głównej liście panelu admina, tylko w publicznej zakładce „Turnieje". Tutaj tworzysz je i nimi zarządzasz.</p>
+        </div>
+
+        <div id="adminWarning" class="panel-alert" style="display:none;"></div>
+
+        <div class="dashboard-grid">
+            <div class="panel-card">
+                <h2>Tworzenie rundy turniejowej</h2>
+                <p class="subtext">Runda turniejowa startuje automatycznie, gdy pokój się zapełni — tak samo jak zwykły pokój standardowy. Jest darmowa (bez wpisowego) i nie wypłaca żadnych nagród.</p>
+                <div class="panel-row">
+                    <div>
+                        <label>Nazwa turnieju</label>
+                        <input type="text" id="tournamentRoomName" placeholder="Nazwa turnieju" />
+                    </div>
+                    <div>
+                        <label>Maksymalna liczba graczy</label>
+                        <input type="number" id="tournamentRoomMaxPlayers" min="2" max="20" value="10" />
+                    </div>
+                    <div>
+                        <label>Długość rundy (minuty)</label>
+                        <input type="number" id="tournamentRoundDuration" min="15" max="600" value="60" />
+                    </div>
+                </div>
+                <div class="panel-row">
+                    <div>
+                        <label>Modyfikator ekonomii</label>
+                        <input type="number" id="tournamentEcoModifier" min="-5" max="5" step="0.25" value="0" />
+                    </div>
+                    <div>
+                        <label>Modyfikator wojska</label>
+                        <input type="number" id="tournamentMilitaryModifier" min="-5" max="5" step="0.25" value="0" />
+                    </div>
+                </div>
+                <div class="panel-row">
+                    <div>
+                        <label><input type="checkbox" id="tournamentPlayersCanAddBots" /> Pozwól graczom samodzielnie dodawać boty w poczekalni</label>
+                    </div>
+                </div>
+                <button class="btn-action" onclick="createTournamentRoom()">Utwórz rundę turniejową</button>
+            </div>
+
+            <div class="panel-card">
+                <div class="admin-view-tabs">
+                    <button type="button" class="admin-view-tab active" id="viewTabRoomsAll" onclick="setAdminView('rooms-all')">Aktywne turnieje</button>
+                    <button type="button" class="admin-view-tab" id="viewTabRoomsOngoing" onclick="setAdminView('rooms-ongoing')">Trwające rundy turniejowe</button>
+                </div>
+
+                <div id="roomsView">
+                    <div id="activeMatchesContainer" class="rooms-tile-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+        const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        function showAdminError(message) {
+            const warning = document.getElementById('adminWarning');
+            warning.style.display = 'block';
+            warning.innerText = message;
+        }
+
+        function hideAdminError() {
+            const warning = document.getElementById('adminWarning');
+            warning.style.display = 'none';
+            warning.innerText = '';
+        }
+
+        function formatNumber(value) {
+            return Number(value).toLocaleString('pl-PL');
+        }
+
+        function numOrDefault(value, fallback) {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? parsed : fallback;
+        }
+
+        function formatRoundClock(value) {
+            const total = Math.max(0, Math.floor(Number(value) || 0));
+            const hours = String(Math.floor(total / 3600)).padStart(2, '0');
+            const minutes = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
+            const seconds = String(total % 60).padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+
+        async function fetchAdminProfile() {
+            try {
+                const response = await fetch('/api/auth/me', { headers });
+                if (!response.ok) {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('token');
+                    return window.location.href = '/login.html';
+                }
+                const profile = await response.json();
+                if (!profile.isAdmin) {
+                    return showAdminError('Brak uprawnień administratora.');
+                }
+                await loadAdminRooms();
+            } catch (err) {
+                console.error(err);
+                showAdminError('Błąd ładowania panelu turniejów.');
+            }
+        }
+
+        async function createTournamentRoom() {
+            hideAdminError();
+            const payload = {
+                name: document.getElementById('tournamentRoomName').value.trim(),
+                maxPlayers: Number(document.getElementById('tournamentRoomMaxPlayers').value) || 10,
+                playersCanAddBots: document.getElementById('tournamentPlayersCanAddBots').checked,
+                isTournament: true,
+                settings: {
+                    dlugoscRundySekundy: Number(document.getElementById('tournamentRoundDuration').value) * 60 || 3600,
+                    modyfikatorCzasuEkonomii: numOrDefault(document.getElementById('tournamentEcoModifier').value, 0),
+                    modyfikatorCzasuWojska: numOrDefault(document.getElementById('tournamentMilitaryModifier').value, 0),
+                }
+            };
+            try {
+                const response = await fetch('/api/rooms', { method: 'POST', headers, body: JSON.stringify(payload) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się utworzyć rundy turniejowej.');
+                document.getElementById('tournamentRoomName').value = '';
+                await loadAdminRooms();
+                alert('Runda turniejowa została utworzona.');
+            } catch (err) {
+                console.error(err);
+                showAdminError(err.message || 'Błąd tworzenia rundy turniejowej.');
+            }
+        }
+
+        function createRoomTemplateCard(room) {
+            const waitingCount = room.waitingCount || 0;
+            const maxPlayers = room.maxGraczy || room.maxPlayers || 10;
+            const isPaused = !!room.isPaused;
+            const statusLabel = isPaused ? 'Zapauzowany' : 'Dostępny';
+            const statusClass = isPaused ? 'paused' : 'lobby';
+            const container = document.createElement('div');
+            container.className = 'room-tile';
+            container.innerHTML = `
+                <div class="room-tile-header">
+                    <div>
+                        <h3 class="room-tile-title">${room.nazwaPokoju || room.roomName}</h3>
+                        <div class="status-pill ${statusClass}">${statusLabel}</div>
+                    </div>
+                </div>
+                <div class="room-tile-info">
+                    <div><strong>W kolejce:</strong> ${waitingCount} / ${maxPlayers}</div>
+                    <div><strong>Czas rundy:</strong> ${Math.floor((room.ustawienia?.dlugoscRundySekundy || 3600) / 60)} min</div>
+                </div>
+                <div class="room-tile-players">
+                    ${room.waitingPlayers?.length ? `W kolejce: ${room.waitingPlayers.map(p => p.username).join(', ')}` : 'Brak graczy w kolejce.'}
+                </div>
+                <div class="room-tile-actions">
+                    <button class="btn-small" onclick="togglePauseRoom('${room._id}', ${isPaused})">${isPaused ? 'Wznów' : 'Pauza'}</button>
+                    <button class="btn-small btn-red" onclick="deleteAdminRoom('${room._id}', '${room.nazwaPokoju || room.roomName}')">Usuń turniej</button>
+                </div>
+            `;
+            return container;
+        }
+
+        function createRoundCard(round) {
+            const maxPlayers = round.maxPlayers || (round.players || []).length || 10;
+            const remaining = round.roundEndsAt ? Math.max(0, Math.floor((new Date(round.roundEndsAt).getTime() - Date.now()) / 1000)) : null;
+            const container = document.createElement('div');
+            container.className = 'room-tile';
+            container.innerHTML = `
+                <div class="room-tile-header">
+                    <div>
+                        <h3 class="room-tile-title">${round.roomName}</h3>
+                        <div class="status-pill active">Trwa runda${remaining !== null ? ` • ${formatRoundClock(remaining)}` : ''}</div>
+                    </div>
+                </div>
+                <div class="room-tile-info">
+                    <div><strong>Gracze:</strong> ${round.currentPlayersCount || (round.players || []).length}</div>
+                    <div><strong>Czas rundy:</strong> ${Math.floor((round.settings?.dlugoscRundySekundy || 3600) / 60)} min</div>
+                    <div><strong>Do końca rundy:</strong> ${remaining !== null ? formatRoundClock(remaining) : '—'}</div>
+                </div>
+                <div class="room-tile-players">
+                    ${round.players?.length ? `Gracze: ${round.players.map(p => p.name || p.username).join(', ')}` : 'Brak graczy.'}
+                </div>
+                <div class="room-tile-actions">
+                    <button class="btn-small btn-green" onclick="spectateRound('${round._id}')">Oglądaj</button>
+                    <button class="btn-small btn-red" onclick="endAdminRound('${round._id}', '${round.roomName}')">Zakończ</button>
+                    <button class="btn-small btn-red" onclick="deleteAdminRound('${round._id}', '${round.roomName}')">Usuń rundę</button>
+                </div>
+            `;
+            return container;
+        }
+
+        let currentView = 'rooms-all';
+        let lastRoomTemplates = [];
+        let lastRounds = [];
+
+        function renderRoomsView() {
+            const container = document.getElementById('activeMatchesContainer');
+            if (currentView === 'rooms-ongoing') {
+                if (!lastRounds.length) {
+                    container.innerHTML = '<p style="color:#cbd5e1;">Brak trwających rund turniejowych w tej chwili.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                lastRounds.forEach(round => container.appendChild(createRoundCard(round)));
+            } else {
+                if (!lastRoomTemplates.length) {
+                    container.innerHTML = '<p style="color:#cbd5e1;">Brak utworzonych rund turniejowych. Utwórz nową powyżej.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                lastRoomTemplates.forEach(room => container.appendChild(createRoomTemplateCard(room)));
+            }
+        }
+
+        async function loadAdminRoomTemplates() {
+            const container = document.getElementById('activeMatchesContainer');
+            if (!lastRoomTemplates.length && currentView === 'rooms-all') {
+                container.innerHTML = '<p style="color:#cbd5e1;">Ładowanie turniejów...</p>';
+            }
+            try {
+                const response = await fetch('/api/admin/rooms?tournament=1', { headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Błąd przy pobieraniu turniejów.');
+                lastRoomTemplates = result;
+                if (currentView === 'rooms-all') renderRoomsView();
+            } catch (err) {
+                if (currentView === 'rooms-all') container.innerHTML = `<p style="color:#f87171;">${err.message || 'Błąd.'}</p>`;
+            }
+        }
+
+        async function loadAdminRounds() {
+            const container = document.getElementById('activeMatchesContainer');
+            if (!lastRounds.length && currentView === 'rooms-ongoing') {
+                container.innerHTML = '<p style="color:#cbd5e1;">Ładowanie rund...</p>';
+            }
+            try {
+                const response = await fetch('/api/admin/rounds?tournament=1', { headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Błąd przy pobieraniu rund.');
+                lastRounds = result;
+                if (currentView === 'rooms-ongoing') renderRoomsView();
+            } catch (err) {
+                if (currentView === 'rooms-ongoing') container.innerHTML = `<p style="color:#f87171;">${err.message || 'Błąd.'}</p>`;
+            }
+        }
+
+        function loadAdminRooms() {
+            loadAdminRoomTemplates();
+            loadAdminRounds();
+        }
+
+        function setAdminView(view) {
+            currentView = view;
+            document.getElementById('viewTabRoomsAll').classList.toggle('active', view === 'rooms-all');
+            document.getElementById('viewTabRoomsOngoing').classList.toggle('active', view === 'rooms-ongoing');
+            renderRoomsView();
+        }
+
+        async function spectateRound(roundId) {
+            window.location.href = `/game.html?roundId=${roundId}`;
+        }
+
+        async function togglePauseRoom(roomId, isPaused) {
+            try {
+                const response = await fetch(`/api/rooms/${roomId}/pause`, { method: 'PUT', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zmienić stanu pauzy.');
+                await loadAdminRoomTemplates();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd zmiany stanu pauzy.');
+            }
+        }
+
+        async function endAdminRound(roundId, name) {
+            try {
+                const response = await fetch(`/api/rounds/${roundId}/end`, { method: 'PUT', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zakończyć rundy.');
+                await loadAdminRounds();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd zakończenia rundy.');
+            }
+        }
+
+        async function deleteAdminRound(roundId, name) {
+            if (!window.confirm(`Na pewno usunąć rundę "${name}"? Tej operacji nie można cofnąć.`)) return;
+            try {
+                const response = await fetch(`/api/rounds/${roundId}`, { method: 'DELETE', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się usunąć rundy.');
+                await loadAdminRounds();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd usuwania rundy.');
+            }
+        }
+
+        async function deleteAdminRoom(roomId, name) {
+            if (!window.confirm(`Na pewno usunąć turniej "${name}"? Tej operacji nie można cofnąć.`)) return;
+            try {
+                const response = await fetch(`/api/rooms/${roomId}`, { method: 'DELETE', headers });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się usunąć turnieju.');
+                await loadAdminRoomTemplates();
+            } catch (err) {
+                showAdminError(err.message || 'Błąd usuwania turnieju.');
+            }
+        }
+
+        setInterval(() => {
+            loadAdminRooms();
+        }, 5000);
+
+        fetchAdminProfile();
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/doge-theme.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>War of Lords - Edytor mapy drużynowej</title>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .nav-menu { background: url('/pasek gorny bez ikon.png') top center / 100% auto no-repeat; width: 100%; padding: 15px 0; text-align: center; margin: -20px -20px 20px -20px; }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 16px; font-weight: bold; font-size: 15px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+
+        h1 { color: #e8c766; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 0; }
+        .subtext { color: #94a3b8; max-width: 900px; text-align: center; margin: -10px 0 20px; font-size: 14px; }
+
+        .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; justify-content: center; }
+        .btn { border: none; border-radius: 8px; padding: 10px 18px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .btn-save { background: linear-gradient(180deg, #e8c766, #b8901f); color: #1c1408; }
+        .btn-save:hover { background: linear-gradient(180deg, #f0d78c, #c9a227); }
+        .btn-reset { background-color: #7f1d1d; color: #fecaca; border: 1px solid #ef4444; }
+        .btn-reset:hover { background-color: #ef4444; color: white; }
+        .status-text { font-size: 13px; color: #94a3b8; }
+        .status-text.saved { color: #34d399; }
+        .status-text.custom { color: #e8c766; }
+
+        #mapEditorContainer {
+            position: relative;
+            width: 100%;
+            max-width: 1160px;
+            aspect-ratio: 1448 / 1086;
+            background-image: url('./mapa druzyna.png');
+            background-size: cover;
+            background-position: center;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            touch-action: none;
+        }
+
+        .editor-node {
+            position: absolute;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.72);
+            border: 2px solid #e8c766;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            transform: translate(-50%, -50%);
+            cursor: grab;
+            user-select: none;
+        }
+        .editor-node:hover { border-color: #f0d78c; background: rgba(15, 23, 42, 0.9); }
+        .editor-node.dragging { cursor: grabbing; border-color: #34d399; z-index: 10; }
+
+        #adminError { color: #ef4444; font-weight: bold; margin-top: 20px; }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+    <script>
+        window.alert = function () {};
+        window.confirm = function () { return true; };
+    </script>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Główna</a>
+        <a id="navAdmin" href="admin.html">Panel Admina</a>
+    </div>
+
+    <h1>Edytor mapy drużynowej</h1>
+    <p class="subtext">Przeciągnij każdy numerowany znacznik dokładnie na zamek narysowany na obrazku. Pozycje zapisują się dla wszystkich przyszłych rund drużynowych (trwające rundy nie są dotknięte).</p>
+
+    <div class="toolbar">
+        <button type="button" class="btn btn-save" onclick="saveLayout()">💾 Zapisz pozycje</button>
+        <button type="button" class="btn btn-reset" onclick="resetLayout()">↺ Przywróć domyślne</button>
+        <span class="status-text" id="statusText">Ładowanie...</span>
+    </div>
+
+    <div id="mapEditorContainer"></div>
+    <div id="adminError" style="display:none;"></div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (!token) window.location.href = '/login.html';
+        const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        const container = document.getElementById('mapEditorContainer');
+        const statusText = document.getElementById('statusText');
+        let nodes = []; // [{id, x, y}]
+        let dragging = null; // {id, el}
+
+        function showAdminError(message) {
+            const el = document.getElementById('adminError');
+            el.textContent = message;
+            el.style.display = 'block';
+            container.style.display = 'none';
+            document.querySelector('.toolbar').style.display = 'none';
+        }
+
+        function renderNodes() {
+            container.innerHTML = '';
+            nodes.forEach((node) => {
+                const el = document.createElement('div');
+                el.className = 'editor-node';
+                el.style.left = `${node.x}%`;
+                el.style.top = `${node.y}%`;
+                el.textContent = node.label || node.id.replace('W', '');
+                el.dataset.id = node.id;
+                el.addEventListener('pointerdown', (event) => startDrag(event, node, el));
+                container.appendChild(el);
+            });
+        }
+
+        function startDrag(event, node, el) {
+            event.preventDefault();
+            dragging = { node, el };
+            el.classList.add('dragging');
+            el.setPointerCapture(event.pointerId);
+        }
+
+        container.addEventListener('pointermove', (event) => {
+            if (!dragging) return;
+            const rect = container.getBoundingClientRect();
+            let xPct = ((event.clientX - rect.left) / rect.width) * 100;
+            let yPct = ((event.clientY - rect.top) / rect.height) * 100;
+            xPct = Math.max(0, Math.min(100, xPct));
+            yPct = Math.max(0, Math.min(100, yPct));
+            dragging.node.x = xPct;
+            dragging.node.y = yPct;
+            dragging.el.style.left = `${xPct}%`;
+            dragging.el.style.top = `${yPct}%`;
+        });
+
+        function stopDrag() {
+            if (!dragging) return;
+            dragging.el.classList.remove('dragging');
+            dragging = null;
+            statusText.textContent = 'Niezapisane zmiany';
+            statusText.className = 'status-text custom';
+        }
+        container.addEventListener('pointerup', stopDrag);
+        container.addEventListener('pointercancel', stopDrag);
+
+        async function loadLayout() {
+            try {
+                const meResponse = await fetch('/api/auth/me', { headers });
+                if (!meResponse.ok) { window.location.href = '/login.html'; return; }
+                const me = await meResponse.json();
+                if (!me.isAdmin) { showAdminError('Brak uprawnień administratora.'); return; }
+
+                const response = await fetch('/api/admin/team-map-layout', { headers });
+                if (!response.ok) throw new Error('Nie udało się pobrać pozycji wiosek.');
+                const data = await response.json();
+                nodes = (data.nodes || []).map((n) => ({ id: n.id, x: n.x, y: n.y, label: n.label }));
+                renderNodes();
+                statusText.textContent = data.isCustom ? 'Wczytano zapisane pozycje' : 'Wczytano pozycje domyślne';
+                statusText.className = data.isCustom ? 'status-text custom' : 'status-text';
+            } catch (err) {
+                console.error(err);
+                showAdminError('Błąd ładowania edytora mapy.');
+            }
+        }
+
+        async function saveLayout() {
+            try {
+                const response = await fetch('/api/admin/team-map-layout', {
+                    method: 'PUT', headers,
+                    body: JSON.stringify({ nodes: nodes.map((n) => ({ id: n.id, x: n.x, y: n.y })) })
+                });
+                if (!response.ok) throw new Error('Nie udało się zapisać pozycji.');
+                statusText.textContent = 'Zapisano ✓';
+                statusText.className = 'status-text saved';
+            } catch (err) {
+                console.error(err);
+                statusText.textContent = 'Błąd zapisu';
+                statusText.className = 'status-text';
+            }
+        }
+
+        async function resetLayout() {
+            try {
+                const response = await fetch('/api/admin/team-map-layout', { method: 'DELETE', headers });
+                if (!response.ok) throw new Error('Nie udało się zresetować pozycji.');
+                const data = await response.json();
+                nodes = (data.nodes || []).map((n) => ({ id: n.id, x: n.x, y: n.y, label: n.label }));
+                renderNodes();
+                statusText.textContent = 'Przywrócono domyślne pozycje';
+                statusText.className = 'status-text';
+            } catch (err) {
+                console.error(err);
+                statusText.textContent = 'Błąd resetowania';
+                statusText.className = 'status-text';
+            }
+        }
+
+        loadLayout();
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+</body>
+</html>

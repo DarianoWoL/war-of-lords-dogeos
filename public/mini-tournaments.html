@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" data-source-lang="en" data-source-lang="en" data-source-lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>War of Lords - Mini-Tournaments</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;
+            background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif;
+            margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; padding-bottom: 60px;
+        }
+        .nav-menu { background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat; width: 100%; padding: 15px 0; text-align: center; margin-bottom: 30px; }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 20px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { display: none !important; position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navMiniTournaments { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 950px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        /* Page chrome below matches pokoje.html's look (same info-bar / room-card frame assets) —
+           only the prize display keeps its own distinct, more-visible boxed style (see .prize-grid
+           further down), left untouched per the user's explicit request. */
+        .page-header { text-align: center; margin: 0 0 22px; max-width: 1100px; padding: 0 20px; box-sizing: border-box; }
+        .page-header h1 { margin: 0 0 8px; color: #e8c766; font-size: 30px; text-transform: uppercase; letter-spacing: 0.03em; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .page-header p { margin: 0 auto; max-width: 700px; color: #cbd5e1; font-size: 15px; line-height: 1.6; }
+
+        .info-bar { background: url('/pasek.png') center / 100% 100% no-repeat; border-radius: 0; padding: 25px 25px 40px; margin-bottom: 30px; max-width: 1100px; width: 1098.89px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 4px 15px rgba(0, 0, 0, 0.3); }
+        .info-bar .ticket-status { font-size: 16px; color: #cbd5e1; max-width: 700px; }
+        .info-bar .ticket-status strong { color: #fbbf24; }
+
+        .btn-join { background-image: url('/przycisk.png'); background-size: 100% 100%; background-color: transparent; color: #e8c766; border: none; padding: 12px 25px; font-size: 15px; font-weight: bold; border-radius: 0; cursor: pointer; transition: color 0.2s; text-transform: uppercase; text-decoration: none; display: inline-block; }
+        .btn-join:hover { color: #f0d78c; }
+        .btn-join:disabled { color: #94a3b8 !important; cursor: not-allowed; }
+
+        .rooms-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; max-width: 1100px; width: 100%; padding: 0 20px; box-sizing: border-box; }
+        /* 2026-10-02, explicit request: removed the @media (max-width: 640px) rule that used to
+           stack .rooms-grid into a single wide column on mobile - page-scale.js (already loaded
+           on this page) scales the whole page down to fit instead, same as pokoje.html. */
+
+        .room-card { background: url('/tlopokoi.png') center / 100% 100% no-repeat; border-radius: 0; padding: 25px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; min-height: 420px; transition: transform 0.2s; position: relative; overflow: hidden; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); box-sizing: border-box; }
+        .room-card:hover { transform: translateY(-2px); }
+        .room-card.locked { filter: brightness(0.8); }
+
+        .room-info { width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .room-card h3 { margin: 0 0 10px 0; font-size: 22px; text-transform: uppercase; color: #e8c766; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .room-card .room-meta-text { font-size: 15px; color: #cbd5e1; margin: 4px 0; font-weight: 500; }
+        .ticket-badge { display: inline-block; font-size: 11px; font-weight: bold; padding: 3px 10px; border-radius: 999px; background: rgba(212, 175, 55, 0.18); color: #e8c766; margin-bottom: 8px; }
+
+        /* Prize display kept exactly in its previous, more-legible boxed style — untouched. */
+        .prize-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 0; width: 100%; max-width: 380px; }
+        .prize-item { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(212, 175, 55, 0.28); border-radius: 10px; padding: 10px; text-align: center; }
+        .prize-item .prize-label { color: #94a3b8; font-size: 11px; text-transform: uppercase; }
+        .prize-item .prize-value { color: #fbbf24; font-size: 16px; font-weight: 700; }
+
+        .empty-state { text-align: center; color: #cbd5e1; padding: 30px 0; grid-column: 1 / -1; }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/texts/mini-tournaments.js"></script>
+    <script src="/i18n.js"></script>
+    <script src="/wol-connect.js"></script>
+</head>
+<body>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Home</a>
+        <a id="navRooms" href="pokoje.html">Battle Rooms</a>
+        <a id="navTournaments" href="turnieje.html">Tournaments</a>
+        <a id="navMiniTournaments" href="mini-tournaments.html" class="active">Mini-Tournaments</a>
+        <a id="navShop" href="live.html">Live Bets</a>
+        <a id="navRanking" href="ranking.html">Overall Ranking</a>
+        <a id="navProfile" href="profile.html">Profile</a>
+        <a id="navRules" href="zasady.html">Rules</a>
+    </div>
+
+    <div class="page-header">
+        <h1>🏅 Mini-Tournaments</h1>
+        <p>Shorter rounds with guaranteed DOGE prizes for 1st, 2nd and 3rd place. The game pace (building, recruiting, economy) is sped up in proportion to the round length.</p>
+        <p>Before you join, read the <a href="/zasady-mini-turniej.html" style="color:#e8c766;">Mini-Tournament Rules</a> and the <a href="/regulamin.html" style="color:#e8c766;">Terms of Service</a>.</p>
+    </div>
+
+    <div class="info-bar" id="ticketCard">
+        <div class="ticket-status" id="ticketStatusText">Loading...</div>
+        <button type="button" class="btn-join" id="ticketActionBtn" style="display:none;">Buy a Mini-Tournament Ticket</button>
+    </div>
+
+    <div class="rooms-grid" id="roomsContainer">
+        <div class="room-card">
+            <div class="room-info">
+                <h3>Loading rooms...</h3>
+                <div class="room-meta-text">Please wait, loading data from the server.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        const headers = token ? { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+        let ticketPriceZl = 10;
+        let hasUnusedTicket = false;
+        let poolRemaining = 0;
+        let poolSize = 0;
+        let chainScale = 0.1;
+        const priceDoge = () => (+(ticketPriceZl * chainScale).toFixed(2));
+
+        function formatNumber(value) {
+            return Number(value || 0).toLocaleString('pl-PL');
+        }
+
+        async function loadTicketStatus() {
+            const priceRes = await fetch('/api/settings/mini-tournament-ticket-price');
+            const priceData = await priceRes.json();
+            ticketPriceZl = priceData.priceZl;
+            try { chainScale = (await WolConnect.config()).priceScale || chainScale; } catch (e) { /* default */ }
+            poolRemaining = priceData.remaining;
+            poolSize = priceData.poolSize;
+
+            const statusText = document.getElementById('ticketStatusText');
+            const actionBtn = document.getElementById('ticketActionBtn');
+            const poolInfo = `This month’s pool: <strong>${formatNumber(poolRemaining)} / ${formatNumber(poolSize)}</strong>.`;
+
+            if (!token) {
+                statusText.innerHTML = `Mini-Tournament entry: <strong>${priceDoge()} DOGE</strong> (testnet). ${poolInfo} Connect your wallet to join.`;
+                actionBtn.style.display = 'inline-block';
+                actionBtn.textContent = 'Connect wallet';
+                actionBtn.onclick = () => { window.location.href = '/login.html'; };
+                return;
+            }
+
+            const meRes = await fetch('/api/auth/me', { headers });
+            if (!meRes.ok) { window.location.href = '/login.html'; return; }
+            const me = await meRes.json();
+            hasUnusedTicket = !!me.hasUnusedMiniTournamentTicket;
+
+            if (hasUnusedTicket) {
+                statusText.innerHTML = `You have <strong>1 unused Mini-Tournament Ticket</strong> — join any room below that requires a ticket.`;
+                actionBtn.style.display = 'none';
+            } else if (poolRemaining <= 0) {
+                statusText.innerHTML = `This month’s pool of Mini-Tournament Tickets has run out. ${poolInfo}`;
+                actionBtn.style.display = 'none';
+            } else {
+                statusText.innerHTML = `Entry: <strong>${priceDoge()} DOGE</strong> (testnet), paid from your wallet. Pick a room below and press <strong>Join</strong>. ${poolInfo}`;
+                actionBtn.style.display = 'inline-block';
+                actionBtn.textContent = `Buy ticket · ${priceDoge()} DOGE`;
+                // Purchasing itself happens on the ticket shop (same page/flow as the Monthly
+                // Tournament ticket) — this just gets the player there, not a direct API call.
+                actionBtn.onclick = async () => { if (await WolConnect.buyTicket('mini')) window.location.reload(); };
+            }
+        }
+
+        function createRoomCard(room) {
+            const durationMin = Math.floor((room.ustawienia?.dlugoscRundySekundy || 3600) / 60);
+            const prizes = room.miniTournamentPrizes || {};
+            const requiresTicket = !!room.requiresMiniTournamentTicket;
+            const isPaused = room.isPaused === true;
+
+            // Matchmaking w ciemno: nie pokazujemy liczby graczy w kolejce ani stanu "pełny" — kolejka
+            // nie ma górnego limitu (grupy 10 graczy odrywają się na bieżąco), a sama idea ukrywa
+            // populację kolejki przed graczami tak samo jak nicki.
+            let actionHtml;
+            if (isPaused) {
+                actionHtml = `<button class="btn-join" disabled>Paused</button>`;
+            } else if (requiresTicket && !token) {
+                actionHtml = `<a href="/login.html" class="btn-join">Connect wallet</a>`;
+            } else if (requiresTicket && !hasUnusedTicket) {
+                actionHtml = `<button class="btn-join" onclick="payAndJoin('${room._id}', '${(room.nazwaPokoju || room.roomName || '').replace(/'/g, "\\'")}')">Join · ${priceDoge()} DOGE</button>`;
+            } else if (!token) {
+                actionHtml = `<a href="/login.html" class="btn-join">Connect wallet</a>`;
+            } else {
+                actionHtml = `<button class="btn-join" onclick="joinRoom('${room._id}', '${(room.nazwaPokoju || room.roomName || '').replace(/'/g, "\\'")}')">🔍 Find a Game</button>`;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'room-card' + (isPaused ? ' locked' : '');
+            card.innerHTML = `
+                <div class="room-info">
+                    ${requiresTicket ? '<div class="ticket-badge">🎫 Ticket required</div>' : ''}
+                    <h3>${room.nazwaPokoju || room.roomName}</h3>
+                    <div class="room-meta-text">Status: ${isPaused ? 'Paused' : 'Available'}</div>
+                    <div class="room-meta-text">Round length: ${durationMin} min · Speed: ${room.speedFactor ?? (120 / durationMin)}x</div>
+                    <div class="prize-grid">
+                        <div class="prize-item"><div class="prize-label">1st place</div><div class="prize-value">${formatNumber(prizes.place1VPLN)} DOGE</div></div>
+                        <div class="prize-item"><div class="prize-label">2nd place</div><div class="prize-value">${formatNumber(prizes.place2VPLN)} DOGE</div></div>
+                        <div class="prize-item"><div class="prize-label">3rd place</div><div class="prize-value">${formatNumber(prizes.place3VPLN)} DOGE</div></div>
+                    </div>
+                </div>
+                ${actionHtml}
+            `;
+            return card;
+        }
+
+        async function payAndJoin(roomId, roomName) {
+            if (await WolConnect.buyTicket('mini')) joinRoom(roomId, roomName);
+        }
+
+        async function joinRoom(roomId, roomName) {
+            try {
+                const response = await fetch(`/api/rooms/${roomId}/join`, { method: 'POST', headers });
+                const result = await response.json();
+                if (!response.ok) {
+                    if (WolConnect.isActiveGameError(result.error) && await WolConnect.handleActiveGame()) return joinRoom(roomId, roomName);
+                    throw new Error(result.error || 'Could not join the room.');
+                }
+                const joinedRoom = result.room || {};
+                const displayName = joinedRoom.nazwaPokoju || roomName || 'Room';
+                window.location.href = `/poczekalnia.html?roomId=${roomId}&roomName=${encodeURIComponent(displayName)}`;
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+
+        async function loadRooms() {
+            const container = document.getElementById('roomsContainer');
+            try {
+                const response = await fetch('/api/rooms?miniTournament=1');
+                const rooms = await response.json();
+                if (!rooms.length) {
+                    container.innerHTML = '<p class="empty-state">No Mini-Tournaments are available right now. Check back soon.</p>';
+                    return;
+                }
+                container.innerHTML = '';
+                rooms.forEach((room) => container.appendChild(createRoomCard(room)));
+            } catch (err) {
+                container.innerHTML = `<p class="empty-state">Error loading rooms: ${err.message}</p>`;
+            }
+        }
+
+        async function init() {
+            await loadTicketStatus();
+            await loadRooms();
+        }
+
+        init();
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+    <script src="/page-scale.js"></script>
+    <script src="/wol-guest.js"></script>
+</body>
+</html>

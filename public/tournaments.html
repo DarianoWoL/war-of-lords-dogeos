@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" data-source-lang="en" data-source-lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>War of Lords - Tournaments</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+        .nav-menu {
+            background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat;
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 20px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { display: none !important; position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .tile-shell { width: 100%; max-width: 760px; padding: 0 20px; box-sizing: border-box; }
+        .tournament-tile {
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96));
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 20px;
+            padding: 34px;
+            box-sizing: border-box;
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 16px 45px rgba(0,0,0,0.4);
+        }
+        .tournament-tile h1 { margin: 0 0 4px; color: #e8c766; font-size: 30px; text-transform: uppercase; letter-spacing: 0.03em; }
+        .tournament-status { display: inline-block; font-size: 13px; font-weight: bold; padding: 4px 12px; border-radius: 999px; background: rgba(52,211,153,0.18); color: #34d399; margin-bottom: 18px; }
+        .tournament-tickets { color: #cbd5e1; font-size: 16px; margin-bottom: 22px; }
+        .tournament-tickets strong { color: #fbbf24; }
+
+        .tile-section { margin-bottom: 22px; }
+        .tile-section h2 { margin: 0 0 12px; font-size: 15px; color: #e8c766; text-transform: uppercase; letter-spacing: 0.03em; }
+        .schedule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+        .schedule-item { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 12px; padding: 14px 16px; }
+        .schedule-item .schedule-label { color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 6px; }
+        .schedule-item .schedule-value { color: #f8fafc; font-size: 15px; font-weight: 600; }
+
+        .prize-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+        .prize-item { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 12px; padding: 14px 16px; text-align: center; }
+        .prize-item .prize-label { color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 6px; }
+        .prize-item .prize-value { color: #fbbf24; font-size: 20px; font-weight: 700; }
+
+        .tile-action { display: block; text-align: center; margin-top: 8px; padding: 16px 22px; border-radius: 12px; font-weight: bold; font-size: 16px; text-decoration: none; background: linear-gradient(180deg, #e8c766, #b8901f); color: #1c1408; transition: transform 0.2s; }
+        .tile-action:hover { transform: translateY(-1px); background: linear-gradient(180deg, #f0d78c, #c9a227); }
+
+        .empty-state { text-align: center; color: #cbd5e1; padding: 20px 0; }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/texts/tournaments.js"></script>
+    <script src="/i18n.js"></script>
+    <script src="/wol-connect.js"></script>
+</head>
+<body>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Home</a>
+        <a id="navRooms" href="pokoje.html">Battle Rooms</a>
+        <a id="navTournaments" href="turnieje.html">Tournaments</a>
+        <a id="navShop" href="live.html">Live Bets</a>
+        <a id="navRanking" href="ranking.html">Overall Ranking</a>
+        <a id="navProfile" href="profile.html">Profile</a>
+        <a id="navRules" href="zasady.html">Rules</a>
+    </div>
+
+    <div class="tile-shell">
+        <div class="tournament-tile" id="tournamentTile">
+            <p class="empty-state">Wczytywanie danych turnieju...</p>
+        </div>
+    </div>
+
+    <script>
+        const STATUS_LABELS = { UPCOMING: 'Registration open', ACTIVE: 'In progress', COMPLETED: 'Finished', UNKNOWN: '—' };
+
+        function formatDateTime(iso) {
+            if (!iso) return 'To be announced';
+            return new Date(iso).toLocaleString('pl-PL', { dateStyle: 'medium', timeStyle: 'short' });
+        }
+
+        let chainScale = 0.1;
+        WolConnect.config().then((c) => { chainScale = c.priceScale || chainScale; }).catch(() => {});
+        async function buyMonthly(event) {
+            event.preventDefault();
+            if (await WolConnect.buyTicket('monthly')) window.location.href = 'turnieje.html';
+        }
+
+        function renderEmpty() {
+            document.getElementById('tournamentTile').innerHTML = `
+                <h1>Tournaments</h1>
+                <p class="empty-state">No tournament edition is open right now. Check back soon.</p>
+            `;
+        }
+
+        function renderTile(data, hasTicket, loggedIn) {
+            const tile = document.getElementById('tournamentTile');
+
+            let actionHtml;
+            if (!loggedIn) {
+                actionHtml = `<a href="login.html" class="tile-action">Connect wallet to buy a ticket</a>`;
+            } else if (hasTicket) {
+                actionHtml = `<a href="turnieje.html" class="tile-action">Enter the tournament</a>`;
+            } else {
+                actionHtml = `<a href="#" class="tile-action" onclick="buyMonthly(event)">Buy a Tournament Ticket · ${+(data.ticketPricePLN * chainScale).toFixed(2)} DOGE</a>`;
+            }
+
+            const prizesHtml = data.prizes ? `
+                <div class="tile-section">
+                    <h2>🏆 DOGE prizes</h2>
+                    <div class="prize-grid">
+                        <div class="prize-item"><div class="prize-label">1st place</div><div class="prize-value">${data.prizes.place1} DOGE</div></div>
+                        <div class="prize-item"><div class="prize-label">2nd place</div><div class="prize-value">${data.prizes.place2} DOGE</div></div>
+                        <div class="prize-item"><div class="prize-label">3rd place</div><div class="prize-value">${data.prizes.place3} DOGE</div></div>
+                        <div class="prize-item"><div class="prize-label">4th-10th place</div><div class="prize-value">${data.prizes.place4to10} DOGE</div></div>
+                    </div>
+                </div>
+            ` : '';
+
+            tile.innerHTML = `
+                <h1>${data.title || data.monthKey}</h1>
+                <span class="tournament-status">${STATUS_LABELS[data.simplifiedStatus] || data.simplifiedStatus}</span>
+                <p class="tournament-tickets">Tickets available: <strong>${data.tickets.remaining} / ${data.tickets.total}</strong> · Ticket price: <strong>${data.ticketPricePLN} DOGE</strong></p>
+
+                <div class="tile-section">
+                    <h2>📅 Schedule</h2>
+                    <div class="schedule-grid">
+                        <div class="schedule-item">
+                            <div class="schedule-label">Qualification Rounds</div>
+                            <div class="schedule-value">${formatDateTime(data.schedule.qualification.startAt)}</div>
+                            ${data.schedule.qualification.durationMinutes ? `<div class="schedule-label" style="margin-top:6px;">Round length: ${data.schedule.qualification.durationMinutes} min</div>` : ''}
+                        </div>
+                        <div class="schedule-item">
+                            <div class="schedule-label">Semi-final Rounds</div>
+                            <div class="schedule-value">${formatDateTime(data.schedule.semifinal.startAt)}</div>
+                        </div>
+                        <div class="schedule-item">
+                            <div class="schedule-label">Final Round</div>
+                            <div class="schedule-value">${formatDateTime(data.schedule.final.startAt)}</div>
+                        </div>
+                    </div>
+                </div>
+
+                ${prizesHtml}
+
+                ${actionHtml}
+            `;
+        }
+
+        async function init() {
+            const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+            try {
+                const tileRes = await fetch('/api/tournament/tile');
+                const data = await tileRes.json();
+                if (!data.available) return renderEmpty();
+
+                let hasTicket = false;
+                if (token) {
+                    try {
+                        const statusRes = await fetch('/api/tournament/my-status', { headers: { Authorization: `Bearer ${token}` } });
+                        if (statusRes.ok) {
+                            const statusData = await statusRes.json();
+                            hasTicket = !!statusData.hasTicket;
+                        }
+                    } catch (err) {
+                        console.error('Błąd sprawdzania statusu uczestnictwa:', err);
+                    }
+                }
+                renderTile(data, hasTicket, !!token);
+            } catch (err) {
+                console.error('Błąd ładowania danych turnieju:', err);
+                document.getElementById('tournamentTile').innerHTML = '<p class="empty-state">Error loading the tournament data. Please try again later.</p>';
+            }
+        }
+
+        init();
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+    <script src="/page-scale.js"></script>
+    <script src="/wol-guest.js"></script>
+</body>
+</html>

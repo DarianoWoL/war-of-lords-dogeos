@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>War of Lords - Tryb Drużynowy</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;
+            background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif;
+            margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; padding-bottom: 60px;
+        }
+        .nav-menu { background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat; width: 100%; padding: 15px 0; text-align: center; margin-bottom: 30px; }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 16px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .shell { width: 100%; max-width: 700px; padding: 0 20px 40px; box-sizing: border-box; }
+        .back-link { display: inline-block; margin-bottom: 18px; color: #94a3b8; text-decoration: none; font-size: 14px; }
+        .back-link:hover { color: #e8c766; }
+        .page-header { text-align: center; margin-bottom: 24px; }
+        .page-header h1 { margin: 0; font-size: 30px; color: #e8c766; letter-spacing: 1px; text-transform: uppercase; }
+        .panel-alert { background: rgba(248, 113, 113, 0.15); border: 1px solid #f87171; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; color: #f8fafc; }
+        .panel-card { background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96)); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 18px; padding: 24px; }
+        .panel-card h2 { margin: 0 0 8px; font-size: 20px; color: #e8c766; }
+        .panel-card .subtext { margin: 0 0 18px; color: #cbd5e1; font-size: 14px; line-height: 1.5; }
+        .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: bold; }
+        .status-pill.active { background: rgba(52,211,153,0.18); color: #34d399; }
+        .status-pill.finished { background: rgba(248,113,113,0.18); color: #f87171; }
+        .btn-small { border: none; border-radius: 10px; cursor: pointer; font-weight: bold; padding: 10px 16px; font-size: 14px; background: #1e293b; color: #f8fafc; border: 1px solid rgba(212, 175, 55, 0.28); }
+        .btn-small:hover { background: #334155; }
+    </style>
+</head>
+<body>
+    <script>
+        window.alert = function () {};
+        window.confirm = function () { return true; };
+    </script>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="/index.html">Główna</a>
+        <a id="navRooms" href="/pokoje.html">Pokoje Bitewne</a>
+        <a id="navTournaments" href="/turnieje.html">Turnieje</a>
+        <a id="navShop" href="/sklep.html">Sklep</a>
+        <a id="navRanking" href="/ranking.html">Ranking Ogólny</a>
+        <a id="navProfile" href="/profile.html">Profil</a>
+        <a id="navRules" href="/zasady.html">Zasady</a>
+        <a id="navAdmin" href="/admin.html" class="active">Panel Admina</a>
+    </div>
+
+    <div class="shell">
+        <a class="back-link" href="/admin.html">&larr; Wróć do panelu administratora</a>
+        <div class="page-header">
+            <h1>🛡️ Tryb Drużynowy</h1>
+        </div>
+
+        <div id="adminWarning" class="panel-alert" style="display:none;"></div>
+
+        <div class="panel-card">
+            <h2>Zarządzanie trybem drużynowym</h2>
+            <p class="subtext">Wyłącz, aby zablokować tworzenie NOWYCH pokoi drużynowych (i ukryć przełącznik „Tryb drużynowy" w Pokojach Bitewnych) — trwające już rundy drużynowe nie są tym dotknięte. Egzekwowane też po stronie serwera.</p>
+            <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+                <span id="teamModeStatusLabel" class="status-pill active">Tryb drużynowy: Wczytywanie...</span>
+                <button type="button" class="btn-small" id="toggleTeamModeBtn" onclick="toggleTeamMode()">Przełącz</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (!token) { window.location.href = '/login.html'; }
+        const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        function showAdminError(message) {
+            const warning = document.getElementById('adminWarning');
+            warning.style.display = 'block';
+            warning.innerText = message;
+        }
+
+        let teamModeEnabled = true;
+
+        function renderTeamModeStatus() {
+            const label = document.getElementById('teamModeStatusLabel');
+            const btn = document.getElementById('toggleTeamModeBtn');
+            if (teamModeEnabled) {
+                label.textContent = 'Tryb drużynowy: Włączony';
+                label.className = 'status-pill active';
+                btn.textContent = 'Wyłącz tryb drużynowy';
+            } else {
+                label.textContent = 'Tryb drużynowy: Wyłączony';
+                label.className = 'status-pill finished';
+                btn.textContent = 'Włącz tryb drużynowy';
+            }
+        }
+
+        async function loadTeamModeStatus() {
+            try {
+                const response = await fetch('/api/settings/team-mode');
+                if (!response.ok) return;
+                const data = await response.json();
+                teamModeEnabled = data.enabled !== false;
+                renderTeamModeStatus();
+            } catch (err) {
+                console.error('Błąd ładowania statusu trybu drużynowego:', err);
+            }
+        }
+
+        async function toggleTeamMode() {
+            try {
+                const response = await fetch('/api/admin/settings/team-mode', {
+                    method: 'PUT', headers, body: JSON.stringify({ enabled: !teamModeEnabled })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zmienić statusu trybu drużynowego.');
+                teamModeEnabled = result.enabled;
+                renderTeamModeStatus();
+            } catch (err) {
+                showAdminError(err.message);
+            }
+        }
+
+        async function init() {
+            const response = await fetch('/api/auth/me', { headers });
+            if (!response.ok) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('token');
+                return window.location.href = '/login.html';
+            }
+            const profile = await response.json();
+            if (!profile.isAdmin) return showAdminError('Brak uprawnień administratora.');
+            loadTeamModeStatus();
+        }
+
+        init();
+    </script>
+    <script src="/page-scale.js"></script>
+</body>
+</html>

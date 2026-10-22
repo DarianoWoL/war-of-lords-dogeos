@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="legal.termsTitle">War of Lords - Regulamin Serwisu</title>
+    <style>html[lang="en"] .legal-doc[data-doc-lang="pl"], html:not([lang="en"]) .legal-doc[data-doc-lang="en"] { display: none; }
+        .legal-lang-note{margin:0 auto 18px;max-width:900px;padding:12px 16px;border:1px solid #d4af37;border-radius:8px;background:rgba(212,175,55,0.12);color:#f0d78c;font-size:15px;line-height:1.5}
+        .legal-doc ol[type="a"] { list-style-type: lower-alpha; margin-top: 8px; }</style>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+
+        .nav-menu {
+            background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat;
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .nav-menu a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #e8c766;
+        }
+
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { display: none !important; position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .legal-card {
+            width: 100%;
+            max-width: 1000px;
+            background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96));
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 20px;
+            padding: 36px 40px;
+            box-sizing: border-box;
+            box-shadow: inset 0 0 0 1px rgba(240, 215, 140, 0.1), 0 16px 45px rgba(0,0,0,0.4);
+            margin: 0 20px 30px;
+        }
+
+        .legal-card h1 {
+            margin: 0 0 8px;
+            color: #e8c766;
+            font-size: 30px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            text-align: center;
+        }
+
+        .legal-card > p.subtitle {
+            text-align: center;
+            color: #cbd5e1;
+            margin: 0 0 30px;
+            font-size: 13px;
+        }
+
+        .legal-card section { margin-bottom: 28px; }
+
+        .legal-card h2 {
+            margin: 0 0 14px;
+            padding-bottom: 10px;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            color: #e8c766;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .legal-card h3 { margin: 18px 0 8px; color: #f0d78c; font-size: 15px; }
+        .legal-card p, .legal-card li { color: #e2e8f0; line-height: 1.65; font-size: 14.5px; }
+        .legal-card ul, .legal-card ol { padding-left: 22px; margin: 8px 0; }
+        .legal-card strong { color: #f8fafc; }
+
+        .legal-note {
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-top: 12px;
+        }
+
+        .legal-provider-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin: 10px 0 18px;
+        }
+
+        .legal-provider-box .legal-label { color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .legal-provider-box .legal-value { color: #f8fafc; font-weight: 600; margin-bottom: 12px; }
+        .legal-provider-details { margin: 28px 0 8px; border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 10px; background: rgba(15, 23, 42, 0.6); }
+        .legal-provider-details > summary { cursor: pointer; padding: 12px 16px; color: #e8c766; font-weight: 600; list-style: none; }
+        .legal-provider-details > summary::-webkit-details-marker { display: none; }
+        .legal-provider-details > summary::before { content: '▸ '; }
+        .legal-provider-details[open] > summary::before { content: '▾ '; }
+        .legal-provider-details .legal-provider-box { margin: 0 16px 16px; }
+
+
+        @media (max-width: 640px) {
+            .legal-card { padding: 24px 18px; }
+            .legal-card h1 { font-size: 22px; }
+        }
+        #adminPanelLink { position: absolute; left: 234.44px; top: 41.22px; width: 295.89px; height: 60px; margin: 0; box-sizing: border-box; }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Główna</a>
+        <a id="navRooms" href="pokoje.html">Pokoje Bitewne</a>
+        <a id="navTournaments" href="turnieje.html">Turnieje</a>
+        <a id="navShop" href="sklep.html">Sklep</a>
+        <a id="navRanking" href="ranking.html">Ranking Ogólny</a>
+        <a id="navProfile" href="profile.html">Profil</a>
+        <a id="navRules" href="zasady.html">Zasady</a>
+    </div>
+
+    <div id="adminPanelLink" style="display:none;">
+        <a href="admin.html" style="display:inline-block; background:#f59e0b; color:#111827; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">👑 PANEL ADMINISTRATORA</a>
+    </div>
+
+    <div class="legal-card">
+        <!-- LEGAL:BEGIN - generowane przez scripts/build_legal.py z dokumenty-prawne/zrodla/ -->
+<div class="legal-doc" data-doc-lang="pl" lang="pl">
+        <h1>Regulamin Serwisu War of Lords</h1>
+        <p class="subtitle">Wersja z dnia 6 października 2026 r. (projekt) · obowiązuje od: [DO UZUPEŁNIENIA: data publikacji w Serwisie]</p>
+
+        <section>
+            <h2>§1. Postanowienia ogólne i definicje</h2>
+            <p>Niniejszy Regulamin określa zasady korzystania z przeglądarkowej, strategicznej gry e-sportowej <strong>War of Lords</strong>, dostępnej pod adresem <strong>waroflords.pl</strong> (dalej: „Serwis” lub „Gra”), w tym zasady udziału w rozgrywkach turniejowych oraz zasady prowadzenia Salda DOGE. Regulamin jest regulaminem świadczenia usług drogą elektroniczną w rozumieniu art. 8 ustawy z dnia 18 lipca 2002 r. o świadczeniu usług drogą elektroniczną.</p>
+            <p>Użyte w Regulaminie pojęcia oznaczają:</p>
+            <ul>
+                <li><strong>Usługodawca / Organizator / Administrator</strong> — osoba prowadząca Serwis i organizująca rozgrywki, której dane wskazano w §2;</li>
+                <li><strong>Użytkownik</strong> — osoba fizyczna korzystająca z Serwisu, spełniająca warunki z §3;</li>
+                <li><strong>Konto</strong> — indywidualny profil Użytkownika w Serwisie, zabezpieczony nazwą użytkownika i hasłem;</li>
+                <li><strong>Runda</strong> — pojedyncza rozgrywka na wspólnej mapie, trwająca z góry określony czas, w której Użytkownicy rozbudowują wioski, rekrutują wojsko i walczą ze sobą;</li>
+                <li><strong>Pokój</strong> — miejsce w Serwisie, w którym zbierają się uczestnicy Rundy; Pokoje dzielą się na darmowe Pokoje Bitewne oraz pokoje turniejowe (Turniej Miesięczny, Mini-Turnieje);</li>
+                <li><strong>Turniej Miesięczny</strong> — cykliczne zawody e-sportowe składające się z rund kwalifikacyjnych, półfinałów i finału, opisane w §5 i w Zasadach Turnieju;</li>
+                <li><strong>Mini-Turniej</strong> — pojedyncza, krótsza Runda turniejowa z nagrodami za 1., 2. i 3. miejsce, opisana w §5a i w Zasadach Mini-Turniejów;</li>
+                <li><strong>Bilet Turniejowy / Bilet do Mini-Turnieju</strong> — odpłatne uprawnienie do udziału w rozgrywkach turniejowych (wpisowe za udział w zawodach e-sportowych), stanowiące Treść Cyfrową;</li>
+                <li><strong>DOGE</strong> — kryptoaktywo (waluta wirtualna) Dogecoin, funkcjonujące w publicznej sieci blockchain Dogecoin;</li>
+                <li><strong>Saldo DOGE</strong> — prowadzony przez Usługodawcę w Serwisie zapis ilości DOGE przysługującej Użytkownikowi, zasilany nagrodami oraz wpłatami i pomniejszany o zakupy Biletów oraz wypłaty, na zasadach opisanych w §5c;</li>
+                <li><strong>Portfel Serwisu</strong> — adres w sieci Dogecoin należący do Usługodawcy, wskazany w Serwisie jako adres do wpłat;</li>
+                <li><strong>Złoto</strong> — zasób rozgrywki istniejący wyłącznie w ramach danej Rundy (produkowany przez budynki w grze i wydawany na budowę i rekrutację); Złoto nie ma żadnej wartości majątkowej, nie może być nabyte za pieniądze ani DOGE, nie przechodzi do kolejnych Rund i nie podlega wymianie ani wypłacie;</li>
+                <li><strong>Bot</strong> — uczestnik Rundy sterowany przez oprogramowanie Serwisu, wykorzystywany wyłącznie w darmowych Pokojach Bitewnych oraz w darmowej rozgrywce próbnej (§1a ust. 3 lit. c);</li>
+                <li><strong>Treść Cyfrowa</strong> — dane wytwarzane i dostarczane w postaci cyfrowej w rozumieniu ustawy z dnia 30 maja 2014 r. o prawach konsumenta, w tym Bilety Turniejowe i Bilety do Mini-Turnieju.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>§1a. Charakter rozgrywki — gra umiejętności (e-sport)</h2>
+            <ol>
+                <li>War of Lords jest strategiczną grą e-sportową. Wynik każdej Rundy — w tym miejsce w rankingu Rundy, wynik każdego starcia bojowego, wynik zwiadu, zniszczenie murów, przejęcie wioski oraz wyniki Turnieju Miesięcznego i Mini-Turniejów — zależy wyłącznie od umiejętności, wiedzy, strategii i decyzji podejmowanych przez Użytkowników, w szczególności od kolejności i tempa rozbudowy wioski, doboru, liczebności i momentu wysłania jednostek oraz wyboru celu ataku.</li>
+                <li>Wszystkie zasady rozgrywki są jawne i opisane w Zasadach Gry. Walka rozstrzygana jest w sposób w pełni deterministyczny, według jawnych wzorów (siła ataku, siła obrony, premia muru), bez udziału jakiegokolwiek elementu losowego: przy tych samych decyzjach Użytkowników wynik starcia jest zawsze taki sam. Gra nie zawiera rzutów kośćmi, losowania obrażeń, „trafień krytycznych”, skrzynek z losową zawartością ani żadnych innych mechanizmów losowych. W rozgrywkach, w których przyznawane są nagrody (Turniej Miesięczny, Mini-Turnieje, Ranking Serwerów Darmowych), nie występuje żaden element losowy ani pseudolosowy.</li>
+                <li>Poniżej wymieniono wyczerpująco wszystkie elementy Gry, które nie wynikają z decyzji Użytkowników, wraz z ich wpływem na rozgrywkę:
+                    <ol type="a">
+                        <li><strong>Przydział wioski startowej</strong> — dokonywany automatycznie według stałej reguły, bez losowania: wolne wioski główne przydzielane są w kolejności ich numerów (W1, W2, …) Użytkownikom w kolejności dołączenia do pokoju (w trybie drużynowym — w obrębie regionu mapy przypisanego drużynie). Wszystkie wioski startowe mają identyczne parametry, a czas marszu wojsk pomiędzy dowolnymi dwiema wioskami zależy wyłącznie od rodzaju wysyłanych jednostek, nigdy od położenia wiosek na mapie — wszyscy Użytkownicy mają więc identyczne warunki startowe.</li>
+                        <li><strong>Skład pokoi rund kwalifikacyjnych Turnieju Miesięcznego</strong> — ustalany bez losowania, według jawnego wzoru opisanego w Zasadach Turnieju, na podstawie kolejności zapisów do danej edycji (kolejności nabycia Biletu): uczestnik z numerem porządkowym i (liczonym od 0) trafia w rundzie k do pokoju (q + (k − 1) · s) mod R, gdzie q = część całkowita z i/10, s = reszta z dzielenia i przez 10, a R — liczba pokoi. Każdy pokój liczy zawsze 10 uczestników, a każdy uczestnik może przed rundą samodzielnie sprawdzić swój przydział. Podział określa wyłącznie skład przeciwników; nie zmienia zasad rozgrywki ani sposobu liczenia punktów.</li>
+                        <li><strong>Boty</strong> — gracze komputerowi występujący wyłącznie w darmowych Pokojach Bitewnych i w darmowej rozgrywce próbnej. Decyzje Botów wynikają z deterministycznego algorytmu (generator liczb pseudolosowych z ziarnem wyliczonym z identyfikatora Rundy, którego stan jest częścią zapisanego stanu gry — przebieg Rundy z Botami można w całości odtworzyć). Boty <strong>nigdy</strong> nie biorą udziału w rundach Turnieju Miesięcznego ani Mini-Turniejów (jest to wymuszone technicznie przez Serwis), a Rundy, w których uczestniczył choćby jeden Bot, <strong>nie są wliczane</strong> do Rankingu Serwerów Darmowych, z którym wiążą się nagrody (§5b ust. 2). W Rundach z udziałem Botów nie są przyznawane żadne nagrody.</li>
+                        <li><strong>Dobór graczy w Mini-Turniejach</strong> — odbywa się automatycznie według kolejności zgłoszeń i rankingu MMR Mini-Turniejów, z jawnie opisanymi widełkami dopasowania (§5a ust. 2); nie zawiera elementu losowego.</li>
+                    </ol>
+                </li>
+                <li>Ewentualny remis o miejsce premiowane nagrodą w DOGE nigdy nie jest rozstrzygany losowo. Remis rozstrzyga wyłącznie z góry ustalona, jawna kaskada obiektywnych i mierzalnych statystyk osiągniętych przez Użytkownika w rozgrywce (m.in. liczba pokonanych jednostek wroga w podziale na atak i obronę, a następnie moment osiągnięcia wyniku), opisana w §5a ust. 7 oraz w Zasadach Turnieju i Zasadach Mini-Turniejów.</li>
+                <li>Nagrody w Turnieju Miesięcznym i Mini-Turniejach są z góry ustalone i ogłaszane przed rozpoczęciem zapisów; ich wysokość nie zależy od liczby sprzedanych Biletów ani liczby uczestników, a wpisowe nie tworzy puli rozdzielanej między zwycięzców. Użytkownicy rywalizują wyłącznie własną grą — w Serwisie nie można obstawiać wyników cudzych rozgrywek ani zdarzeń.</li>
+                <li>Z powyższych względów Gra jest grą umiejętności (zawodami e-sportowymi), a nie grą losową, zakładem wzajemnym ani grą na automacie w rozumieniu art. 2 ustawy z dnia 19 listopada 2009 r. o grach hazardowych — jej wynik nie zależy od przypadku, a Użytkownicy nie zawierają zakładów o wynik jakiegokolwiek zdarzenia.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§2. Dane Usługodawcy</h2>
+            <div class="legal-provider-box">
+                        <div class="legal-label">Adres e-mail (kontakt / reklamacje)</div>
+                        <div class="legal-value"><a href="mailto:support@waroflords.pl" style="color:#e8c766;">support@waroflords.pl</a></div>
+                        <div class="legal-label" style="margin-top:12px;">Pełne dane Usługodawcy</div>
+                        <div class="legal-value"><a href="#dane-uslugodawcy" style="color:#e8c766;">na końcu strony (rozwiń)</a></div>
+                    </div>
+        </section>
+
+        <section>
+            <h2>§3. Warunki korzystania z Serwisu</h2>
+            <ol>
+                <li>Korzystanie z Serwisu wymaga urządzenia z dostępem do Internetu oraz aktualnej przeglądarki internetowej obsługującej JavaScript, pliki cookies i pamięć lokalną przeglądarki.</li>
+                <li>Z Serwisu mogą korzystać osoby, które ukończyły 16 lat. Osoby w wieku poniżej 16 lat mogą korzystać z Serwisu wyłącznie za zgodą rodzica lub opiekuna prawnego, udzieloną przed rejestracją Konta. Wypłata DOGE wymaga dodatkowo oświadczenia opisanego w §5c ust. 9.</li>
+                <li>Jeden Użytkownik może posiadać wyłącznie jedno Konto. Zakładanie i korzystanie z wielu kont przez tę samą osobę (tzw. „multikonto”) jest zabronione (§7).</li>
+                <li>Korzystanie z podstawowych funkcji Serwisu (rozgrywka w darmowych Pokojach Bitewnych, rozgrywka próbna, ranking) jest bezpłatne. Udział w rozgrywkach turniejowych wymaga Biletu opłacanego z Salda DOGE (§5, §5a, §6).</li>
+                <li>Użytkownik zobowiązany jest korzystać z Serwisu zgodnie z prawem, Regulaminem i dobrymi obyczajami, w szczególności nie dostarczać treści o charakterze bezprawnym (m.in. na czatach Serwisu).</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§4. Rejestracja i Konto</h2>
+            <ol>
+                <li>Rejestracja Konta następuje poprzez wypełnienie formularza rejestracyjnego (nazwa użytkownika, adres e-mail, hasło) oraz zaakceptowanie niniejszego Regulaminu i Polityki Prywatności. Z chwilą rejestracji zostaje zawarta umowa o świadczenie usług drogą elektroniczną na czas nieoznaczony.</li>
+                <li>Użytkownik zobowiązany jest do zachowania poufności hasła do Konta i ponosi odpowiedzialność za działania wykonane przy jego użyciu, chyba że doszło do nich z winy Usługodawcy.</li>
+                <li>Użytkownik może w każdej chwili wypowiedzieć umowę i zażądać usunięcia Konta, kontaktując się z Usługodawcą pod adresem support@waroflords.pl. Przed usunięciem Konta Użytkownik może wypłacić posiadane Saldo DOGE na zasadach z §5c; jeżeli wypłata nie jest możliwa (np. saldo niższe od minimalnej kwoty wypłaty), Usługodawca na żądanie Użytkownika wypłaci saldo bez stosowania kwoty minimalnej.</li>
+                <li>Usługodawca może zablokować lub usunąć Konto Użytkownika rażąco naruszającego Regulamin, w szczególności zasady fair play (§7), po uprzednim poinformowaniu Użytkownika o przyczynie i umożliwieniu złożenia wyjaśnień, chyba że charakter naruszenia wymaga natychmiastowego działania (np. oszustwo, wykorzystywanie błędów Gry). Zablokowanie Konta nie pozbawia Użytkownika prawa do wypłaty Salda DOGE, z zastrzeżeniem §5c ust. 11 i §7 ust. 2.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§5. Bilety Turniejowe i Turniej Miesięczny</h2>
+            <ol>
+                <li>Bilet Turniejowy uprawnia do udziału we wszystkich 4 rundach kwalifikacyjnych danej edycji Turnieju Miesięcznego. Bilet nie podlega wymianie na DOGE ani przeniesieniu na inne Konto.</li>
+                <li>Bilet Turniejowy nabywa się wyłącznie z Salda DOGE, po cenie wyrażonej w DOGE i wyświetlanej w Serwisie przed zakupem. Cena jest ceną ostateczną.</li>
+                <li>Miesięczna pula Biletów Turniejowych może być ograniczona — jej aktualny stan wyświetlany jest w Serwisie przed zakupem.</li>
+                <li>Jeden Użytkownik może nabyć maksymalnie jeden Bilet Turniejowy w danym miesiącu kalendarzowym. Limit odnawia się pierwszego dnia kolejnego miesiąca.</li>
+                <li>Nagrody w DOGE dla 10 miejsc w Finale są z góry ustalone i ogłaszane w Serwisie przed rozpoczęciem sprzedaży Biletów danej edycji; po sprzedaży pierwszego Biletu nie mogą zostać obniżone.</li>
+                <li>Format rozgrywki, punktacja (Tournament Points), ścieżka awansu (w tym bezpośredni awans Top 5 Rankingu Serwerów Darmowych) i zasady rozstrzygania remisów opisane są w Zasadach Turnieju, stanowiących integralną część Regulaminu.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§5a. Mini-Turnieje i Program Poleceń</h2>
+            <ol>
+                <li>Bilet do Mini-Turnieju uprawnia do wejścia do kolejki dobierania graczy dla jednego, wybranego przez Użytkownika pokoju Mini-Turniejowego. Bilet nabywa się wyłącznie z Salda DOGE, po cenie wyrażonej w DOGE i wyświetlanej w Serwisie przed zakupem; nie podlega on wymianie na DOGE ani przeniesieniu na inne Konto.</li>
+                <li>Dobór graczy do Rundy odbywa się automatycznie, na podstawie odrębnego rankingu MMR Mini-Turniejów, z widełkami dopasowania rozszerzającymi się wraz z czasem oczekiwania (do 30 sekund ±50 punktów, od 31 do 60 sekund ±150 punktów, powyżej 60 sekund — dowolny dostępny gracz z kolejki). W trakcie oczekiwania i potwierdzania dopasowania Użytkownicy nie widzą tożsamości ani statystyk pozostałych graczy — skład ujawnia się po rozpoczęciu Rundy.</li>
+                <li>Po skompletowaniu grupy 10 graczy każdy z nich ma 15 sekund na potwierdzenie udziału. Bilet zostaje wykorzystany dopiero w chwili, gdy wszyscy dopasowani gracze potwierdzą udział i Runda się rozpocznie — do tego momentu Użytkownik może opuścić kolejkę bez utraty Biletu. Gracz, który nie potwierdzi udziału w wyznaczonym czasie, zostaje usunięty z kolejki bez utraty Biletu, a pozostali wracają do kolejki z pierwszeństwem.</li>
+                <li>Użytkownik może posiadać maksymalnie jeden niewykorzystany Bilet do Mini-Turnieju. Wykorzystanie Biletu nie jest ograniczone terminem.</li>
+                <li>Liczba Biletów do Mini-Turnieju możliwych do zakupu w danym miesiącu kalendarzowym jest ograniczona łączną pulą ustalaną przez Administratora; jej stan wyświetlany jest w Serwisie przed zakupem.</li>
+                <li>Każdy pokój Mini-Turniejowy ma z góry ustaloną i ogłoszoną przed rozpoczęciem zapisów, gwarantowaną nagrodę w DOGE za 1., 2. i 3. miejsce — niezależną od liczby sprzedanych Biletów i liczby uczestników. Nagrody są dopisywane do Salda DOGE zwycięzców niezwłocznie po zakończeniu Rundy.</li>
+                <li>O zajętym miejscu decydują w pierwszej kolejności punkty wioski osiągnięte w Rundzie. Przy równej liczbie punktów wioski kolejność rozstrzyga kolejno: (1) łączna liczba pokonanych jednostek wroga (atak + obrona), (2) liczba jednostek pokonanych w ataku, (3) liczba jednostek pokonanych w obronie, (4) wcześniejszy moment osiągnięcia danej liczby punktów wioski w trakcie Rundy. Żadne z tych kryteriów nie jest losowe.</li>
+                <li>Pozostałe zasady Mini-Turniejów opisane są w Zasadach Mini-Turniejów, stanowiących integralną część Regulaminu.</li>
+                <li>Każdy Użytkownik posiada unikalny kod polecający, widoczny w zakładce Profil. Jeżeli 10 osób, które przy rejestracji podały kod danego Użytkownika, dokona zakupu dowolnego Biletu (Turniejowego lub do Mini-Turnieju), Użytkownik polecający otrzymuje premię w DOGE w wysokości ogłoszonej w Serwisie. Premia przysługuje za każde kolejne 10 takich osób, bez górnego limitu. Do warunku liczy się jeden zakup danej osoby poleconej.</li>
+                <li>Premia w Programie Poleceń nie jest przyznawana w drodze losowania ani innego elementu przypadku — zależy wyłącznie od zweryfikowanej liczby zakupów dokonanych przez osoby polecone.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§5b. Nagrody w DOGE i podatki</h2>
+            <ol>
+                <li>Nagrody w Serwisie przyznawane są wyłącznie w DOGE i dopisywane do Salda DOGE zwycięzcy, w pełnej wysokości (100%), bez żadnych potrąceń.</li>
+                <li>Nagrody przysługują za: miejsca premiowane w Finale Turnieju Miesięcznego (§5 ust. 5), miejsca 1–3 w Mini-Turniejach (§5a ust. 6), miejsca 1–5 w miesięcznym Rankingu Serwerów Darmowych w okresie po zakończeniu rund kwalifikacyjnych danej edycji Turnieju (na zasadach opisanych w Zasadach Turnieju; do rankingu liczą się wyłącznie Rundy rozegrane z udziałem co najmniej 8 prawdziwych graczy i bez udziału Botów) oraz w ramach Programu Poleceń (§5a ust. 9). Wysokość każdej z tych nagród jest ogłaszana w Serwisie z wyprzedzeniem.</li>
+                <li>Niezależnie od powyższego Administrator może przyznać Użytkownikowi nagrodę w DOGE według własnego uznania — w szczególności za zgłoszenie błędu Gry lub istotny wkład w rozwój Serwisu albo jego społeczności. Przyznanie, wysokość i powód takiej nagrody pozostają w gestii Administratora; żadne działanie Użytkownika nie rodzi roszczenia o jej przyznanie.</li>
+                <li>Organizator jest osobą fizyczną nieprowadzącą działalności gospodarczej i nie pełni funkcji płatnika podatku dochodowego w rozumieniu art. 41 ustawy z dnia 26 lipca 1991 r. o podatku dochodowym od osób fizycznych. Organizator nie pobiera ani nie odprowadza podatku od nagród i nie składa w tym zakresie deklaracji podatkowych.</li>
+                <li>Nagroda stanowi dla zwycięzcy przychód podlegający opodatkowaniu na zasadach ogólnych. Wartość nagrody wyrażonej w DOGE ustala się według wartości rynkowej DOGE z dnia jej otrzymania. Zwycięzca jest zobowiązany samodzielnie rozliczyć ten przychód w swoim zeznaniu podatkowym zgodnie z obowiązującymi przepisami; odpowiedzialność za prawidłowe rozliczenie spoczywa na Użytkowniku.</li>
+                <li>Złoto, punkty wioski, punkty umiejętności (MMR) ani miejsca w rankingach nie stanowią nagród i nie mają wartości majątkowej.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§5c. Saldo DOGE, wpłaty i wypłaty</h2>
+            <ol>
+                <li>Saldo DOGE jest prowadzonym przez Usługodawcę zapisem ilości DOGE przysługującej Użytkownikowi. Saldo wyrażone jest wyłącznie w DOGE. Saldo DOGE nie jest rachunkiem bankowym, rachunkiem płatniczym ani pieniądzem elektronicznym, nie jest oprocentowane i nie podlega ochronie gwarancyjnej.</li>
+                <li>Saldo DOGE może zostać wykorzystane wyłącznie do: (a) zakupu Biletów Turniejowych i Biletów do Mini-Turnieju, (b) wypłaty DOGE na prywatny adres Użytkownika w sieci Dogecoin. Usługodawca nie prowadzi wymiany DOGE na pieniądze (PLN ani inne waluty) ani na inne kryptoaktywa i nie wypłaca równowartości Salda w pieniądzu.</li>
+                <li><strong>Wpłata.</strong> Użytkownik może zasilić Saldo DOGE, wysyłając DOGE z własnego portfela na adres Portfela Serwisu wskazany w zakładce Portfel, a następnie zgłaszając w Serwisie identyfikator (hash) transakcji i jej kwotę. Saldo zostaje zasilone po zweryfikowaniu transakcji w sieci Dogecoin przez Usługodawcę, o kwotę faktycznie otrzymaną na Portfelu Serwisu. Opłatę sieciową za transakcję wpłaty ponosi Użytkownik.</li>
+                <li>Na adres Portfela Serwisu należy wysyłać wyłącznie DOGE w sieci Dogecoin. Usługodawca nie odpowiada za środki wysłane w innej sieci, na błędny adres lub bez zgłoszenia transakcji, chyba że do utraty doszło z jego winy; w razie zgłoszenia takiej sytuacji Usługodawca dołoży starań, aby ustalić i zwrócić środki, jeżeli jest to technicznie możliwe.</li>
+                <li>Ta sama transakcja (ten sam hash) może zostać zgłoszona tylko raz. Zgłoszenie wpłaty, której nie potwierdzono w sieci, zostaje odrzucone z podaniem powodu.</li>
+                <li><strong>Wypłata.</strong> Użytkownik może w każdej chwili zlecić wypłatę Salda DOGE (w całości lub w części) na wskazany przez siebie adres w sieci Dogecoin (adres rozpoczynający się od litery „D”, sprawdzany pod kątem poprawności, w tym sumy kontrolnej). Minimalna kwota pojedynczej wypłaty ustalana jest przez Administratora i wyświetlana w Serwisie przed zleceniem.</li>
+                <li>Kwota wypłaty jest rezerwowana (odejmowana z Salda DOGE) w chwili zlecenia. Wypłata realizowana jest on-chain, po weryfikacji zlecenia przez Usługodawcę, co do zasady w terminie 7 dni roboczych. Opłatę sieciową za transakcję wypłaty ponosi Usługodawca — na adres Użytkownika wysyłana jest pełna kwota wypłaty. Identyfikator transakcji wypłaty jest udostępniany Użytkownikowi w historii transakcji w Serwisie.</li>
+                <li>Wypłata DOGE na błędnie podany przez Użytkownika adres jest nieodwracalna; Usługodawca nie ponosi odpowiedzialności za skutki podania przez Użytkownika nieprawidłowego adresu, który przeszedł weryfikację formatu.</li>
+                <li>Każde zlecenie wypłaty wymaga złożenia: (a) oświadczenia, że Użytkownik jest osobą pełnoletnią, albo oświadczenia osoby będącej opiekunem prawnym niepełnoletniego Użytkownika o wyrażeniu zgody na wypłatę, oraz (b) potwierdzenia, że Użytkownik samodzielnie rozlicza przychód zgodnie z §5b. Oświadczenia są rejestrowane wraz z datą i godziną ich złożenia.</li>
+                <li>Odrzucona wypłata (np. z powodu uzasadnionych wątpliwości co do uprawnienia do Salda) jest zwracana na Saldo DOGE Użytkownika wraz z podaniem powodu.</li>
+                <li>Usługodawca może wstrzymać realizację wypłaty i zwrócić się do Użytkownika o wyjaśnienia w przypadku uzasadnionego podejrzenia naruszenia Regulaminu (w szczególności zasad fair play) lub przepisów prawa, w tym przepisów o przeciwdziałaniu praniu pieniędzy i finansowaniu terroryzmu.</li>
+                <li>Wartość DOGE wyrażona w pieniądzu podlega zmianom rynkowym. Usługodawca nie gwarantuje wartości DOGE i nie odpowiada za zmianę jego kursu. Ceny Biletów, nagrody i salda wyrażone są w DOGE.</li>
+                <li>Błędne zapisanie DOGE na Saldzie (np. w wyniku awarii technicznej) podlega korekcie, o czym Użytkownik zostaje poinformowany.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§5d. Przejście z VPLN na DOGE (postanowienie przejściowe)</h2>
+            <ol>
+                <li>Dotychczasowa jednostka rozliczeniowa Serwisu VPLN została zastąpiona przez Saldo DOGE. Salda VPLN istniejące w dniu [DO UZUPEŁNIENIA: data przeliczenia] zostały przeliczone na DOGE po stałym kursie [DO UZUPEŁNIENIA: liczba] DOGE za 1 VPLN i dopisane do Sald DOGE Użytkowników. Po tym samym kursie przeliczono ogłoszone nagrody turniejowe oraz ceny Biletów.</li>
+                <li>Zgłoszenia wypłaty VPLN na rachunek bankowy złożone przed przeliczeniem są realizowane na dotychczasowych zasadach; w razie ich odrzucenia kwota wraca na Saldo DOGE po kursie wskazanym w ust. 1.</li>
+                <li>Od dnia przeliczenia Serwis nie przyjmuje płatności w PLN i nie realizuje wypłat na rachunki bankowe.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§6. Zakupy Biletów — zasady ogólne</h2>
+            <ol>
+                <li>Bilety Turniejowe i Bilety do Mini-Turnieju nabywa się wyłącznie poprzez zapłatę z Salda DOGE. Serwis nie korzysta z zewnętrznych operatorów płatności.</li>
+                <li>Zakup Biletu stanowi opłatę za udział w zawodach e-sportowych (rundach turniejowych Gry). Cena wyświetlana w Serwisie przed zakupem jest ceną ostateczną. Sprzedaż realizowana jest w ramach działalności nierejestrowanej i jest zwolniona z podatku VAT na podstawie art. 113 ust. 1 ustawy z dnia 11 marca 2004 r. o podatku od towarów i usług.</li>
+                <li>Kwota zakupu jest odejmowana z Salda DOGE w chwili potwierdzenia zakupu, a Bilet zostaje przyznany na Konto natychmiast. Każdy zakup jest rejestrowany w trwałej ewidencji zakupów.</li>
+                <li>Zgodnie z art. 38 ust. 1 pkt 13 ustawy z dnia 30 maja 2014 r. o prawach konsumenta, Użytkownikowi będącemu konsumentem nie przysługuje prawo odstąpienia od umowy o dostarczanie Treści Cyfrowej niedostarczanej na nośniku materialnym, jeżeli spełnianie świadczenia rozpoczęło się za jego wyraźną i uprzednią zgodą przed upływem terminu do odstąpienia, po poinformowaniu go o utracie tego prawa, a Usługodawca przekazał mu potwierdzenie. Zgodę tę Użytkownik wyraża przy każdym zakupie, zaznaczając odpowiednie pole w oknie potwierdzenia zakupu; potwierdzenie zakupu jest widoczne w Serwisie.</li>
+                <li>Powyższe nie wyłącza uprawnień Użytkownika z tytułu niezgodności Treści Cyfrowej z umową (rozdział 5b ustawy o prawach konsumenta), w szczególności gdy zakupiony Bilet nie został przyznany na Konto mimo pobrania DOGE z Salda — zastosowanie mają zasady reklamacji z §8.</li>
+                <li>W przypadku odwołania przez Usługodawcę edycji Turnieju lub pokoju Mini-Turniejowego przed ich rozpoczęciem, Bilet zostaje zwrócony na Konto albo jego cena — na Saldo DOGE.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§7. Zasady fair play</h2>
+            <ol>
+                <li>Zabronione jest: korzystanie z oprogramowania automatyzującego lub ułatwiającego rozgrywkę (zewnętrzne boty, skrypty, cheaty), wykorzystywanie błędów Gry w sposób naruszający jej uczciwość, zakładanie i wykorzystywanie wielu Kont (multikonta), uzgadnianie wyników z innymi Użytkownikami oraz przekazywanie Konta osobom trzecim.</li>
+                <li>Naruszenie zasad fair play może skutkować ostrzeżeniem, czasowym lub trwałym zablokowaniem Konta, utratą Biletu bez zwrotu, wykluczeniem z danej edycji Turnieju, a w przypadku nagród uzyskanych w wyniku naruszenia — ich cofnięciem.</li>
+                <li>Szczegółowe zasady rozgrywki i konsekwencje naruszeń opisane są w Zasadach Gry, Zasadach Turnieju i Zasadach Mini-Turniejów.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§8. Reklamacje</h2>
+            <ol>
+                <li>Reklamacje dotyczące funkcjonowania Serwisu, w tym Salda DOGE, wpłat, wypłat i zakupów, należy zgłaszać na adres support@waroflords.pl.</li>
+                <li>Reklamacja powinna zawierać nazwę użytkownika (login), opis nieprawidłowości oraz — w miarę możliwości — datę, okoliczności i identyfikator transakcji, której dotyczy.</li>
+                <li>Usługodawca rozpatruje reklamację w terminie 14 dni kalendarzowych od jej otrzymania i przesyła odpowiedź na adres e-mail, z którego ją zgłoszono (lub inny wskazany przez Użytkownika).</li>
+                <li>Użytkownik będący konsumentem może skorzystać z pozasądowych sposobów rozpatrywania reklamacji i dochodzenia roszczeń, w tym z pomocy miejskiego lub powiatowego rzecznika konsumentów.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§9. Odpowiedzialność Usługodawcy</h2>
+            <ol>
+                <li>Usługodawca dokłada starań, aby Serwis działał w sposób ciągły i bez zakłóceń, nie gwarantuje jednak nieprzerwanej dostępności Serwisu, w szczególności w czasie prac konserwacyjnych, awarii technicznych lub zdarzeń niezależnych od Usługodawcy. W razie awarii uniemożliwiającej rozegranie Rundy turniejowej Usługodawca powtarza Rundę albo zwraca Bilet.</li>
+                <li>Usługodawca nie odpowiada za opóźnienia lub niedostępność sieci Dogecoin ani za działanie portfeli i usług osób trzecich, z których korzysta Użytkownik.</li>
+                <li>Odpowiedzialność Usługodawcy wobec konsumentów kształtowana jest zgodnie z bezwzględnie obowiązującymi przepisami prawa polskiego; Regulamin nie wyłącza ani nie ogranicza uprawnień konsumentów wynikających z tych przepisów.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§10. Dane osobowe</h2>
+            <p>Zasady przetwarzania danych osobowych Użytkowników opisane są w Polityce Prywatności, dostępnej w Serwisie.</p>
+        </section>
+
+        <section>
+            <h2>§11. Postanowienia końcowe</h2>
+            <ol>
+                <li>Usługodawca może zmienić Regulamin z ważnych przyczyn (m.in. zmiana przepisów prawa, zmiana funkcjonalności Serwisu, zmiana danych Usługodawcy). O zmianie Użytkownicy zostaną poinformowani komunikatem w Serwisie co najmniej 7 dni przed jej wejściem w życie; Użytkownik, który nie akceptuje zmian, może wypowiedzieć umowę i wypłacić Saldo DOGE. Zmiany nie dotyczą edycji Turnieju i pokoi Mini-Turniejowych, do których zapisy już trwają.</li>
+                <li>W sprawach nieuregulowanych Regulaminem zastosowanie mają przepisy prawa polskiego, w szczególności Kodeksu cywilnego, ustawy o świadczeniu usług drogą elektroniczną oraz ustawy o prawach konsumenta.</li>
+                <li>Spory rozstrzygają sądy powszechne właściwe według przepisów prawa polskiego; w sporach z konsumentami stosuje się przepisy szczególne o właściwości sądu.</li>
+                <li>Regulamin sporządzono w języku polskim; wersja w języku angielskim ma charakter informacyjny. W razie rozbieżności wiążąca jest wersja polska.</li>
+                <li>Regulamin wchodzi w życie z dniem publikacji w Serwisie.</li>
+            </ol>
+        </section>
+
+        <details class="legal-provider-details" id="dane-uslugodawcy">
+            <summary>Dane Usługodawcy</summary>
+            <div class="legal-provider-box">
+                <div class="legal-label">Usługodawca</div>
+                <div class="legal-value">Ilona Dobrowolska</div>
+                <div class="legal-label">Adres siedziby / do doręczeń</div>
+                <div class="legal-value">Rzeczyca Księża 227, 23-230 RZECZYCA KSIĘŻA</div>
+                <div class="legal-label">Adres e-mail</div>
+                <div class="legal-value"><a href="mailto:support@waroflords.pl" style="color:#e8c766;">support@waroflords.pl</a></div>
+            </div>
+        </details>
+        </div>
+<div class="legal-doc" data-doc-lang="en" lang="en">
+        <h1>War of Lords Terms of Service</h1>
+        <p class="subtitle">Version of 6 October 2026 (draft) · in force from: [TO BE COMPLETED: publication date]</p>
+        <p class="legal-lang-note">This is an English translation provided for information. The binding version of these Terms of Service is the Polish version — in case of any discrepancy, the Polish version prevails.</p>
+
+        <section>
+            <h2>§1. General provisions and definitions</h2>
+            <p>These Terms of Service set out the rules for using the browser-based strategic e-sports game <strong>War of Lords</strong>, available at <strong>waroflords.pl</strong> (the “Service” or the “Game”), including the rules for taking part in tournaments and for keeping the DOGE Balance. They constitute terms of providing services by electronic means within the meaning of Article 8 of the Polish Act of 18 July 2002 on providing services by electronic means.</p>
+            <p>The following terms have the meanings given below:</p>
+            <ul>
+                <li><strong>Service Provider / Organiser / Administrator</strong> — the person running the Service and organising the competitions, identified in §2;</li>
+                <li><strong>User</strong> — a natural person using the Service who meets the conditions set out in §3;</li>
+                <li><strong>Account</strong> — the User’s individual profile in the Service, protected by a username and password;</li>
+                <li><strong>Round</strong> — a single game on a shared map lasting a pre-set time, in which Users develop villages, recruit troops and fight each other;</li>
+                <li><strong>Room</strong> — a place in the Service where the participants of a Round gather; Rooms are free Battle Rooms or tournament rooms (Monthly Tournament, Mini-Tournaments);</li>
+                <li><strong>Monthly Tournament</strong> — a recurring e-sports competition consisting of qualification rounds, semi-finals and a final, described in §5 and in the Tournament Rules;</li>
+                <li><strong>Mini-Tournament</strong> — a single, shorter tournament Round with prizes for 1st, 2nd and 3rd place, described in §5a and in the Mini-Tournament Rules;</li>
+                <li><strong>Tournament Ticket / Mini-Tournament Ticket</strong> — a paid entitlement to take part in tournaments (an entry fee for e-sports competitions), constituting Digital Content;</li>
+                <li><strong>DOGE</strong> — the crypto-asset (virtual currency) Dogecoin, operating on the public Dogecoin blockchain network;</li>
+                <li><strong>DOGE Balance</strong> — the record kept by the Service Provider in the Service of the amount of DOGE due to the User, credited with prizes and deposits and reduced by Ticket purchases and withdrawals, as described in §5c;</li>
+                <li><strong>Service Wallet</strong> — the Dogecoin network address belonging to the Service Provider, indicated in the Service as the deposit address;</li>
+                <li><strong>Gold</strong> — a game resource existing only within a given Round (produced by in-game buildings and spent on building and recruiting); Gold has no monetary value, cannot be bought for money or DOGE, does not carry over to other Rounds and cannot be exchanged or withdrawn;</li>
+                <li><strong>Bot</strong> — a Round participant controlled by the Service’s software, used only in free Battle Rooms and in the free trial game (§1a(3)(c));</li>
+                <li><strong>Digital Content</strong> — data produced and supplied in digital form within the meaning of the Polish Act of 30 May 2014 on consumer rights, including Tournament Tickets and Mini-Tournament Tickets.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>§1a. Nature of the game — a game of skill (e-sports)</h2>
+            <ol>
+                <li>War of Lords is a strategic e-sports game. The result of every Round — including the place in the Round ranking, the outcome of every battle, reconnaissance results, wall destruction, the capture of villages and the results of the Monthly Tournament and Mini-Tournaments — depends solely on the skill, knowledge, strategy and decisions of the Users, in particular on the order and pace of village development, the choice, number and timing of units sent and the choice of attack targets.</li>
+                <li>All game rules are public and described in the Game Rules. Combat is resolved in a fully deterministic way, according to public formulas (attack strength, defence strength, wall bonus), without any element of chance: with the same decisions of the Users the outcome of a battle is always the same. The Game contains no dice rolls, random damage, “critical hits”, loot boxes or any other random mechanisms. In competitions in which prizes are awarded (Monthly Tournament, Mini-Tournaments, Free Server Ranking) there is no random or pseudo-random element at all.</li>
+                <li>Below is an exhaustive list of all elements of the Game that do not result from the Users’ decisions, together with their effect on the game:
+                    <ol type="a">
+                        <li><strong>Assignment of the starting village</strong> — made automatically according to a fixed rule, without any draw: free main villages are assigned in the order of their numbers (W1, W2, …) to Users in the order in which they joined the room (in team mode — within the map region assigned to the team). All starting villages have identical parameters, and troop travel time between any two villages depends only on the type of units sent, never on where the villages lie on the map — all Users therefore have identical starting conditions.</li>
+                        <li><strong>Room line-ups in the Monthly Tournament qualification rounds</strong> — set without any draw, according to a public formula described in the Tournament Rules, based on the order of registration for the given edition (the order of buying the Ticket): the participant with sequence number i (counted from 0) is placed in round k in room (q + (k − 1) · s) mod R, where q = the integer part of i/10, s = the remainder of i divided by 10, and R = the number of rooms. Every room always has 10 participants, and each participant can check their own assignment before the round. The split determines only who the opponents are; it does not change the game rules or the way points are counted.</li>
+                        <li><strong>Bots</strong> — computer players used only in free Battle Rooms and in the free trial game. Bot decisions come from a deterministic algorithm (a pseudo-random number generator seeded from the Round identifier, whose state is part of the saved game state — a Round with Bots can be fully reproduced). Bots <strong>never</strong> take part in Monthly Tournament or Mini-Tournament rounds (technically enforced by the Service), and Rounds in which even one Bot took part <strong>are not counted</strong> towards the Free Server Ranking, which carries prizes (§5b(2)). No prizes are awarded in Rounds with Bots.</li>
+                        <li><strong>Mini-Tournament matchmaking</strong> — performed automatically according to the order of entry and the Mini-Tournament MMR ranking, with publicly described matching ranges (§5a(2)); it contains no element of chance.</li>
+                    </ol>
+                </li>
+                <li>A tie for a place rewarded with a DOGE prize is never resolved by chance. Ties are resolved only by a pre-set, public cascade of objective and measurable statistics achieved by the User in the game (including the number of enemy units defeated in attack and in defence, and then the moment the result was reached), described in §5a(7) and in the Tournament Rules and Mini-Tournament Rules.</li>
+                <li>Monthly Tournament and Mini-Tournament prizes are set in advance and announced before registration opens; their amount does not depend on the number of Tickets sold or the number of participants, and entry fees do not form a pool shared among the winners. Users compete only through their own play — in the Service it is not possible to bet on the results of other people’s games or of any events.</li>
+                <li>For these reasons the Game is a game of skill (an e-sports competition) and not a game of chance, a mutual bet or a slot-machine game within the meaning of Article 2 of the Polish Gambling Act of 19 November 2009 — its result does not depend on chance, and Users do not place bets on the result of any event.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§2. Service Provider details</h2>
+            <div class="legal-provider-box">
+                        <div class="legal-label">E-mail address (contact / complaints)</div>
+                        <div class="legal-value"><a href="mailto:support@waroflords.pl" style="color:#e8c766;">support@waroflords.pl</a></div>
+                        <div class="legal-label" style="margin-top:12px;">Full Service Provider details</div>
+                        <div class="legal-value"><a href="#provider-details" style="color:#e8c766;">at the end of the page (expand)</a></div>
+                    </div>
+        </section>
+
+        <section>
+            <h2>§3. Conditions of use</h2>
+            <ol>
+                <li>Using the Service requires a device with Internet access and an up-to-date web browser supporting JavaScript, cookies and the browser’s local storage.</li>
+                <li>The Service may be used by persons aged 16 or over. Persons under 16 may use the Service only with the consent of a parent or legal guardian given before the Account is registered. A DOGE withdrawal additionally requires the declaration described in §5c(9).</li>
+                <li>Each User may hold only one Account. Creating and using several accounts by the same person (“multi-accounting”) is prohibited (§7).</li>
+                <li>The basic functions of the Service (playing in free Battle Rooms, the trial game, the ranking) are free of charge. Taking part in tournaments requires a Ticket paid for from the DOGE Balance (§5, §5a, §6).</li>
+                <li>The User must use the Service in accordance with the law, these Terms and good practice, and in particular must not post unlawful content (including in the Service’s chats).</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§4. Registration and Account</h2>
+            <ol>
+                <li>An Account is registered by completing the registration form (username, e-mail address, password) and accepting these Terms and the Privacy Policy. Upon registration a contract for the provision of electronic services is concluded for an indefinite period.</li>
+                <li>The User must keep the Account password confidential and is responsible for actions performed with it, unless they result from the Service Provider’s fault.</li>
+                <li>The User may terminate the contract and request deletion of the Account at any time by contacting the Service Provider at support@waroflords.pl. Before the Account is deleted, the User may withdraw the DOGE Balance in accordance with §5c; if a withdrawal is not possible (e.g. the balance is below the minimum withdrawal amount), the Service Provider will, at the User’s request, pay out the balance without applying the minimum amount.</li>
+                <li>The Service Provider may block or delete the Account of a User who seriously breaches these Terms, in particular the fair play rules (§7), after informing the User of the reason and allowing them to give an explanation, unless the nature of the breach requires immediate action (e.g. fraud, exploiting Game bugs). Blocking an Account does not deprive the User of the right to withdraw the DOGE Balance, subject to §5c(11) and §7(2).</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§5. Tournament Tickets and the Monthly Tournament</h2>
+            <ol>
+                <li>A Tournament Ticket entitles the holder to take part in all 4 qualification rounds of a given Monthly Tournament edition. A Ticket cannot be exchanged for DOGE or transferred to another Account.</li>
+                <li>A Tournament Ticket can be bought only with the DOGE Balance, at a price expressed in DOGE and shown in the Service before the purchase. The price is final.</li>
+                <li>The monthly pool of Tournament Tickets may be limited — its current state is shown in the Service before the purchase.</li>
+                <li>A User may buy at most one Tournament Ticket per calendar month. The limit resets on the first day of the next month.</li>
+                <li>The DOGE prizes for the 10 places in the Final are set in advance and announced in the Service before Ticket sales for a given edition open; once the first Ticket has been sold, they cannot be reduced.</li>
+                <li>The game format, scoring (Tournament Points), the path to qualification (including direct entry for the Top 5 of the Free Server Ranking) and the tie-break rules are described in the Tournament Rules, which form an integral part of these Terms.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§5a. Mini-Tournaments and the Referral Programme</h2>
+            <ol>
+                <li>A Mini-Tournament Ticket entitles the holder to enter the matchmaking queue for one Mini-Tournament room chosen by the User. The Ticket can be bought only with the DOGE Balance, at a price expressed in DOGE and shown in the Service before the purchase; it cannot be exchanged for DOGE or transferred to another Account.</li>
+                <li>Players are matched automatically, based on a separate Mini-Tournament MMR ranking, with matching ranges widening with waiting time (up to 30 seconds ±50 points, from 31 to 60 seconds ±150 points, over 60 seconds — any available player in the queue). While waiting and confirming the match, Users do not see the identity or statistics of the other players — the line-up is revealed once the Round starts.</li>
+                <li>Once a group of 10 players is complete, each of them has 15 seconds to confirm. The Ticket is used only when all matched players have confirmed and the Round starts — until then the User may leave the queue without losing the Ticket. A player who does not confirm in time is removed from the queue without losing the Ticket, and the others return to the queue with priority.</li>
+                <li>A User may hold at most one unused Mini-Tournament Ticket. There is no time limit for using a Ticket.</li>
+                <li>The number of Mini-Tournament Tickets that can be bought in a calendar month is limited by a total pool set by the Administrator; its state is shown in the Service before the purchase.</li>
+                <li>Every Mini-Tournament room has a guaranteed DOGE prize for 1st, 2nd and 3rd place, set in advance and announced before registration opens — independent of the number of Tickets sold and the number of participants. Prizes are credited to the winners’ DOGE Balances right after the Round ends.</li>
+                <li>Places are decided first by the village points achieved in the Round. In case of equal village points the order is decided in turn by: (1) the total number of enemy units defeated (attack + defence), (2) the number of units defeated in attack, (3) the number of units defeated in defence, (4) reaching the given number of village points earlier in the Round. None of these criteria is random.</li>
+                <li>The remaining Mini-Tournament rules are described in the Mini-Tournament Rules, which form an integral part of these Terms.</li>
+                <li>Every User has a unique referral code, shown in the Profile tab. If 10 people who entered a User’s code when registering buy any Ticket (Tournament or Mini-Tournament), the referring User receives a DOGE bonus in the amount announced in the Service. The bonus is granted for every further 10 such people, with no upper limit. One purchase per referred person counts towards the condition.</li>
+                <li>The Referral Programme bonus is not awarded by lottery or any other element of chance — it depends solely on the verified number of purchases made by referred people.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§5b. DOGE prizes and taxes</h2>
+            <ol>
+                <li>Prizes in the Service are awarded only in DOGE and credited to the winner’s DOGE Balance in full (100%), without any deductions.</li>
+                <li>Prizes are awarded for: the rewarded places in the Monthly Tournament Final (§5(5)), places 1–3 in Mini-Tournaments (§5a(6)), places 1–5 in the monthly Free Server Ranking for the period after the qualification rounds of a given Tournament edition (as described in the Tournament Rules; only Rounds played with at least 8 real players and without Bots count towards this ranking) and under the Referral Programme (§5a(9)). The amount of each of these prizes is announced in the Service in advance.</li>
+                <li>In addition, the Administrator may grant a User a DOGE prize at their own discretion — in particular for reporting a Game bug or a significant contribution to the Service or its community. The granting, amount and reason for such a prize are at the Administrator’s discretion; no action of a User gives rise to a claim for it.</li>
+                <li>The Organiser is a natural person not running a business and does not act as an income tax remitter within the meaning of Article 41 of the Polish Personal Income Tax Act of 26 July 1991. The Organiser does not withhold or pay tax on prizes and does not file tax returns in this respect.</li>
+                <li>A prize is taxable income of the winner under the general rules. The value of a prize expressed in DOGE is determined according to the market value of DOGE on the day it is received. The winner must settle this income in their own tax return in accordance with applicable law; responsibility for correct settlement lies with the User.</li>
+                <li>Gold, village points, skill points (MMR) and ranking places are not prizes and have no monetary value.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§5c. DOGE Balance, deposits and withdrawals</h2>
+            <ol>
+                <li>The DOGE Balance is a record kept by the Service Provider of the amount of DOGE due to the User. The Balance is expressed only in DOGE. The DOGE Balance is not a bank account, a payment account or electronic money, bears no interest and is not covered by any deposit guarantee scheme.</li>
+                <li>The DOGE Balance may be used only to: (a) buy Tournament Tickets and Mini-Tournament Tickets, (b) withdraw DOGE to the User’s private Dogecoin address. The Service Provider does not exchange DOGE for money (PLN or other currencies) or for other crypto-assets and does not pay out the equivalent of the Balance in money.</li>
+                <li><strong>Deposit.</strong> The User may top up the DOGE Balance by sending DOGE from their own wallet to the Service Wallet address shown in the Wallet tab and then reporting the transaction identifier (hash) and amount in the Service. The Balance is credited after the Service Provider has verified the transaction on the Dogecoin network, with the amount actually received in the Service Wallet. The network fee for a deposit transaction is borne by the User.</li>
+                <li>Only DOGE on the Dogecoin network may be sent to the Service Wallet address. The Service Provider is not liable for funds sent on another network, to a wrong address or without reporting the transaction, unless the loss results from its fault; if such a situation is reported, the Service Provider will make efforts to identify and return the funds where technically possible.</li>
+                <li>The same transaction (the same hash) can be reported only once. A reported deposit that has not been confirmed on the network is rejected with a reason.</li>
+                <li><strong>Withdrawal.</strong> The User may at any time order a withdrawal of the DOGE Balance (in full or in part) to a Dogecoin address of their choice (an address starting with the letter “D”, checked for validity including its checksum). The minimum amount of a single withdrawal is set by the Administrator and shown in the Service before the order.</li>
+                <li>The withdrawal amount is reserved (deducted from the DOGE Balance) when the order is placed. Withdrawals are sent on-chain after verification of the order by the Service Provider, as a rule within 7 business days. The network fee for a withdrawal transaction is borne by the Service Provider — the full withdrawal amount is sent to the User’s address. The withdrawal transaction identifier is shown to the User in the transaction history in the Service.</li>
+                <li>A DOGE withdrawal to an address entered incorrectly by the User is irreversible; the Service Provider is not liable for the consequences of the User entering an incorrect address that passed the format check.</li>
+                <li>Each withdrawal order requires: (a) a declaration that the User is of legal age, or a declaration by the legal guardian of an underage User consenting to the withdrawal, and (b) a confirmation that the User settles the income themselves in accordance with §5b. The declarations are recorded together with the date and time they were made.</li>
+                <li>A rejected withdrawal (e.g. due to justified doubts as to entitlement to the Balance) is returned to the User’s DOGE Balance together with the reason.</li>
+                <li>The Service Provider may suspend a withdrawal and ask the User for an explanation in case of a justified suspicion of a breach of these Terms (in particular the fair play rules) or of the law, including the rules on preventing money laundering and terrorist financing.</li>
+                <li>The monetary value of DOGE is subject to market changes. The Service Provider does not guarantee the value of DOGE and is not liable for changes in its exchange rate. Ticket prices, prizes and balances are expressed in DOGE.</li>
+                <li>DOGE credited to a Balance in error (e.g. as a result of a technical failure) is subject to correction, of which the User is informed.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§5d. Transition from VPLN to DOGE (transitional provision)</h2>
+            <ol>
+                <li>The Service’s former unit of account, VPLN, has been replaced by the DOGE Balance. VPLN balances existing on [TO BE COMPLETED: conversion date] were converted into DOGE at a fixed rate of [TO BE COMPLETED: number] DOGE per 1 VPLN and credited to Users’ DOGE Balances. Announced tournament prizes and Ticket prices were converted at the same rate.</li>
+                <li>Requests to withdraw VPLN to a bank account submitted before the conversion are processed under the previous rules; if rejected, the amount is returned to the DOGE Balance at the rate set out in point 1.</li>
+                <li>From the conversion date the Service does not accept payments in PLN and does not make payouts to bank accounts.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§6. Buying Tickets — general rules</h2>
+            <ol>
+                <li>Tournament Tickets and Mini-Tournament Tickets are bought only by payment from the DOGE Balance. The Service does not use external payment operators.</li>
+                <li>Buying a Ticket is a fee for taking part in an e-sports competition (the Game’s tournament rounds). The price shown in the Service before the purchase is final. Sales are made as unregistered activity and are exempt from VAT under Article 113(1) of the Polish VAT Act of 11 March 2004.</li>
+                <li>The purchase amount is deducted from the DOGE Balance when the purchase is confirmed, and the Ticket is credited to the Account immediately. Every purchase is recorded in a permanent purchase register.</li>
+                <li>Under Article 38(1)(13) of the Polish Consumer Rights Act of 30 May 2014, a User who is a consumer has no right to withdraw from a contract for the supply of Digital Content not supplied on a tangible medium if performance has begun with their express prior consent before the end of the withdrawal period, after being informed of the loss of that right, and the Service Provider has given them a confirmation. The User gives this consent with each purchase by ticking the relevant box in the purchase confirmation window; the purchase confirmation is visible in the Service.</li>
+                <li>The above does not exclude the User’s rights in case of non-conformity of Digital Content with the contract (Chapter 5b of the Consumer Rights Act), in particular where a purchased Ticket has not been credited to the Account even though DOGE was deducted from the Balance — the complaint rules in §8 apply.</li>
+                <li>If the Service Provider cancels a Tournament edition or a Mini-Tournament room before it starts, the Ticket is returned to the Account or its price to the DOGE Balance.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§7. Fair play</h2>
+            <ol>
+                <li>The following are prohibited: using software that automates or assists play (external bots, scripts, cheats), exploiting Game bugs in a way that undermines its fairness, creating and using multiple Accounts (multi-accounting), arranging results with other Users and handing over an Account to third parties.</li>
+                <li>A breach of fair play may result in a warning, a temporary or permanent Account block, loss of a Ticket without refund, exclusion from a given Tournament edition and, for prizes obtained through the breach, their withdrawal.</li>
+                <li>Detailed game rules and the consequences of breaches are described in the Game Rules, the Tournament Rules and the Mini-Tournament Rules.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§8. Complaints</h2>
+            <ol>
+                <li>Complaints concerning the Service, including the DOGE Balance, deposits, withdrawals and purchases, should be sent to support@waroflords.pl.</li>
+                <li>A complaint should include the username (login), a description of the problem and — where possible — the date, circumstances and the identifier of the transaction concerned.</li>
+                <li>The Service Provider handles a complaint within 14 calendar days of receiving it and sends the reply to the e-mail address from which it was sent (or another address indicated by the User).</li>
+                <li>A User who is a consumer may use out-of-court complaint and redress procedures, including help from the municipal or district consumer ombudsman.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§9. Service Provider’s liability</h2>
+            <ol>
+                <li>The Service Provider makes efforts to ensure that the Service runs continuously and without disruption, but does not guarantee uninterrupted availability, in particular during maintenance, technical failures or events beyond its control. If a failure makes it impossible to play a tournament Round, the Service Provider repeats the Round or returns the Ticket.</li>
+                <li>The Service Provider is not liable for delays or unavailability of the Dogecoin network or for the operation of third-party wallets and services used by the User.</li>
+                <li>The Service Provider’s liability towards consumers is governed by the mandatory provisions of Polish law; these Terms do not exclude or limit consumers’ rights under those provisions.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>§10. Personal data</h2>
+            <p>The rules for processing Users’ personal data are set out in the Privacy Policy available in the Service.</p>
+        </section>
+
+        <section>
+            <h2>§11. Final provisions</h2>
+            <ol>
+                <li>The Service Provider may change these Terms for important reasons (including changes in the law, changes in the Service’s functionality or in the Service Provider’s details). Users will be informed of a change by a notice in the Service at least 7 days before it takes effect; a User who does not accept the changes may terminate the contract and withdraw the DOGE Balance. Changes do not apply to Tournament editions and Mini-Tournament rooms for which registration is already under way.</li>
+                <li>Matters not governed by these Terms are subject to Polish law, in particular the Civil Code, the Act on providing services by electronic means and the Consumer Rights Act.</li>
+                <li>Disputes are resolved by the common courts competent under Polish law; in disputes with consumers the special rules on court jurisdiction apply.</li>
+                <li>These Terms have been drawn up in Polish; the English version is for information only. In case of any discrepancy, the Polish version prevails.</li>
+                <li>These Terms take effect on the day they are published in the Service.</li>
+            </ol>
+        </section>
+
+        <details class="legal-provider-details" id="provider-details">
+            <summary>Service Provider details</summary>
+            <div class="legal-provider-box">
+                <div class="legal-label">Service Provider</div>
+                <div class="legal-value">Ilona Dobrowolska</div>
+                <div class="legal-label">Registered / correspondence address</div>
+                <div class="legal-value">Rzeczyca Księża 227, 23-230 RZECZYCA KSIĘŻA</div>
+                <div class="legal-label">E-mail address</div>
+                <div class="legal-value"><a href="mailto:support@waroflords.pl" style="color:#e8c766;">support@waroflords.pl</a></div>
+            </div>
+        </details>
+        </div>
+        <!-- LEGAL:END -->
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (token) {
+            fetch('/api/auth/me', { headers: { Authorization: `Bearer ${token}` } })
+                .then((r) => r.ok ? r.json() : null)
+                .then((profile) => {
+                    if (!profile) return;
+                    const adminPanelLinkEl = document.getElementById('adminPanelLink');
+                    if (adminPanelLinkEl) adminPanelLinkEl.style.display = (profile.role === 'ADMIN' || profile.isAdmin) ? 'block' : 'none';
+                })
+                .catch(() => {});
+        }
+    </script>
+    <script>
+        // Odnosnik "pelne dane" rozwija sekcje z danymi na koncu strony (w biezacej wersji jezykowej).
+        document.querySelectorAll('a[href="#dane-uslugodawcy"], a[href="#provider-details"]').forEach((link) => link.addEventListener('click', () => {
+            const target = document.getElementById(link.getAttribute('href').slice(1));
+            if (target) target.open = true;
+        }));
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+    <script src="/page-scale.js"></script>
+</body>
+</html>

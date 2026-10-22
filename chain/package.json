@@ -1,0 +1,17 @@
+{
+  "name": "wol-chain",
+  "version": "0.1.0",
+  "private": true,
+  "description": "War of Lords - DogeOS testnet contracts (tournament entry, prizes, betting)",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:testnet": "hardhat run scripts/deploy.js --network dogeosTestnet"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^18.0.8",
+    "hardhat": "^2.22.0",
+    "socket.io-client": "^4.8.4"
+  }
+}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-source-lang="en" data-source-lang="en" translate="no">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="shop.pageTitle">War of Lords - Shop</title>
+    <!-- Only one category ever existed here (Bilety Turniejowe) - this landing tile just made every
+         visit take an extra click through an "Otwórz" button to reach it. Redirects straight to
+         sklep-bilety.html instead; replace() so this intermediate page never lands in browser
+         history (Back from the ticket page goes to wherever the player came from, not to here). -->
+    <script>window.location.replace('dogeos.html'); // sklep = bilety, nagrody i zaklady przez portfel DogeOS</script>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+
+        .nav-menu { background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat; width: 100%; padding: 15px 0; text-align: center; margin-bottom: 40px; }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 20px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+
+        /* Baked-in default nav link layout, adopted site-wide from a player-arranged position
+           (see layout-editor.js) so every visitor sees the same arrangement by default. */
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { display: none !important; position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        h1 { color: #e8c766; margin-bottom: 5px; margin-top: 10px; text-shadow: 0px 4px 8px rgba(0,0,0,0.8); text-transform: uppercase; letter-spacing: 0.04em; }
+        .subtitle { color: #cbd5e1; margin-bottom: 40px; text-align: center; font-size: 16px; text-shadow: 0px 2px 4px rgba(0,0,0,0.8); font-weight: 500; }
+
+        .shop-tiles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; max-width: 1000px; width: 100%; padding: 0 20px; box-sizing: border-box; }
+        @media (max-width: 720px) { .shop-tiles-grid { grid-template-columns: 1fr; } }
+
+        .shop-tile {
+            background: url('/ramka.png') center / 100% 100% no-repeat;
+            border-radius: 0;
+            padding: 30px 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 280px;
+            transition: transform 0.2s, border-color 0.2s;
+            box-sizing: border-box;
+        }
+        .shop-tile:hover { transform: translateY(-5px); border-color: #d4af37; }
+        .shop-tile.disabled:hover { transform: none; border-color: rgba(212, 175, 55, 0.32); }
+
+        .shop-tile-icon { font-size: 45px; margin-bottom: 15px; }
+        .shop-tile-title { font-size: 20px; font-weight: bold; color: #e8c766; text-transform: uppercase; margin-bottom: 10px; }
+        .shop-tile-desc { color: #cbd5e1; font-size: 14px; margin-bottom: 20px; line-height: 1.4; flex-grow: 1; }
+
+        .btn-shop-tile {
+            background-image: url('/przycisk.png');
+            background-size: 100% 100%; background-color: transparent;
+            color: #e8c766;
+            border: none;
+            padding: 12px 25px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 0;
+            cursor: pointer;
+            transition: color 0.2s;
+            width: 90%;
+            text-transform: uppercase;
+            text-decoration: none;
+            display: inline-block;
+            box-sizing: border-box;
+        }
+        .btn-shop-tile:hover { color: #f0d78c; }
+        .btn-shop-tile.disabled { background: #475569; color: #94a3b8; cursor: not-allowed; pointer-events: none; }
+    </style>
+    <script src="/locales.js"></script>
+    <script src="/i18n.js"></script>
+</head>
+<body>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="index.html">Home</a>
+        <a id="navRooms" href="pokoje.html">Battle Rooms</a>
+        <a id="navTournaments" href="turnieje.html">Tournaments</a>
+        <a id="navShop" href="live.html" class="active">Live Bets</a>
+        <a id="navRanking" href="ranking.html">Overall Ranking</a>
+        <a id="navProfile" href="profile.html">Profile</a>
+        <a id="navRules" href="zasady.html">Rules</a>
+    </div>
+
+    <h1 data-i18n="shop.pageTitle">War of Lords - Shop</h1>
+
+    <div class="shop-tiles-grid" style="grid-template-columns: 1fr; max-width: 340px;">
+        <div class="shop-tile">
+            <div>
+                <div class="shop-tile-icon">🎫</div>
+                <div class="shop-tile-title" data-i18n="shop.tournamentTickets">Tournament tickets</div>
+                <div class="shop-tile-desc" data-i18n="shop.ticketsBlurb">Paid with your DOGE balance (final price) — buy 1 to 5 at once.</div>
+            </div>
+            <a href="sklep-bilety.html" class="btn-shop-tile" data-i18n="shop.open">Open</a>
+        </div>
+        <div class="shop-tile">
+            <div>
+                <div class="shop-tile-icon">🐕</div>
+                <div class="shop-tile-title">DogeOS Testnet</div>
+                <div class="shop-tile-desc">Connect your DogeOS wallet, pay tournament entry, claim prizes and bet on rounds — testnet DOGE, no real value.</div>
+            </div>
+            <a href="dogeos.html" class="btn-shop-tile">Open</a>
+        </div>
+    </div>
+    <script src="/cookie-consent.js"></script>
+    <script src="/site-footer.js"></script>
+    <script src="/page-scale.js"></script>
+    <script src="/wol-guest.js"></script>
+</body>
+</html>

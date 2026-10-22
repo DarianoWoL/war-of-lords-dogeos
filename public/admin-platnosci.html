@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/doge-theme.js"></script>
+    <style>body{visibility:hidden;}</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>War of Lords - Rejestr Wpłat</title>
+    <style>
+        body {
+            background-image: url('/assets/background.png');
+            background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;
+            background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif;
+            margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; padding-bottom: 60px;
+        }
+        .nav-menu { background: url('/pasek gorny bez ikon.png') 113.64px top / 1883.07px auto no-repeat; width: 100%; padding: 15px 0; text-align: center; margin-bottom: 30px; }
+        .nav-menu a { color: #94a3b8; text-decoration: none; margin: 0 16px; font-weight: bold; font-size: 16px; }
+        .nav-menu a:hover, .nav-menu a.active { color: #e8c766; }
+        .nav-menu { position: relative; width: 1998px; max-width: 100%; height: 138px; }
+        #navHome { position: absolute; left: 461.30px; top: 46.11px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRooms { position: absolute; left: 567.31px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navTournaments { position: absolute; left: 703.09px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navShop { position: absolute; left: 811.31px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRanking { position: absolute; left: 1068.75px; top: 47.89px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navProfile { position: absolute; left: 1207.29px; top: 46.78px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+        #navRules { position: absolute; left: 1306.08px; top: 45.67px; width: 160px; height: 60px; margin: 0; box-sizing: border-box; }
+
+        .shell { width: 100%; max-width: 1200px; padding: 0 20px 40px; box-sizing: border-box; }
+        .back-link { display: inline-block; margin-bottom: 18px; color: #94a3b8; text-decoration: none; font-size: 14px; }
+        .back-link:hover { color: #e8c766; }
+        .page-header { text-align: center; margin-bottom: 24px; }
+        .page-header h1 { margin: 0; font-size: 30px; color: #e8c766; letter-spacing: 1px; text-transform: uppercase; }
+        .page-header p { margin: 10px auto 0; max-width: 760px; color: #cbd5e1; font-size: 15px; line-height: 1.6; }
+        .panel-alert { background: rgba(248, 113, 113, 0.15); border: 1px solid #f87171; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; color: #f8fafc; }
+        .panel-alert.success { background: rgba(52, 211, 153, 0.15); border-color: #34d399; }
+        .panel-card { background: linear-gradient(180deg, rgba(18, 27, 48, 0.95), rgba(10, 16, 33, 0.96)); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 18px; padding: 20px; margin-bottom: 18px; }
+        .panel-card .subtext { color: #cbd5e1; font-size: 13px; line-height: 1.5; }
+
+        .filters-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+        .filters-row .field { display: flex; flex-direction: column; gap: 4px; }
+        .filters-row label { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.03em; }
+        .filters-row select, .filters-row input[type="date"] { padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.28); background: #0f172a; color: #f8fafc; font-size: 14px; }
+        .btn { border: none; border-radius: 10px; cursor: pointer; font-weight: bold; padding: 11px 18px; font-size: 14px; background: #1e293b; color: #f8fafc; border: 1px solid rgba(212, 175, 55, 0.28); }
+        .btn:hover { background: #334155; }
+        .btn-gold { background: linear-gradient(180deg, #e8c766, #b8901f); color: #1c1408; border-color: transparent; }
+        .btn-gold:hover { filter: brightness(1.05); }
+
+        .totals-row { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 16px; }
+        .totals-row .stat { background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.25); border-radius: 12px; padding: 12px 18px; }
+        .totals-row .stat .label { font-size: 12px; color: #94a3b8; text-transform: uppercase; }
+        .totals-row .stat .value { font-size: 20px; color: #e8c766; font-weight: bold; }
+
+        .table-wrap { overflow-x: auto; }
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table th, .admin-table td { border: 1px solid rgba(212, 175, 55, 0.24); padding: 10px 8px; font-size: 13px; text-align: left; white-space: nowrap; }
+        .admin-table th { color: #e8c766; }
+        .status-pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: bold; }
+        .status-pill.paid { background: rgba(52, 211, 153, 0.18); color: #34d399; }
+        .status-pill.pending { background: rgba(234, 179, 8, 0.18); color: #eab308; }
+        .status-pill.failed { background: rgba(239, 68, 68, 0.18); color: #f87171; }
+        .legal-note { font-size: 12px; color: #94a3b8; line-height: 1.6; margin-top: 14px; }
+    </style>
+</head>
+<body>
+    <div class="nav-menu layout-editor-ignore">
+        <a id="navHome" href="/index.html">Główna</a>
+        <a id="navRooms" href="/pokoje.html">Pokoje Bitewne</a>
+        <a id="navTournaments" href="/turnieje.html">Turnieje</a>
+        <a id="navShop" href="/sklep.html">Sklep</a>
+        <a id="navRanking" href="/ranking.html">Ranking Ogólny</a>
+        <a id="navProfile" href="/profile.html">Profil</a>
+        <a id="navRules" href="/zasady.html">Zasady</a>
+        <a id="navAdmin" href="/admin.html" class="active">Panel Admina</a>
+    </div>
+
+    <div class="shell">
+        <a class="back-link" href="/admin.html">&larr; Wróć do Panelu Admina</a>
+        <div class="page-header">
+            <h1>💳 Rejestr Wpłat</h1>
+            <p>Pełna, trwała ewidencja wszystkich prób zakupu biletów turniejowych — zarówno opłaconych realnymi pieniędzmi przez HotPay, jak i saldem VPLN (1:1, zob. regulamin.html §5c) — wyraźnie rozróżnionych kolumną „Metoda płatności” i osobnymi sumami poniżej, do wglądu i pobrania w każdej chwili, np. na potrzeby księgowości lub kontroli.</p>
+        </div>
+
+        <div id="adminWarning" class="panel-alert" style="display:none;"></div>
+
+        <div class="panel-card">
+            <h3 style="margin:0 0 6px; color:#e8c766; font-size:16px;">🛡️ Bezpieczny limit wpłat (miesięczny)</h3>
+            <p class="subtext" style="margin:0 0 14px;">Twardy limit łącznej kwoty realnych wpłat PLN przez HotPay w danym miesiącu — niezależny od puli/ceny biletów, na wypadek gdyby zostały źle skonfigurowane. Płatności saldem VPLN nigdy się do niego nie liczą. Ustaw 0, aby wyłączyć limit.</p>
+            <div class="totals-row" style="margin-top:0; margin-bottom:14px;">
+                <div class="stat">
+                    <div class="label">Zebrano w tym miesiącu (HotPay)</div>
+                    <div class="value" id="revenueLimitCollected">—</div>
+                </div>
+                <div class="stat">
+                    <div class="label">Pozostało do limitu</div>
+                    <div class="value" id="revenueLimitRemaining">—</div>
+                </div>
+            </div>
+            <div class="filters-row">
+                <div class="field">
+                    <label for="revenueLimitInput">Miesięczny limit wpłat (zł, 0 = brak limitu)</label>
+                    <input type="number" id="revenueLimitInput" min="0" step="1" style="padding:10px 12px; border-radius:10px; border:1px solid rgba(212,175,55,0.28); background:#0f172a; color:#f8fafc; font-size:14px; width:200px;">
+                </div>
+                <button type="button" class="btn btn-gold" onclick="saveRevenueLimit()">Zapisz limit</button>
+            </div>
+        </div>
+
+        <div class="panel-card">
+            <div class="filters-row">
+                <div class="field">
+                    <label for="filterStatus">Status</label>
+                    <select id="filterStatus">
+                        <option value="">Wszystkie</option>
+                        <option value="paid">Opłacone</option>
+                        <option value="pending">Oczekujące</option>
+                        <option value="failed">Nieudane</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="filterFrom">Od (data utworzenia)</label>
+                    <input type="date" id="filterFrom">
+                </div>
+                <div class="field">
+                    <label for="filterTo">Do (data utworzenia)</label>
+                    <input type="date" id="filterTo">
+                </div>
+                <button type="button" class="btn" onclick="loadPayments()">Filtruj</button>
+                <button type="button" class="btn btn-gold" onclick="downloadCsv()">⬇ Pobierz CSV</button>
+            </div>
+            <div class="totals-row">
+                <div class="stat">
+                    <div class="label">Opłaconych zamówień (w filtrze)</div>
+                    <div class="value" id="totalsCount">—</div>
+                </div>
+                <div class="stat">
+                    <div class="label">Suma wpłat brutto (PLN)</div>
+                    <div class="value" id="totalsAmount">—</div>
+                </div>
+                <div class="stat">
+                    <div class="label">Suma zapłat saldem VPLN (w filtrze)</div>
+                    <div class="value" id="totalsAmountVpln">—</div>
+                </div>
+                <div class="stat">
+                    <div class="label">Pokazanych wierszy</div>
+                    <div class="value" id="totalsShown">—</div>
+                </div>
+            </div>
+            <p class="legal-note">
+                Podstawa i okres przechowywania: dowody transakcji przechowywane są bezterminowo (nic w systemie ich nie usuwa),
+                co pokrywa ustawowe minimum 5 lat wynikające z art. 73-74 ustawy o rachunkowości oraz art. 32 i 86 Ordynacji podatkowej
+                (okres liczony od końca roku kalendarzowego, którego dana wpłata dotyczy). Zgodnie z RODO podstawą przetwarzania
+                tych danych jest właśnie ten obowiązek prawny — nie zgoda użytkownika — więc nie podlegają one wcześniejszemu usunięciu na żądanie.
+            </p>
+        </div>
+
+        <div class="panel-card">
+            <div class="table-wrap">
+                <table class="admin-table" id="paymentsTable">
+                    <thead>
+                        <tr>
+                            <th>Produkt</th>
+                            <th>Data utworzenia</th>
+                            <th>Data zapłaty</th>
+                            <th>Użytkownik</th>
+                            <th>Email</th>
+                            <th>Ilość</th>
+                            <th>Kwota brutto</th>
+                            <th>Metoda płatności</th>
+                            <th>Status</th>
+                            <th>ID transakcji HotPay</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentsBody">
+                        <tr><td colspan="10" style="color:#94a3b8;">Ładowanie...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (!token) { window.location.href = '/login.html'; }
+        const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+        function showAdminError(message) {
+            const warning = document.getElementById('adminWarning');
+            warning.className = 'panel-alert';
+            warning.style.display = 'block';
+            warning.innerText = message;
+        }
+
+        function showAdminSuccess(message) {
+            const warning = document.getElementById('adminWarning');
+            warning.className = 'panel-alert success';
+            warning.style.display = 'block';
+            warning.innerText = message;
+            setTimeout(() => { warning.style.display = 'none'; }, 3000);
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str == null ? '' : String(str);
+            return div.innerHTML;
+        }
+
+        function formatDateTime(value) {
+            if (!value) return '—';
+            return new Date(value).toLocaleString('pl-PL');
+        }
+
+        function formatAmount(value) {
+            return `${Number(value || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} zł`;
+        }
+
+        function formatVplnAmount(value) {
+            return `${Number(value || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} VPLN`;
+        }
+
+        function paymentMethodLabel(o) {
+            return o.currency === 'VPLN' ? '💎 Saldo VPLN' : '💳 HotPay (PLN)';
+        }
+
+        function buildQuery() {
+            const params = new URLSearchParams();
+            const status = document.getElementById('filterStatus').value;
+            const from = document.getElementById('filterFrom').value;
+            const to = document.getElementById('filterTo').value;
+            if (status) params.set('status', status);
+            if (from) params.set('from', new Date(from + 'T00:00:00').toISOString());
+            if (to) params.set('to', new Date(to + 'T23:59:59').toISOString());
+            return params.toString();
+        }
+
+        const STATUS_LABELS = { paid: 'Opłacone', pending: 'Oczekujące', failed: 'Nieudane' };
+
+        async function loadPayments() {
+            const tbody = document.getElementById('paymentsBody');
+            tbody.innerHTML = '<tr><td colspan="10" style="color:#94a3b8;">Ładowanie...</td></tr>';
+            try {
+                const res = await fetch(`/api/admin/payments?${buildQuery()}`, { headers });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                if (!data.orders.length) {
+                    tbody.innerHTML = '<tr><td colspan="10" style="color:#94a3b8;">Brak wpłat spełniających filtr.</td></tr>';
+                } else {
+                    tbody.innerHTML = data.orders.map((o) => `
+                        <tr>
+                            <td>${escapeHtml(o.product || '—')}</td>
+                            <td>${formatDateTime(o.createdAt)}</td>
+                            <td>${formatDateTime(o.paidAt)}</td>
+                            <td>${escapeHtml(o.username || '—')}</td>
+                            <td>${escapeHtml(o.email || '—')}</td>
+                            <td>${o.quantity}</td>
+                            <td>${o.currency === 'VPLN' ? formatVplnAmount(o.grossAmountZl) : formatAmount(o.grossAmountZl)}</td>
+                            <td>${paymentMethodLabel(o)}</td>
+                            <td><span class="status-pill ${o.status}">${STATUS_LABELS[o.status] || o.status}</span></td>
+                            <td>${escapeHtml(o.hotpayPaymentId || '—')}</td>
+                        </tr>
+                    `).join('');
+                }
+                document.getElementById('totalsCount').textContent = data.paidTotals.count;
+                document.getElementById('totalsAmount').textContent = formatAmount(data.paidTotals.grossAmountZl);
+                const vpln = data.paidTotalsVpln || { count: 0, vplnAmount: 0 };
+                document.getElementById('totalsAmountVpln').textContent = `${formatVplnAmount(vpln.vplnAmount)} (${vpln.count} zamówień)`;
+                document.getElementById('totalsShown').textContent = data.orders.length;
+            } catch (err) {
+                showAdminError(`Nie udało się wczytać rejestru wpłat: ${err.message}`);
+            }
+        }
+
+        async function downloadCsv() {
+            try {
+                const res = await fetch(`/api/admin/payments/export?${buildQuery()}`, { headers });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const blob = await res.blob();
+                const disposition = res.headers.get('Content-Disposition') || '';
+                const match = disposition.match(/filename="([^"]+)"/);
+                const filename = match ? match[1] : 'rejestr-wplat.csv';
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+            } catch (err) {
+                showAdminError(`Nie udało się pobrać CSV: ${err.message}`);
+            }
+        }
+
+        async function loadRevenueLimit() {
+            try {
+                const res = await fetch('/api/admin/settings/hotpay-revenue-limit', { headers });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                document.getElementById('revenueLimitInput').value = data.limitPLN;
+                document.getElementById('revenueLimitCollected').textContent = formatAmount(data.revenueThisMonthPLN);
+                document.getElementById('revenueLimitRemaining').textContent = data.limitPLN
+                    ? formatAmount(data.remainingPLN)
+                    : 'Brak limitu';
+            } catch (err) {
+                showAdminError(`Nie udało się wczytać limitu wpłat: ${err.message}`);
+            }
+        }
+
+        async function saveRevenueLimit() {
+            const value = Number(document.getElementById('revenueLimitInput').value);
+            if (!Number.isFinite(value) || value < 0) {
+                showAdminError('Podaj prawidłową, nieujemną kwotę limitu.');
+                return;
+            }
+            try {
+                const res = await fetch('/api/admin/settings/hotpay-revenue-limit', {
+                    method: 'PUT', headers, body: JSON.stringify({ limitPLN: value })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+                showAdminSuccess('Limit wpłat zapisany.');
+                loadRevenueLimit();
+            } catch (err) {
+                showAdminError(`Nie udało się zapisać limitu wpłat: ${err.message}`);
+            }
+        }
+
+        loadPayments();
+        loadRevenueLimit();
+    </script>
+    <script src="/cookie-consent.js"></script>
+    <script src="/page-scale.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+// Tlumaczenia strony statusu platnosci (platnosc-status.html) - tryb fraz, patrz public/i18n.js.
+window.WOL_AUTO_TEXTS = true;
+window.WOL_TEXTS = (window.WOL_TEXTS || []).concat([
+    ['War of Lords - Status płatności', 'War of Lords - Payment status'],
+    ['Brak informacji o zamówieniu', 'No order information'],
+    ['Nie znaleziono identyfikatora zamówienia w adresie strony.', 'No order ID was found in the page address.'],
+    ['Wróć do sklepu', 'Back to the shop'],
+    ['Mój profil', 'My profile'],
+    ['Płatność zakończona sukcesem!', 'Payment successful!'],
+    ['Bilet do Mini-Turnieju dodany do Twojego konta. Możesz teraz dołączyć do dowolnego Mini-Turnieju wymagającego biletu.', 'The Mini-Tournament Ticket has been added to your account. You can now join any Mini-Tournament that requires a ticket.'],
+    ['Dodano {0} {1} do Twojego konta. Zostałeś automatycznie zarejestrowany w turnieju.', 'Added {0} {1} to your account. You have been registered for the tournament automatically.'],
+    ['bilet turniejowy', 'tournament ticket'],
+    ['bilety turniejowe', 'tournament tickets'],
+    ['biletów turniejowych', 'tournament tickets'],
+    ['Wejdź do turnieju', 'Enter the tournament'],
+    ['Płatność nie powiodła się', 'Payment failed'],
+    ['Transakcja została odrzucona lub anulowana. Bilety nie zostały naliczone — spróbuj ponownie w sklepie.', 'The transaction was rejected or cancelled. No tickets were added — try again in the shop.'],
+    ['Płatność w toku', 'Payment in progress'],
+    ['Otrzymanie potwierdzenia trwa dłużej niż zwykle. Sprawdź saldo biletów za chwilę w Profilu — jeśli po kilku minutach nadal nic się nie zmieni, skontaktuj się z nami: support@waroflords.pl.', 'The confirmation is taking longer than usual. Check your tickets in your Profile in a moment — if nothing changes after a few minutes, contact us: support@waroflords.pl.'],
+    ['Błąd sprawdzania statusu', 'Status check error'],
+    ['Nie udało się sprawdzić statusu płatności. Odśwież stronę lub sprawdź Profil za chwilę.', 'Could not check the payment status. Refresh the page or check your Profile in a moment.'],
+    ['Płatność anulowana', 'Payment cancelled'],
+    ['Transakcja została anulowana lub odrzucona. Bilety nie zostały naliczone.', 'The transaction was cancelled or rejected. No tickets were added.'],
+    ['Zobacz Mini-Turnieje', 'See Mini-Tournaments'],
+    ['Sprawdzamy status płatności...', 'Checking the payment status...'],
+    ['To może potrwać kilka sekund. Nie zamykaj tej strony.', 'This may take a few seconds. Do not close this page.'],
+]);
