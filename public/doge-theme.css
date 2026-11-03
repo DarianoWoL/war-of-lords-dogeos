@@ -254,3 +254,15 @@ html[data-theme="doge"] button.map-node:hover { background: rgba(255,255,255,.28
 
 html[data-theme="doge"] button.map-node { background-image: none !important; box-shadow: 0 0 0 2px rgba(74,44,0,.4) !important; text-shadow: none !important; padding: 0 !important; }
 html[data-theme="doge"] button.map-node.map-node-mine { box-shadow: 0 0 0 2px rgba(74,44,0,.5), 0 0 12px 3px var(--mine-glow, transparent) !important; }
+
+/* Doge unit icons (little shibas with their gear) in recruitment and garrison tables */
+html[data-theme="doge"] tr[data-unit-row="archer"] > td:first-child { background: url("/assets/unit-archer.png") no-repeat 4px center / 38px 38px; padding-left: 48px !important; min-height: 44px; }
+html[data-theme="doge"] tr[data-unit-row="shield"] > td:first-child { background: url("/assets/unit-shield.png") no-repeat 4px center / 38px 38px; padding-left: 48px !important; min-height: 44px; }
+html[data-theme="doge"] tr[data-unit-row="axe"] > td:first-child { background: url("/assets/unit-axe.png") no-repeat 4px center / 38px 38px; padding-left: 48px !important; min-height: 44px; }
+html[data-theme="doge"] tr[data-unit-row="scout"] > td:first-child { background: url("/assets/unit-scout.png") no-repeat 4px center / 38px 38px; padding-left: 48px !important; min-height: 44px; }
+html[data-theme="doge"] tr[data-unit-row="cavalry"] > td:first-child { background: url("/assets/unit-cavalry.png") no-repeat 4px center / 38px 38px; padding-left: 48px !important; min-height: 44px; }
+html[data-theme="doge"] tr[data-unit-row="ram"] > td:first-child { background: url("/assets/unit-ram.png") no-repeat 4px center / 38px 38px; padding-left: 48px !important; min-height: 44px; }
+html[data-theme="doge"] tr[data-unit-row="lord"] > td:first-child { background: url("/assets/unit-lord.png") no-repeat 4px center / 38px 38px; padding-left: 48px !important; min-height: 44px; }
+html[data-theme="doge"] #recruitTable td, html[data-theme="doge"] #garrisonTable td { vertical-align: middle; }
+/* garrison rows are shorter: smaller icons with room around them */
+html[data-theme="doge"] #garrisonTable tr[data-unit-row] > td:first-child { background-size: 30px 30px !important; background-position: 2px center !important; padding-left: 38px !important; height: 36px; }

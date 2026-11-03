@@ -1350,6 +1350,7 @@ function updateRecruitment() {
     selectors.recruitTableBody.innerHTML = '';
     rows.forEach((row) => {
       const tr = document.createElement('tr');
+      tr.dataset.unitRow = row.id;
       tr.innerHTML = `
         <td>
           <div class="unit-name">${row.label}</div>
@@ -1435,6 +1436,7 @@ function updateGarrison() {
   const garrison = (village && village.garrison && typeof village.garrison === 'object') ? village.garrison : GameEngine.defaultVillageGarrison();
   state.units.forEach((unit) => {
     const row = document.createElement('tr');
+    row.dataset.unitRow = unit.id;
     row.innerHTML = `
       <td>${wolUnitName(unit)}</td>
       <td>${formatMinSec(GameEngine.getAttackTravelTime(unit.id))}</td>

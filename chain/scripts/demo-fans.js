@@ -55,7 +55,8 @@ async function api(method, p, token, body) {
       await users.updateOne({ _id: u._id }, { $set: { walletAddress: wallet.address.toLowerCase(), needsUsername: false } });
     }
     const token = jwt.sign({ id: String(u._id) }, process.env.JWT_SECRET || 'change_this_secret');
-    fans.push({ username, wallet, arena: new ethers.Contract(address, abi, wallet), token, busy: false });
+    const signer = new ethers.NonceManager(wallet);
+    fans.push({ username, wallet, signer, arena: new ethers.Contract(address, abi, signer), token, busy: false });
   }
   fs.writeFileSync(WALLET_FILE, JSON.stringify(saved, null, 2));
   log(`Widzowie: ${fans.map((f) => `${f.username} ${f.wallet.address}`).join(' | ')}`);
@@ -98,6 +99,7 @@ async function api(method, p, token, body) {
       }
     } catch (err) {
       log(`${f.username}: blad (${err.shortMessage || err.message})`);
+      if (f.signer && /nonce|replacement/i.test(String(err.shortMessage || err.message))) f.signer.reset(); // re-read the on-chain nonce next round
     } finally { f.busy = false; }
   }
 
