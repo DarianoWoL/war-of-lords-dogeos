@@ -442,9 +442,13 @@ Issued: ${new Date().toISOString()}`;
     return m;
   }
   async function openOnChain(m) {
-    const rc = await sendTx('openMarket', (c) => c.openMarket(m.marketId));
+    let rc = null;
+    try { rc = await sendTx('openMarket', (c) => c.openMarket(m.marketId)); } catch (e) {
+      // Already opened on-chain (an earlier attempt landed after we gave up): only the database still says 'opening'.
+      if (!/market exists/i.test(e.shortMessage || e.message || '')) throw e;
+    }
     m.status = 'open';
-    m.txs = { ...(m.txs || {}), open: rc.hash };
+    if (rc) m.txs = { ...(m.txs || {}), open: rc.hash };
     m.markModified('txs');
     await m.save();
   }

@@ -1,9 +1,9 @@
 // Theme switch: "Classic" (medieval) vs "Doge" (playful). Choice is remembered per browser.
 // Loaded in <head> of every page: applies the theme before first paint, then adds a small toggle.
 (function () {
-  var KEY = 'wolTheme', theme = 'classic';
+  var KEY = 'wolTheme', theme = 'doge';
   try { var q = /[?&]theme=(doge|classic)/.exec(location.search); if (q) localStorage.setItem(KEY, q[1]); } catch (e) {}
-  try { theme = localStorage.getItem(KEY) === 'doge' ? 'doge' : 'classic'; } catch (e) {}
+  try { theme = localStorage.getItem(KEY) === 'classic' ? 'classic' : 'doge'; } catch (e) {}
   var root = document.documentElement;
   root.setAttribute('data-theme', theme);
   if (theme === 'doge') document.write('<link rel="stylesheet" href="/doge-theme.css">');

@@ -225,3 +225,7 @@ html[data-theme="doge"] div[style*="position:fixed;inset:0"] > div p, html[data-
 html[data-theme="doge"] div[style*="position:fixed;inset:0"] > div input { background: #fff !important; color: var(--d-brown) !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important; }
 html[data-theme="doge"] div[style*="position:fixed;inset:0"] > div .wolSpin { border-color: #e0b84a !important; border-top-color: #ff8a00 !important; }
 html[data-theme="doge"] div[style*="position:fixed;inset:0"] > div button.wolNo { background: #fff !important; color: var(--d-brown) !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important; }
+
+/* Admin button (shown only for admins) sits on top of the pinned bar instead of hiding under it */
+html[data-theme="doge"] #adminPanelLink { z-index: 6000 !important; left: 360px !important; top: 32px !important; width: auto !important; height: auto !important; position: absolute !important; }
+html[data-theme="doge"] #adminPanelLink a { background: #fff !important; color: var(--d-brown) !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important; padding: 8px 18px !important; box-shadow: 0 3px 0 var(--d-brown); font-family: 'Fredoka', sans-serif; }
