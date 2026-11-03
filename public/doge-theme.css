@@ -94,7 +94,7 @@ html[data-theme="doge"] .rule b { color: #c45a00 !important; }
 html[data-theme="doge"] .player { border-top: 2px dashed #e0b84a !important; }
 html[data-theme="doge"] .player .info { color: #7a4a00 !important; }
 html[data-theme="doge"] .result { background: #fff3c4 !important; color: var(--d-brown) !important; border-radius: 14px !important; }
-html[data-theme="doge"] button:not(.secondary):not(#wolThemeToggle):not(.wolPill):not(.wolClaim) {
+html[data-theme="doge"] button:not(.secondary):not(#wolThemeToggle):not(.wolPill):not(.wolClaim):not(.map-node) {
   background: linear-gradient(180deg, #ffb52e, #ff8a00) !important; color: #fff !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important;
   box-shadow: 0 3px 0 var(--d-brown); font-family: 'Fredoka', sans-serif !important; text-shadow: 1px 1px 0 var(--d-brown);
 }
@@ -169,15 +169,8 @@ html[data-theme="doge"] #centerPanel > div:not(#villageImage) * { color: var(--d
 html[data-theme="doge"] .round-result-card { background: var(--d-card) !important; background-image: none !important; border: 4px solid var(--d-brown) !important; border-radius: 28px !important; }
 html[data-theme="doge"] .round-result-card * { color: var(--d-brown); }
 html[data-theme="doge"] #villageImage.map-mode { border: 4px solid var(--d-brown); border-radius: 26px; box-shadow: 0 6px 0 #c98400; filter: saturate(1.25) brightness(1.1); }
-/* villages as little doghouses / bones instead of orange buttons */
-html[data-theme="doge"] button.map-node { background: rgba(255,246,214,.95) !important; background-image: none !important; border: 3px solid var(--d-brown) !important; box-shadow: 0 3px 0 var(--d-brown) !important; color: var(--d-brown) !important; text-shadow: none !important; font-size: 0 !important; padding: 0 !important; }
-html[data-theme="doge"] button.map-node.main::before { content: '🐶'; font-size: 26px; }
-html[data-theme="doge"] button.map-node.sub::before { content: '🦴'; font-size: 20px; }
-html[data-theme="doge"] button.map-node.main:not(.sub)::before { content: '🏠'; }
 html[data-theme="doge"] .map-node-label { color: var(--d-brown) !important; background: rgba(255,246,214,.92); padding: 1px 8px; border-radius: 999px; border: 2px solid var(--d-brown); text-shadow: none !important; font-size: 12px; }
 html[data-theme="doge"] #topBar button:not(#exitGameBtn), html[data-theme="doge"] .village-nav-arrow { color: #fff !important; }
-html[data-theme="doge"] button.map-node.map-node.map-node:not(#x):not(#y) { background: rgba(255,246,214,.95) !important; background-image: none !important; color: var(--d-brown) !important; }
-html[data-theme="doge"] button.map-node.map-node.map-node:not(#x):not(#y).map-node-mine { box-shadow: 0 0 0 4px #ffd84a, 0 3px 0 var(--d-brown) !important; }
 
 /* Room tiles: picture banner on top of every card */
 html[data-theme="doge"] .room-card::before { content: ''; display: block; align-self: stretch; height: 150px; margin: -25px -25px 14px; background: var(--room-img, url('/assets/room-1.jpg')) center / cover no-repeat; border-bottom: 4px solid var(--d-brown); }
@@ -229,3 +222,35 @@ html[data-theme="doge"] div[style*="position:fixed;inset:0"] > div button.wolNo 
 /* Admin button (shown only for admins) sits on top of the pinned bar instead of hiding under it */
 html[data-theme="doge"] #adminPanelLink { z-index: 6000 !important; left: 360px !important; top: 32px !important; width: auto !important; height: auto !important; position: absolute !important; }
 html[data-theme="doge"] #adminPanelLink a { background: #fff !important; color: var(--d-brown) !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important; padding: 8px 18px !important; box-shadow: 0 3px 0 var(--d-brown); font-family: 'Fredoka', sans-serif; }
+
+/* Game modals (buildings, village list, reports, recruit queue) */
+html[data-theme="doge"] .modal-backdrop { background: rgba(74,44,0,.55) !important; }
+html[data-theme="doge"] .modal-content { background: var(--d-card) !important; background-image: none !important; border: 4px solid var(--d-brown) !important; border-radius: 28px !important; box-shadow: 0 8px 0 #c98400 !important; color: var(--d-brown) !important; }
+html[data-theme="doge"] .modal-content *:not(button):not(input) { color: var(--d-brown) !important; text-shadow: none !important; }
+html[data-theme="doge"] .modal-content h2, html[data-theme="doge"] .modal-content h3 { color: #c45a00 !important; }
+html[data-theme="doge"] .modal-content table { background: #fff !important; }
+html[data-theme="doge"] .modal-content th { background: var(--d-yellow) !important; }
+html[data-theme="doge"] .modal-content td { border-color: #e0b84a !important; }
+html[data-theme="doge"] .modal-content td small, html[data-theme="doge"] .modal-content td span { color: #7a4a00 !important; }
+html[data-theme="doge"] .modal-content input { background: #fff !important; color: var(--d-brown) !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important; }
+html[data-theme="doge"] .modal-content div[style], html[data-theme="doge"] #upgradeModal .modal-content > div { border-color: #e0b84a !important; }
+html[data-theme="doge"] .modal-content .close-btn { background: linear-gradient(180deg, #ffb52e, #ff8a00) !important; color: #fff !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important; }
+html[data-theme="doge"] #upgradeModal .modal-content > div:not(.modal-footer-row) { background: #fff8e0 !important; border-radius: 18px; }
+/* lobby status title on the picture */
+html[data-theme="doge"] .lobby-wrapper h2, html[data-theme="doge"] .lobby-wrapper h3, html[data-theme="doge"] #lobbyStatus, html[data-theme="doge"] .lobby-wrapper > div > p { color: var(--d-brown) !important; text-shadow: 1px 1px 0 var(--d-yellow) !important; }
+/* tall/narrow screens (phones): the picture covers the whole screen instead of stopping halfway */
+@media (max-aspect-ratio: 1/1) { html[data-theme="doge"] { background-size: cover !important; background-position: center top !important; background-attachment: fixed !important; } }
+html[data-theme="doge"] .build-queue-panel, html[data-theme="doge"] .build-queue-list, html[data-theme="doge"] #reportsModal #reportsList { background: #fff8e0 !important; background-image: none !important; border: 3px solid var(--d-brown) !important; border-radius: 18px !important; color: var(--d-brown) !important; }
+html[data-theme="doge"] .build-queue-list *:not(button) { color: var(--d-brown) !important; }
+html[data-theme="doge"] .reports-mode-btn { background: #fff !important; color: var(--d-brown) !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important; text-shadow: none !important; }
+html[data-theme="doge"] .reports-mode-btn.active { background: linear-gradient(180deg, #ffb52e, #ff8a00) !important; color: #fff !important; }
+
+/* Map: own Doge map picture, villages are baked into it; markers are plain rings (owner colour comes from the game) */
+html[data-theme="doge"] #villageImage.map-mode { background-image: url('/assets/doge-map.jpg') !important; background-size: 100% 100% !important; background-color: #8fde62 !important; filter: none !important; }
+html[data-theme="doge"] #mapCanvas { box-shadow: none !important; }
+html[data-theme="doge"] #mapCanvas::before { display: none !important; }
+html[data-theme="doge"] button.map-node { background: transparent; border: 3px solid rgba(255,255,255,.7); box-shadow: 0 0 0 2px rgba(74,44,0,.45); font-size: 0; }
+html[data-theme="doge"] button.map-node:hover { background: rgba(255,255,255,.28); }
+
+html[data-theme="doge"] button.map-node { background-image: none !important; box-shadow: 0 0 0 2px rgba(74,44,0,.4) !important; text-shadow: none !important; padding: 0 !important; }
+html[data-theme="doge"] button.map-node.map-node-mine { box-shadow: 0 0 0 2px rgba(74,44,0,.5), 0 0 12px 3px var(--mine-glow, transparent) !important; }
