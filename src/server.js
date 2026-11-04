@@ -3672,6 +3672,31 @@ app.get('/api/game/layout', authMiddleware, async (req, res) => {
   }
 });
 
+// ---- Demo only (DEMO_FILL=on): a waiting player can ask for the remaining places to be filled with bots.
+// The bot runner (chain/scripts/demo-players.js, ONDEMAND=1) polls the demo_fill_requests collection and
+// puts that many idle bots into the queue. Off by default, so a normal deployment never sees this.
+const DEMO_FILL_ROOMS = (process.env.DEMO_FILL_ROOMS || 'Mini Turniej #1').split(',').map((x) => x.trim());
+app.get('/api/demo/config', (req, res) => res.json({ fill: process.env.DEMO_FILL === 'on' }));
+app.post('/api/demo/fill-bots', authMiddleware, async (req, res) => {
+  try {
+    if (process.env.DEMO_FILL !== 'on') return res.status(403).json({ error: 'Not available.' });
+    const roomId = String(req.body.roomId || '');
+    const room = await Room.findById(roomId).select('roomName maxPlayers isMiniTournament');
+    if (!room || !room.isMiniTournament) return res.status(404).json({ error: 'Room not found.' });
+    if (!DEMO_FILL_ROOMS.includes(room.roomName)) return res.status(400).json({ error: 'Bots are not available in this room.' });
+    const queue = miniTournamentQueues.get(roomId) || [];
+    if (!queue.some((p) => p.userId === String(req.userId))) return res.status(400).json({ error: 'Join the queue first.' });
+    if (pendingMatches.has(roomId)) return res.status(400).json({ error: 'A match is already forming.' });
+    const need = (room.maxPlayers || 10) - queue.length;
+    if (need <= 0) return res.json({ ok: true, need: 0 });
+    await mongoose.connection.db.collection('demo_fill_requests').insertOne({ roomId, need, createdAt: new Date(), done: false });
+    res.json({ ok: true, need });
+  } catch (err) {
+    console.error('demo fill error', err);
+    res.status(500).json({ error: 'Failed.' });
+  }
+});
+
 app.post('/api/rooms/:id/join', authMiddleware, async (req, res) => {
   try {
     const roomId = req.params.id;
@@ -3902,23 +3927,6 @@ chainApi = require('./chain').init({
 });
 
 // serve static client
-// LOCAL PREVIEW ONLY (WoL-Doge copy): sign in as a test user without a wallet. Off unless DEV_LOGIN=1, and only from this computer.
-app.get('/dev-login', async (req, res) => {
-  const local = ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket.remoteAddress);
-  if (process.env.DEV_LOGIN !== '1' || !local) return res.status(404).send('Not found');
-  const username = String(req.query.user || 'Dev_Viewer').replace(/[^A-Za-z0-9_]/g, '').slice(0, 20) || 'Dev_Viewer';
-  let user = await User.findOne({ username });
-  if (!user) {
-    const now = new Date();
-    user = (await User.collection.insertOne({ username, passwordHash: 'x', tournamentMMR: 1000, skillPoints: 1200, dogeBalance: 0, tournamentTickets: 0,
-      hasUnusedMiniTournamentTicket: true, isAdmin: false, isBlocked: false, isBot: false, needsUsername: false, termsAcceptedAt: now, privacyAcceptedAt: now, createdAt: now, updatedAt: now }));
-    user = await User.findOne({ username });
-  }
-  await User.collection.updateOne({ _id: user._id }, { $set: { hasUnusedMiniTournamentTicket: true } });
-  const token = jwt.sign({ id: user._id }, JWT_SECRET);
-  res.send('<script>localStorage.setItem("authToken",' + JSON.stringify(token) + ');localStorage.setItem("token",' + JSON.stringify(token) + ');localStorage.setItem("username",' + JSON.stringify(username) + ');localStorage.setItem("wolTheme","doge");location.href="/index.html";</script>');
-});
-
 app.use('/', express.static('public'));
 
 // Bledy z tras (patrz opakowanie przy tworzeniu app): zly identyfikator -> 400, reszta -> 500.

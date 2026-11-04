@@ -266,3 +266,6 @@ html[data-theme="doge"] tr[data-unit-row="lord"] > td:first-child { background: 
 html[data-theme="doge"] #recruitTable td, html[data-theme="doge"] #garrisonTable td { vertical-align: middle; }
 /* garrison rows are shorter: smaller icons with room around them */
 html[data-theme="doge"] #garrisonTable tr[data-unit-row] > td:first-child { background-size: 30px 30px !important; background-position: 2px center !important; padding-left: 38px !important; height: 36px; }
+
+/* Lobby status line ("Waiting for players...") — readable on the sky background */
+html[data-theme="doge"] #timerDisplay { color: #4a2c00 !important; text-shadow: 0 2px 0 #fff3c4, 0 0 12px rgba(255,255,255,.9); font-weight: 900; }

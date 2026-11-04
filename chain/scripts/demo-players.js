@@ -66,6 +66,36 @@ const log = (...a) => console.log(new Date().toLocaleTimeString(), ...a);
       } catch (err) { log(`${b.username}: blad (${err.message}) - sprobuje ponownie`); }
     }
   }
+  // Tryb ONDEMAND=1: boty NIE szukaja gry same. Wchodza do kolejki dopiero na prosbe gracza
+  // (przycisk "Fill the remaining places with bots" w poczekalni zapisuje prosbe w demo_fill_requests).
+  if (process.env.ONDEMAND === '1') {
+    const joinBot = async (b) => {
+      await db.collection('users').updateOne({ _id: new mongoose.Types.ObjectId(b.id) }, { $set: { hasUnusedMiniTournamentTicket: true, tournamentMMR: 1000 } });
+      const res = await fetch(`${BASE}/api/rooms/${roomId}/join`, { method: 'POST', headers: { authorization: 'Bearer ' + b.token, 'content-type': 'application/json', ...INVITE } });
+      if (res.ok && b.socket.connected) b.socket.emit('matchmaking:join', { id: b.id, roomId });
+      return res.ok;
+    };
+    const handleRequests = async () => {
+      try {
+        const reqs = await db.collection('demo_fill_requests').find({ roomId, done: false }).sort({ createdAt: 1 }).toArray();
+        for (const r of reqs) {
+          await db.collection('demo_fill_requests').updateOne({ _id: r._id }, { $set: { done: true } });
+          if (Date.now() - new Date(r.createdAt).getTime() > 60000) continue; // stara prosba - pomijamy
+          let left = r.need;
+          for (const b of bots) {
+            if (left <= 0) break;
+            const playing = await db.collection('rounds').countDocuments({ status: 'active', 'state.players': { $elemMatch: { userId: b.id, hasLeft: { $ne: true } } } });
+            if (playing) continue;
+            if (await joinBot(b)) { left -= 1; log(`${b.username}: wszedl do kolejki na prosbe gracza`); }
+          }
+          if (left > 0) log(`Brakuje ${left} wolnych botow`);
+        }
+      } catch (err) { log('blad obslugi prosby: ' + err.message); }
+    };
+    setInterval(handleRequests, 1500);
+    log('Boty czekaja na prosbe gracza (tryb ONDEMAND).');
+    return;
+  }
   await keepSearching();
   setInterval(keepSearching, 20000);
   log('Boty pracuja. Zatrzymanie: zamknij proces node (demo-players).');

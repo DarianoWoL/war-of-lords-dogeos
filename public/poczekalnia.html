@@ -1203,6 +1203,28 @@
             document.getElementById('teamPlayerSection').style.display = 'none'; // mini-tournament rooms are always 'standard'
         }
 
+        // Demo: a waiting player (or a few friends, each already in the queue) can fill the empty places with bots.
+        let demoFillOn = null;
+        async function setupFillBots() {
+            const btn = document.getElementById('mmFillBtn'); if (!btn) return;
+            try {
+                if (demoFillOn === null) { const c = await fetch('/api/demo/config').then((r) => r.json()); demoFillOn = !!c.fill; }
+            } catch (e) { demoFillOn = false; }
+            if (!demoFillOn) return;
+            btn.style.display = 'inline-block';
+            btn.addEventListener('click', async () => {
+                const note = document.getElementById('mmFillNote');
+                btn.disabled = true;
+                try {
+                    const res = await fetch('/api/demo/fill-bots', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ roomId: roomId }) });
+                    const d = await res.json();
+                    note.style.display = 'block';
+                    if (res.ok) note.textContent = d.need ? ('Bots are joining (' + d.need + ')…') : 'The room is already full.';
+                    else { note.textContent = d.error || 'Not available.'; btn.disabled = false; }
+                } catch (e) { note.style.display = 'block'; note.textContent = 'Not available.'; btn.disabled = false; }
+            });
+        }
+
         function renderMatchmakingBox() {
             const box = document.getElementById('mmBox');
             if (!box) return;
@@ -1213,9 +1235,12 @@
                     <div class="mm-icon">🔍</div>
                     <div class="mm-status-text">Looking for players...</div>
                     <div class="mm-sub-text">Wait while the system matches ${window.__roomMaxPlayers || 10} players of a similar level. Opponents stay anonymous until the match starts.</div>
+                    <button type="button" class="mm-accept-btn" id="mmFillBtn" style="display:none; margin-bottom:10px;">🤖 Fill the remaining places with bots</button>
+                    <div class="mm-sub-text" id="mmFillNote" style="display:none;"></div>
                     <button type="button" class="mm-cancel-btn" id="mmCancelBtn">Cancel search</button>
                 `;
                 document.getElementById('mmCancelBtn').addEventListener('click', cancelMatchmakingSearch);
+                setupFillBots();
                 return;
             }
 
