@@ -66,7 +66,7 @@
 <body>
 <div class="banner">SIMULATION &mdash; virtual players and test DOGE on the DogeOS testnet. Nothing here is real money.</div>
 <header>
-  <h1>Monthly Tournament<small>350 players &middot; 4 qualification rounds &middot; semifinals &middot; final &middot; live bets on the final</small></h1>
+  <h1>Monthly Tournament<small>350 players &middot; 4 qualification rounds &middot; semifinals &middot; final</small></h1>
   <a class="back" href="/">&larr; Back to the game</a>
 </header>
 <main>
@@ -105,9 +105,7 @@
       <label>Prize 2nd<input id="cP2" type="number" value="1000"></label>
       <label>Prize 3rd<input id="cP3" type="number" value="700"></label>
       <label>Prize 4th-10th (each)<input id="cP4" type="number" value="200"></label>
-      <label>Winner bonus cap (% of 1st prize)<input id="cCap" type="number" value="50" min="0" max="100"></label>
-      <label>Spectators betting<input id="cSpec" type="number" value="300" min="0" max="2000"></label>
-      <label>Bet stake (DOGE)<input id="cStake" type="number" value="20" min="1"></label>
+      <input id="cCap" type="hidden" value="0"><input id="cSpec" type="hidden" value="0"><input id="cStake" type="hidden" value="0">
       <label>Seed (change for a different story)<input id="cSeed" type="number" value="2026"></label>
     </div>
     <div class="controls" style="margin-top:12px"><button id="apply">Run this simulation</button></div>
@@ -168,27 +166,8 @@
     const finalRanked = finalMembers.slice().sort((a, b) => b.s - a.s).map((m, idx) => ({ ...m, place: idx + 1 }));
     const winnerId = finalRanked[0].id;
 
-    // betting on the final: each spectator picks a favourite (skill + noise), fixed stake
     const counts = finalists.map(() => 0);
-    for (let i = 0; i < cfg.spectators; i++) {
-      let best = 0, bv = -1e9;
-      finalists.forEach((id, k) => { const v = P[id].skill * 1.1 + gauss(r) * 1.0; if (v > bv) { bv = v; best = k; } });
-      counts[best]++;
-    }
-    const total = cfg.spectators * cfg.stake;
-    const winIdx = finalists.indexOf(winnerId);
-    const backers = counts[winIdx];
-    let bet;
-    const MIN_BETS = 3;
-    const cap = cfg.p1 * cfg.cap; // bonus zwyciezcy nie moze przekroczyc 50% pierwszej nagrody
-    if (cfg.spectators < MIN_BETS || backers === 0 || backers === cfg.spectators) {
-      bet = { refund: true, total, backers, perBacker: cfg.stake, bonus: 0, house: 0, sharePool: total, capped: false };
-    } else {
-      const winnersStake = backers * cfg.stake;
-      let house = total * 0.2, bonus = Math.min(total * 0.2, cap), sharePool = total - house - bonus;
-      if (sharePool < winnersStake) { sharePool = winnersStake; const rest2 = total - winnersStake; bonus = Math.min(rest2 / 2, cap); house = rest2 - bonus; }
-      bet = { refund: false, total, backers, sharePool, perBacker: sharePool / backers, bonus, house, capped: bonus < total * 0.2 - 0.001 };
-    }
+    const bet = { refund: true, total: 0, backers: 0, perBacker: 0, bonus: 0, house: 0, sharePool: 0, capped: false };
     // money
     const revenue = N * cfg.price;
     const treasury = revenue * 0.1;
@@ -233,7 +212,7 @@
   }
 
   // ------------------------------------------------------------------ pipeline bar
-  const STAGES = [['Tickets', 'intro'], ['Qualification', 'qual'], ['Top 40', 'cut'], ['Semifinals', 'semi'], ['Final + bets', 'final'], ['Results', 'money']];
+  const STAGES = [['Tickets', 'intro'], ['Qualification', 'qual'], ['Top 40', 'cut'], ['Semifinals', 'semi'], ['Final', 'final'], ['Results', 'money']];
   function buildPipeline() {
     $('pipeline').innerHTML = STAGES.map(([n], i) => `<div class="pipe" data-i="${i}"><b>${n}</b><span class="sub"></span></div>`).join('');
   }
@@ -309,8 +288,6 @@
       sim.semiRooms.forEach((rm, j) => ev.push({ t: ph.start + ph.dur * (0.3 + j * 0.2), html: `Semifinal ${j + 1}: <b>${nm(rm.ranked[0].id)}</b> takes the room, ${nm(rm.ranked[1].id)} follows` }));
       ev.push({ t: ph.start + ph.dur * 0.92, html: `Wildcards: <b>${sim.wild.map(nm).join(', ')}</b>` });
     } else if (ph.kind === 'final') {
-      ev.push({ t: ph.start + ph.dur * 0.08, html: `Betting is open: <b>${fmt(sim.cfg.spectators)}</b> spectators, ${sim.cfg.stake} DOGE each` });
-      ev.push({ t: ph.start + ph.dur * 0.34, html: `Betting closed. Pool: <b>${fmt(sim.bet.total)} DOGE</b>` });
       ev.push({ t: ph.start + ph.dur * 0.5, html: 'The final has started — 10 lords fight for the crown' });
       ev.push({ t: ph.start + ph.dur * 0.86, html: `<b>${nm(sim.winnerId)}</b> wins the Monthly Tournament!` });
     }
@@ -385,32 +362,24 @@
   function drawFinal(ph, p) {
     show('final');
     const names = sim.P.map((x) => x.name), F = sim.finalists, openP = seg(p, 0.04, 0.3), runP = seg(p, 0.5, 0.82);
-    $('stTitle').textContent = p < 0.34 ? 'Final — bets are open' : p < 0.5 ? 'Final — bets closed' : 'Final';
-    $('stSub').textContent = p < 0.34 ? 'Spectators pick the winner (' + sim.cfg.stake + ' DOGE each)' : p < 0.84 ? 'The 10 finalists fight' : 'Result';
+    $('stTitle').textContent = 'Final';
+    $('stSub').textContent = p < 0.84 ? 'The 10 finalists fight' : 'Result';
     cx.clearRect(0, 0, W(), H());
     const members = sim.finalRanked.map((m) => ({ ...m })), order = F.map((id) => members.find((m) => m.id === id));
     const rowH = (H() - 16) / 10, maxCount = Math.max(...sim.counts, 1), maxS = 420;
     order.forEach((m, i) => {
-      const y = 8 + i * rowH, betW = (W() * 0.38) * (sim.counts[i] * openP) / maxCount, scW = (W() * 0.5) * Math.min(1, (m.s * runP) / maxS);
+      const y = 8 + i * rowH, scW = (W() * 0.7) * Math.min(1, (m.s * runP) / maxS);
       cx.fillStyle = 'rgba(15,23,42,.8)'; cx.fillRect(4, y, W() - 8, rowH - 3);
       cx.fillStyle = '#e2e8f0'; cx.font = 'bold 12.5px Segoe UI'; cx.fillText(names[m.id], 12, y + rowH / 2 + 4);
-      // bets (left bar) and score (right bar)
-      cx.fillStyle = '#7c3aed'; cx.fillRect(150, y + 4, betW, rowH - 11);
-      cx.fillStyle = '#c4b5fd'; cx.font = '11px Segoe UI'; cx.fillText(Math.round(sim.counts[i] * openP) + ' bets', 154 + betW, y + rowH / 2 + 4);
       const done = runP > 0.97, c = done && medal(m.place) ? medal(m.place) : '#3b82f6';
-      cx.fillStyle = c; cx.fillRect(W() * 0.48 + 70, y + 4, scW * 0.9, rowH - 11);
-      if (runP > 0.3) { cx.fillStyle = '#fde68a'; cx.fillText(String(Math.round(m.s * runP)), W() * 0.48 + 74 + scW * 0.9, y + rowH / 2 + 4); }
+      cx.fillStyle = c; cx.fillRect(150, y + 4, scW * 0.9, rowH - 11);
+      if (runP > 0.3) { cx.fillStyle = '#fde68a'; cx.fillText(String(Math.round(m.s * runP)), 154 + scW * 0.9, y + rowH / 2 + 4); }
       if (done && m.place <= 3) { cx.fillStyle = medal(m.place); cx.font = 'bold 12px Segoe UI'; cx.fillText('#' + m.place, W() - 30, y + rowH / 2 + 4); }
     });
-    cx.fillStyle = '#94a3b8'; cx.font = '11px Segoe UI'; cx.fillText('bets', 150, 8); cx.fillText('final score', W() * 0.48 + 70, 8);
+    cx.fillStyle = '#94a3b8'; cx.font = '11px Segoe UI'; cx.fillText('final score', 150, 8);
     setLb('Final standings', order.map((m) => ({ name: names[m.id], score: m.s * runP })).sort((a, b) => b.score - a.score), 0);
-    // betting panel
-    const n = Math.round(sim.cfg.spectators * openP), pool = n * sim.cfg.stake, b = sim.bet, closed = p >= 0.34, res = p > 0.86;
-    let html = `<div class="counters"><div class="counter"><b>${fmt(n)}</b><span>bets placed</span></div><div class="counter"><b>${fmt(pool)} DOGE</b><span>betting pool</span></div><div class="counter"><b>${closed ? 'closed' : 'open'}</b><span>1/6 of the round</span></div></div>`;
-    if (res) {
-      html += b.refund ? '<p class="st" style="text-align:center;margin-top:12px">Not enough bets or nobody picked the winner &mdash; every bet is refunded.</p>'
-        : `<p style="text-align:center;margin-top:12px;font-size:15px">Winner <b class="g">${names[sim.winnerId]}</b> &mdash; <b class="w">${fmt(b.backers)}</b> spectators picked him and each gets <b class="w">${fmt(b.perBacker, 1)} DOGE</b> (stake ${sim.cfg.stake}). The winner of the game gets a bonus of <b class="g">${fmt(b.bonus, 1)} DOGE</b>, the game keeps <b>${fmt(b.house, 1)} DOGE</b>.</p>`;
-    }
+    const b = sim.bet; let html = '';
+    if (p > 0.86) html = `<p style="text-align:center;margin-top:12px;font-size:15px">Winner <b class="g">${names[sim.winnerId]}</b> takes the crown and the first prize.</p>`;
     $('betbox').innerHTML = html;
   }
 
@@ -425,9 +394,8 @@
         <div class="podium"><div class="pod p2"><div>🥈</div><div class="nm">${names[podium[1].id]}</div><div class="g">${fmt(M.prizes[1].prize)} DOGE</div></div><div class="pod p1"><div>🥇</div><div class="nm">${win}</div><div class="g">${fmt(M.prizes[0].prize)}${b.bonus ? ' + ' + fmt(b.bonus, 1) : ''} DOGE</div></div><div class="pod p3"><div>🥉</div><div class="nm">${names[podium[2].id]}</div><div class="g">${fmt(M.prizes[2].prize)} DOGE</div></div></div></div></div>` },
       { at: 0.16, html: `<div class="card panel"><h3>Tickets</h3><table><tr><td>${fmt(c.players)} tickets × ${c.price} DOGE</td><td class="n g">${fmt(M.revenue)} DOGE</td></tr><tr><td>→ game treasury (10%)</td><td class="n">${fmt(M.treasury)}</td></tr><tr><td>→ prize pool (90%)</td><td class="n">${fmt(M.pool)}</td></tr>${M.prizeTotal > M.pool ? '<tr><td colspan="2" class="l">Prizes are higher than the pool from tickets — the rest comes from the reserve.</td></tr>' : ''}</table></div>` },
       { at: 0.30, html: `<div class="card panel"><h3>Prizes paid to players</h3><table>${M.prizes.map((x) => `<tr><td>#${x.place} ${names[x.id]}</td><td class="n ${x.place <= 3 ? 'g' : ''}">${fmt(x.prize)}${x.bonus ? ' + ' + fmt(x.bonus, 1) + ' bonus' : ''}</td></tr>`).join('')}<tr><td><b>Total prizes</b></td><td class="n g">${fmt(M.prizeTotal)}</td></tr></table></div>` },
-      { at: 0.46, html: `<div class="card panel"><h3>Bets on the final</h3><table><tr><td>${fmt(c.spectators)} bets × ${c.stake} DOGE</td><td class="n g">${fmt(b.total)} DOGE</td></tr>${b.refund ? '<tr><td>Everybody refunded</td><td class="n">&mdash;</td></tr>' : `<tr><td>Game treasury (20%)</td><td class="n">${fmt(b.house, 1)}</td></tr><tr><td>Winner of the game (20%, max ${fmt(c.cap * 100)}% of 1st prize)${b.capped ? ' — capped' : ''}</td><td class="n g">${fmt(b.bonus, 1)}</td></tr><tr><td>${fmt(b.backers)} backers of the winner (the rest)</td><td class="n w">${fmt(b.sharePool)} → ${fmt(b.perBacker, 1)} each</td></tr><tr><td>Spectators who lost</td><td class="n l">${fmt(c.spectators - b.backers)} × −${c.stake}</td></tr>`}</table></div>` },
-      { at: 0.62, html: `<div class="card panel"><h3>What the game earned</h3><table><tr><td>Treasury from tickets</td><td class="n">${fmt(M.treasury)}</td></tr><tr><td>Treasury from bets</td><td class="n">${fmt(b.house, 1)}</td></tr><tr><td><b>Game earned</b></td><td class="n g">${fmt(gameEarn, 1)} DOGE</td></tr><tr><td>Left in the prize pool for the next tournaments</td><td class="n w">${fmt(M.carry)} DOGE</td></tr></table></div>` },
-      { at: 0.78, html: `<div class="card panel"><h3>Who earned what</h3><table><tr><td>Champion ${win}</td><td class="n g">${fmt(M.prizes[0].amount, 1)} − ${c.price} ticket</td></tr><tr><td>Other 9 finalists</td><td class="n w">${fmt(M.prizes.slice(1).reduce((s, x) => s + x.prize, 0))} total</td></tr><tr><td>${fmt(c.players - 10)} other players</td><td class="n l">− ${c.price} each</td></tr><tr><td>Spectators (backers)</td><td class="n w">${b.refund ? '0' : '+' + fmt(b.perBacker - c.stake, 1) + ' each'}</td></tr></table></div>` }
+      { at: 0.62, html: `<div class="card panel"><h3>What the game earned</h3><table><tr><td>Treasury from tickets</td><td class="n">${fmt(M.treasury)}</td></tr><tr><td><b>Game earned</b></td><td class="n g">${fmt(gameEarn, 1)} DOGE</td></tr><tr><td>Left in the prize pool for the next tournaments</td><td class="n w">${fmt(M.carry)} DOGE</td></tr></table></div>` },
+      { at: 0.78, html: `<div class="card panel"><h3>Who earned what</h3><table><tr><td>Champion ${win}</td><td class="n g">${fmt(M.prizes[0].amount, 1)} − ${c.price} ticket</td></tr><tr><td>Other 9 finalists</td><td class="n w">${fmt(M.prizes.slice(1).reduce((s, x) => s + x.prize, 0))} total</td></tr><tr><td>${fmt(c.players - 10)} other players</td><td class="n l">− ${c.price} each</td></tr></table></div>` }
     ];
     const box = $('money');
     if (box.dataset.sim !== String(c.seed) + c.players + c.spectators || !box.children.length) { box.dataset.sim = String(c.seed) + c.players + c.spectators; box.className = 'money'; box.innerHTML = cards.map((x, i) => x.html.replace('<div class="card', `<div data-at="${x.at}" class="card`)).join(''); }
