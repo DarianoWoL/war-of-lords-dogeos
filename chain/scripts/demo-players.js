@@ -14,9 +14,9 @@ const BASE = process.env.BASE || 'http://127.0.0.1:3000';
 // Wersja demo na VPS jest zamknieta linkiem z kluczem - skrypty podaja klucz w ciasteczku.
 const INVITE = process.env.INVITE_TOKEN ? { cookie: 'wol_invite=' + encodeURIComponent(process.env.INVITE_TOKEN) } : {};
 const ROOM = process.argv[2] || 'Mini Turniej #1';
-const COUNT = Math.min(Number(process.argv[3]) || 3, 8 - Number(process.env.NAME_OFFSET || 0));
 const OFFSET = Number(process.env.NAME_OFFSET || 0);
-const NAMES = ['Demo_Aldric', 'Demo_Morwen', 'Demo_Grimm', 'Demo_Elara', 'Demo_Thorne', 'Demo_Vesper', 'Demo_Kael', 'Demo_Sable'];
+const NAMES = ['Demo_Aldric', 'Demo_Morwen', 'Demo_Grimm', 'Demo_Elara', 'Demo_Thorne', 'Demo_Vesper', 'Demo_Kael', 'Demo_Sable', 'Demo_Brannoch', 'Demo_Isolde', 'Demo_Ragnar', 'Demo_Selene', 'Demo_Torvald', 'Demo_Maera', 'Demo_Eadric', 'Demo_Lyra', 'Demo_Osric', 'Demo_Wynn'];
+const COUNT = Math.min(Number(process.argv[3]) || 3, NAMES.length - Number(process.env.NAME_OFFSET || 0));
 const log = (...a) => console.log(new Date().toLocaleTimeString(), ...a);
 
 (async () => {

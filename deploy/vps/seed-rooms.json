@@ -1,0 +1,66 @@
+[
+  {
+    "roomName": "Mini Tournament · 1 hour",
+    "enabled": true,
+    "isPaused": false,
+    "entryFee": 0,
+    "maxPlayers": 10,
+    "roomType": "standard",
+    "isTournament": false,
+    "tournamentStage": "qualification",
+    "isMiniTournament": true,
+    "miniTournamentPrizes": {
+      "place1VPLN": 20,
+      "place2VPLN": 10,
+      "place3VPLN": 5
+    },
+    "requiresMiniTournamentTicket": true,
+    "teamCount": 2,
+    "playersCanAddBots": false,
+    "settings": {
+      "dlugoscRundySekundy": 3600,
+      "modyfikatorCzasuEkonomii": 0,
+      "modyfikatorCzasuWojska": 0,
+      "nagrodaTop1": 0,
+      "nagrodaTop2": 0,
+      "nagrodaTop3": 0,
+      "nagrodaAgresor": 0
+    },
+    "poolPP": 0,
+    "waitingPlayers": [],
+    "createdAt": "2026-08-27T10:51:55.326Z",
+    "__v": 0
+  },
+  {
+    "roomName": "Mini Tournament · 30 min",
+    "enabled": true,
+    "isPaused": false,
+    "entryFee": 0,
+    "maxPlayers": 10,
+    "roomType": "standard",
+    "isTournament": false,
+    "tournamentStage": "qualification",
+    "isMiniTournament": true,
+    "miniTournamentPrizes": {
+      "place1VPLN": 20,
+      "place2VPLN": 10,
+      "place3VPLN": 5
+    },
+    "requiresMiniTournamentTicket": true,
+    "teamCount": 2,
+    "playersCanAddBots": false,
+    "settings": {
+      "dlugoscRundySekundy": 1800,
+      "modyfikatorCzasuEkonomii": 0,
+      "modyfikatorCzasuWojska": 0,
+      "nagrodaTop1": 0,
+      "nagrodaTop2": 0,
+      "nagrodaTop3": 0,
+      "nagrodaAgresor": 0
+    },
+    "poolPP": 0,
+    "waitingPlayers": [],
+    "createdAt": "2026-08-27T10:52:14.598Z",
+    "__v": 60
+  }
+]

@@ -881,11 +881,14 @@ registerRoundFinishHook(async (round) => {
   };
   const prizeResults = [];
   const chainEntries = [];
+  // Demo build: the Demo_* filler bots never receive a prize (their placement just goes unpaid).
+  const demoBotIds = new Set((await User.find({ _id: { $in: ranked.slice(0, 3).map((p) => p.userId).filter(Boolean) }, username: /^Demo_/ }).select('_id')).map((u) => String(u._id)));
   for (let i = 0; i < Math.min(3, ranked.length); i += 1) {
     const placement = i + 1;
     const vplnAwarded = prizeByPlacement[placement];
     const p = ranked[i];
     if (!vplnAwarded || !p?.userId) continue;
+    if (demoBotIds.has(String(p.userId))) continue;
     prizeResults.push({ placement, userId: p.userId, username: p.name, vplnAwarded });
     // Paid out 100% gross — no tax withheld (see regulamin.html §5b / TournamentResults.js comment).
     try {

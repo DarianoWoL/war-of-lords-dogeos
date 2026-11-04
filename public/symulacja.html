@@ -100,11 +100,11 @@
     <summary>Settings &mdash; run your own simulation</summary>
     <div class="setgrid">
       <label>Players (multiple of 10)<input id="cPlayers" type="number" value="350" min="100" max="350" step="10"></label>
-      <label>Ticket price (DOGE)<input id="cPrice" type="number" value="20" min="1"></label>
-      <label>Prize 1st<input id="cP1" type="number" value="1500"></label>
-      <label>Prize 2nd<input id="cP2" type="number" value="1000"></label>
-      <label>Prize 3rd<input id="cP3" type="number" value="700"></label>
-      <label>Prize 4th-10th (each)<input id="cP4" type="number" value="200"></label>
+      <label>Ticket price (DOGE)<input id="cPrice" type="number" value="50" min="1"></label>
+      <label>Prize 1st<input id="cP1" type="number" value="4000"></label>
+      <label>Prize 2nd<input id="cP2" type="number" value="2500"></label>
+      <label>Prize 3rd<input id="cP3" type="number" value="1500"></label>
+      <label>Prize 4th-10th (each)<input id="cP4" type="number" value="500"></label>
       <input id="cCap" type="hidden" value="0"><input id="cSpec" type="hidden" value="0"><input id="cStake" type="hidden" value="0">
       <label>Seed (change for a different story)<input id="cSeed" type="number" value="2026"></label>
     </div>
@@ -203,7 +203,7 @@
   const seg = (p, a, b) => ease((p - a) / (b - a));
 
   function cfgFromInputs() {
-    return { players: Math.round(Math.min(350, Math.max(100, Number($('cPlayers').value) || 350)) / 10) * 10, price: Number($('cPrice').value) || 20, p1: Number($('cP1').value) || 0, p2: Number($('cP2').value) || 0, p3: Number($('cP3').value) || 0, p4: Number($('cP4').value) || 0, spectators: Math.max(0, Number($('cSpec').value) || 0), stake: Number($('cStake').value) || 20, cap: Math.max(0, Number($('cCap').value)) / 100, seed: Number($('cSeed').value) || 1 };
+    return { players: Math.round(Math.min(350, Math.max(100, Number($('cPlayers').value) || 350)) / 10) * 10, price: Number($('cPrice').value) || 50, p1: Number($('cP1').value) || 0, p2: Number($('cP2').value) || 0, p3: Number($('cP3').value) || 0, p4: Number($('cP4').value) || 0, spectators: Math.max(0, Number($('cSpec').value) || 0), stake: Number($('cStake').value) || 20, cap: Math.max(0, Number($('cCap').value)) / 100, seed: Number($('cSeed').value) || 1 };
   }
   function start() {
     sim = simulate(cfgFromInputs());
