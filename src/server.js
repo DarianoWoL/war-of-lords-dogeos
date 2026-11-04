@@ -3675,7 +3675,7 @@ app.get('/api/game/layout', authMiddleware, async (req, res) => {
 // ---- Demo only (DEMO_FILL=on): a waiting player can ask for the remaining places to be filled with bots.
 // The bot runner (chain/scripts/demo-players.js, ONDEMAND=1) polls the demo_fill_requests collection and
 // puts that many idle bots into the queue. Off by default, so a normal deployment never sees this.
-const DEMO_FILL_ROOMS = (process.env.DEMO_FILL_ROOMS || 'Mini Turniej #1').split(',').map((x) => x.trim());
+const DEMO_FILL_ROOMS = (process.env.DEMO_FILL_ROOMS || 'Mini Tournament · 30 min,Mini Tournament · 1 hour').split(',').map((x) => x.trim());
 app.get('/api/demo/config', (req, res) => res.json({ fill: process.env.DEMO_FILL === 'on' }));
 app.post('/api/demo/fill-bots', authMiddleware, async (req, res) => {
   try {
