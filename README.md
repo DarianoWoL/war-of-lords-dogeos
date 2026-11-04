@@ -8,7 +8,7 @@ Live demo: invite link is provided in the hackathon submission (the demo runs on
 
 War of Lords is a browser strategy game (real-time villages, armies, tournaments with a Monthly Tournament and
 Mini-Tournaments). This build lets players **connect their DogeOS wallet, pay tournament entry on-chain, receive prizes
-from a smart contract and bet on who wins a round**.
+from a smart contract**.
 
 ## What is on-chain
 
@@ -18,8 +18,7 @@ One contract, [`WarOfLordsArena`](chain/contracts/WarOfLordsArena.sol), on **Dog
 |---|---|
 | **Tournament tickets** | The game server checks the rules (tournament open, one Monthly ticket per month, pool not exhausted) and signs a one-time **EIP-712 voucher**. The player pays the entry fee from the wallet with `buyTicket`; the contract only accepts a valid voucher. The server watches the `TicketPurchased` event and grants the ticket in the game. |
 | **Prizes** | When a Mini-Tournament round ends the server reports the podium (`creditPrizes`); the prize pool is funded by ticket sales (90%) and top-ups. Winners withdraw with `claim()`. A player without a linked wallet gets the prize on the in-game balance, so nothing is lost. |
-| **Season treasury** | 10% of each ticket and 5% of each betting pool go to a season treasury; `rollSeason()` moves it into the prize pool for the next tournaments. |
-| **Spectator betting (Live Bets)** | Every Mini-Tournament round opens a market "who wins?" (outcomes = the round's players). A bet is a fixed **20 DOGE** from the wallet, one per wallet per game, open for the first sixth of the round (min. 60 s). Settlement: **20%** of the pool stays with the game, the player who won the game gets a **bonus of 20% capped at half of that tournament's first prize**, and the **rest goes to the people who picked the winner** (they never get less than their stake back). Refund for everybody if fewer than 3 bets, nobody picked the winner, or everybody picked the same player. Players of a round cannot bet on it. Winnings, refunds and prizes are collected in **one transaction** (`claimAll`) with the gold Claim button. |
+| **Season treasury** | 10% of each ticket goes to a season treasury; `rollSeason()` moves it into the prize pool for the next tournaments. |
 | **Wallet link** | The wallet is linked to the game account by signing a message (no gas). One wallet = one account. |
 
 Trust model (testnet demo): the game server is the contract's *oracle* — it signs vouchers and reports results. It can
@@ -40,7 +39,7 @@ WarOfLordsArena (Solidity 0.8.24)
 
 * `chain/` – Hardhat project: contract, 12 unit tests, deploy script, end-to-end scripts.
 * `src/chain/` – server module (routes `/api/chain/*`, event watcher, market lifecycle, prize payout).
-* `public/dogeos.html` – player page (wallet, tickets, prizes, bets, stats, admin demo tools).
+* `public/dogeos.html` – player page (wallet, tickets, prizes, stats, admin demo tools).
 
 ## Run it
 
@@ -65,8 +64,7 @@ ticket costs 10 testnet DOGE; prizes are paid 1:1), `CHAIN_BET_WINDOW_MINUTES` (
 
 1. Log in, open **Shop → DogeOS Testnet**, connect the wallet, switch to DogeOS Testnet, link the wallet (signature).
 2. Buy a **Mini-Tournament ticket** from the wallet; the ticket appears in the game after the transaction confirms.
-3. In the betting section place a bet on a round (as a spectator); show the live pool and multipliers.
-4. Settle the round: winners press **Collect** (bets) or **Claim prize**; open the transactions in the block explorer.
+4. Settle the round: winners press **Claim prize**; open the transactions in the block explorer.
 
 ## Hackathon submission text (draft)
 
@@ -74,12 +72,12 @@ ticket costs 10 testnet DOGE; prizes are paid 1:1), `CHAIN_BET_WINDOW_MINUTES` (
 
 **Description:** War of Lords is a real-time browser strategy game with monthly and mini tournaments. On DogeOS testnet,
 tournament entry fees are paid by wallet straight into a smart contract, prizes are credited on-chain and claimed by the
-winners, and spectators can bet on who wins each round in a parimutuel market. The game server is only an oracle that
+winners. The game server is only an oracle that
 signs vouchers and reports results — it never holds player funds. Built for competitive players and the DOGE community who
 want skill-based tournaments with transparent prize pools.
 
 **DogeOS integration:** the whole money layer runs on DogeOS testnet (EVM, chain ID 6281971): entry tickets (EIP-712
-vouchers verified by the contract), prize pool and claim, season treasury, and betting markets with refunds. Everything is
+vouchers verified by the contract), prize pool and claim, season treasury. Everything is
 verifiable in the block explorer; the wallet is linked to the game account by a signed message.
 
 **Demo:** short video + screenshots (see `chain/screenshots` after running the UI test).
@@ -88,7 +86,7 @@ verifiable in the block explorer; the wallet is linked to the game account by a 
 
 * Monthly Tournament semifinal/final prizes still use the in-game balance path (Mini-Tournaments are on-chain).
 * The oracle is a single server key (fine for a testnet demo).
-* Betting is testnet-only by design; it is not intended for real-money use.
+* The whole build is testnet-only by design; it is not intended for real-money use. Spectator betting exists in the contract but is switched off in the game (CHAIN_BETS flag).
 
 ## Look and feel
 
@@ -96,4 +94,4 @@ The game ships with two looks, switchable with the button in the bottom-left cor
 
 ## Why invite-only
 
-The demo runs on a shared test server whose account pays gas and the betting bank in test DOGE, next to our production game, so it is not open to bots and spam. Judges get the invite link in the submission. A public version needs per-wallet limits first.
+The demo runs on a shared test server whose account pays gas in test DOGE, next to our production game, so it is not open to bots and spam. Judges get the invite link in the submission. A public version needs per-wallet limits first.

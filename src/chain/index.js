@@ -26,6 +26,9 @@ const BET_WINDOW_FRACTION = 1 / 6;
 const MIN_BET_WINDOW_MS = 60 * 1000;
 // 1 DOGE z gry = SCALE DOGE na testnecie (domyslnie 1:1 - bilet 10 DOGE, nagrody 30/20/10).
 const PRICE_SCALE = Number(process.env.CHAIN_PRICE_SCALE || 1);
+// Spectator bets are OFF unless CHAIN_BETS=on (hackathon build: tickets + prizes only).
+// Markets that were already open keep being closed/settled by marketTick (refunds), so nothing gets stuck.
+const BETS_ENABLED = process.env.CHAIN_BETS === 'on';
 
 function loadDeployment() {
   if (process.env.CHAIN_CONTRACT) return { address: process.env.CHAIN_CONTRACT, deployBlock: Number(process.env.CHAIN_DEPLOY_BLOCK || 0) };
@@ -354,11 +357,13 @@ Issued: ${new Date().toISOString()}`;
   }
 
   app.get('/api/chain/markets', authOptional, wrap(async (req, res) => {
+    if (!BETS_ENABLED) return res.json({ markets: [], rules, betsEnabled: false });
     const list = await ChainMarket.find({ status: { $ne: 'opening' } }).sort({ createdAt: -1 }).limit(30);
     res.json({ markets: await Promise.all(list.map((m) => marketView(m, req.userId))), rules });
   }));
 
   app.post('/api/chain/bets/voucher', authMiddleware, wrap(async (req, res) => {
+    if (!BETS_ENABLED) return res.status(403).json({ error: 'Betting is not available.' });
     const user = await User.findById(req.userId);
     if (!user.walletAddress) return res.status(400).json({ error: 'Link your wallet first.' });
     const market = await ChainMarket.findOne({ marketId: String(req.body.marketId || '') });
@@ -409,6 +414,7 @@ Issued: ${new Date().toISOString()}`;
 
   // ---------------------------------------------------------------- admin (demo i obsluga)
   app.post('/api/chain/admin/demo-market', authMiddleware, requireAdmin, wrap(async (req, res) => {
+    if (!BETS_ENABLED) return res.status(403).json({ error: 'Betting is switched off.' });
     const names = (Array.isArray(req.body.names) ? req.body.names : []).map((n) => String(n).trim()).filter(Boolean).slice(0, 10);
     if (names.length < 2) return res.status(400).json({ error: 'Give at least 2 names.' });
     const minutes = Math.min(Math.max(Number(req.body.minutes) || 10, 1), 240);
@@ -494,6 +500,7 @@ Issued: ${new Date().toISOString()}`;
 
   // Wywolywane z server.js po utworzeniu rundy / po jej zakonczeniu.
   async function onRoundStarted({ round, roomName, players }) {
+    if (!BETS_ENABLED) return;
     const real = (players || []).filter((p) => p && !p.isBot && p.userId);
     if (real.length < 2) return;
     const roundId = String(round._id);

@@ -11,7 +11,7 @@
   // Some pages (home) have a shorter menu; in Doge look give them the full set of links.
   function fillNav() {
     var nav = document.querySelector('.nav-menu'); if (!nav || theme !== 'doge') return;
-    [['navMiniTournaments', 'mini-tournaments.html', 'Mini-Tournaments'], ['navShop', 'live.html', 'Live Bets']].forEach(function (l) {
+    [['navMiniTournaments', 'mini-tournaments.html', 'Mini-Tournaments']].forEach(function (l) {
       if (nav.querySelector('#' + l[0])) return;
       var a = document.createElement('a'); a.id = l[0]; a.href = l[1]; a.textContent = l[2];
       if (location.pathname.indexOf(l[1]) !== -1) a.className = 'active';
@@ -25,8 +25,15 @@
     new MutationObserver(function (list) { list.forEach(function (m) { m.addedNodes.forEach(movePinned); }); }).observe(root, { childList: true, subtree: true });
   }
 
+  // Betting is switched off in this build: hide every "Live Bets" link and send the old page home.
+  function hideBets() {
+    Array.prototype.forEach.call(document.querySelectorAll('a[href="live.html"], a[href="/live.html"]'), function (a) { a.style.display = 'none'; });
+  }
+  if (/\/live(\.html)?$/.test(location.pathname)) location.replace('/index.html');
+
   function addToggle() {
     fillNav();
+    hideBets();
     var b = document.createElement('button');
     b.type = 'button'; b.id = 'wolThemeToggle';
     b.textContent = theme === 'doge' ? '🏰 Classic look' : '🐶 Doge look';
