@@ -3569,6 +3569,33 @@ app.post('/api/rooms/:id/leave', authMiddleware, async (req, res) => {
   res.json({ success: true, message: 'Opuszczono pokój.' });
 });
 
+// ---- Public read-only data for the Noah companion app (CORS *, cached 30 s). No account data beyond public nicknames.
+let publicArenaCache = { at: 0, body: null };
+app.options('/api/public/arena', (req, res) => { res.set({ 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET', 'Access-Control-Allow-Headers': 'Content-Type' }); res.sendStatus(204); });
+app.get('/api/public/arena', async (req, res) => {
+  res.set({ 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'public, max-age=30' });
+  try {
+    if (publicArenaCache.body && Date.now() - publicArenaCache.at < 30000) return res.json(publicArenaCache.body);
+    const settings = await getSettings();
+    const scale = Number(process.env.CHAIN_PRICE_SCALE || 1);
+    const rooms = (await Room.find({ isMiniTournament: true, enabled: { $ne: false }, isPaused: { $ne: true } }).sort({ roomName: 1 })).map((r) => ({
+      name: r.roomName,
+      maxPlayers: r.maxPlayers,
+      roundMinutes: Math.round(((r.settings && r.settings.dlugoscRundySekundy) || 3600) / 60),
+      ticketDoge: Math.round((settings.miniTournamentTicketPricePLN || 0) * scale * 1e6) / 1e6,
+      prizesDoge: { first: (r.miniTournamentPrizes?.place1VPLN || 0) * scale, second: (r.miniTournamentPrizes?.place2VPLN || 0) * scale, third: (r.miniTournamentPrizes?.place3VPLN || 0) * scale }
+    }));
+    const top = await User.find({ isBot: false, isSystemAccount: { $ne: true }, isBlocked: { $ne: true }, username: { $not: /^Demo_/ }, roundsPlayed: { $gt: 0 } }).sort({ skillPoints: -1 }).limit(10).select('username skillPoints roundsPlayed roundsWon');
+    const ranking = top.map((u, i) => ({ rank: i + 1, nick: u.username, skillPoints: u.skillPoints, gamesPlayed: u.roundsPlayed || 0, wins: u.roundsWon || 0 }));
+    const body = { updatedAt: new Date().toISOString(), network: 'DogeOS Chikyu Testnet (test DOGE, no real value)', rooms, ranking };
+    publicArenaCache = { at: Date.now(), body };
+    res.json(body);
+  } catch (err) {
+    console.error('public arena error', err);
+    res.status(500).json({ error: 'unavailable' });
+  }
+});
+
 app.get('/api/ranking', async (req, res) => {
   // No limit here on purpose — public/ranking.html fetches this once and does its own client-side
   // search (filterRanking()) over the full list. A hardcoded .limit(20) here silently made every

@@ -20,6 +20,8 @@ function inviteGate(token) {
   if (!token) return (req, res, next) => next();
   return (req, res, next) => {
     res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    // Public, read-only data for the Noah companion app (CORS enabled in server.js) — no key needed.
+    if (req.path.startsWith('/api/public/')) return next();
     if (req.path === '/robots.txt') return res.type('text/plain').send('User-agent: *\nDisallow: /\n');
     const secure = req.secure || req.headers['x-forwarded-proto'] === 'https';
     if (req.query && typeof req.query.invite === 'string' && safeEqual(req.query.invite, token)) {

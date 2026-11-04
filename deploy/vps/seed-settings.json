@@ -1,0 +1,19 @@
+{
+  "singleton": "main",
+  "shopEnabled": true,
+  "teamModeEnabled": false,
+  "tournamentTicketsSoldThisMonth": 1,
+  "tournamentTicketsMonthKey": "2026-08",
+  "mmrRewardGrantedMonthKey": "2026-09",
+  "miniTournamentTicketPricePLN": 10,
+  "miniTournamentTicketsMonthlyPool": 300,
+  "miniTournamentTicketsSoldThisMonth": 11,
+  "miniTournamentTicketsMonthKey": "2026-10",
+  "minWithdrawalVpln": 100,
+  "__v": 0,
+  "freeRankingConsolationGrantedMonthKey": "2026-09",
+  "hotpayMonthlyRevenueLimitPLN": 3200,
+  "hotpayRevenueMonthKey": "2026-09",
+  "hotpayRevenueThisMonthPLN": 0,
+  "appDownloadEnabled": false
+}
