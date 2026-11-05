@@ -3,7 +3,7 @@
 html[data-theme="doge"] {
   --d-yellow: #ffd84a; --d-orange: #ff9f1c; --d-brown: #4a2c00; --d-cream: #fff6d6; --d-sky: #8fd3ff; --d-card: #fffdf2;
 }
-html[data-theme="doge"] { min-height: 100%; background-image: url("/assets/doge-bg.jpg"); background-size: 100% 82vw; background-position: center top; background-repeat: no-repeat; background-attachment: scroll; background-color: #4b5a33; }
+html[data-theme="doge"] { min-height: 100%; background-image: url("/assets/doge-bg.jpg?v=noah1"); background-size: cover; background-position: center top; background-repeat: no-repeat; background-attachment: fixed; background-color: #8fd3ff; }
 html[data-theme="doge"][data-page="game"] { background-image: url("/assets/doge-game.svg"); background-size: cover; background-position: center bottom; background-attachment: fixed; background-color: #bfe6fb; }
 html[data-theme="doge"] body {
   background: none !important;
