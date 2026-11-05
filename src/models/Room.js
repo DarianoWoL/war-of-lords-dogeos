@@ -52,6 +52,8 @@ const RoomSchema = new mongoose.Schema({
     // When true, joining this room's queue requires (and consumes) one
     // User.hasUnusedMiniTournamentTicket — see performRoomJoin / leaveWaitingRoom in server.js.
     requiresMiniTournamentTicket: { type: Boolean, default: false },
+    // Mini-Turniej only: when true, a waiting player can fill the empty seats with server bots (they never get prizes).
+    allowBots: { type: Boolean, default: false },
     // Only meaningful for roomType 'team' — admin-chosen at room creation, 2-10 teams. Determines
     // both the valid teamId range for lobby:setTeam/lobby:addBotToTeam and maxPlayers
     // (teamCount * 5) — the underlying map always has 10 fixed regions of 5 villages, but a room

@@ -1264,6 +1264,24 @@
            relative to .map-node (position:absolute, the nearest positioned ancestor), so this sits
            just above it regardless of .map-node's own centering transform. overflow isn't clipped
            anywhere on .map-node, so this is free to extend past the circle's own box. */
+        .map-node-buy {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 3px;
+            padding: 0 6px;
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 15px;
+            white-space: nowrap;
+            color: #4a2c00;
+            background: rgba(255, 216, 74, 0.9);
+            border: 1.5px solid #4a2c00;
+            border-radius: 999px;
+            text-shadow: none;
+            pointer-events: none;
+        }
         .map-node-label {
             position: absolute;
             bottom: 100%;
@@ -2489,6 +2507,8 @@
     <script src="/fingerprint.js"></script>
     <script src="/gameEngine.js"></script>
     <script src="/game.js"></script>
+    <script src="/doge-mascot.js"></script>
+    <script src="/wol-helper.js"></script>
     <script src="/topbar-scale.js"></script>
     <script src="/site-footer.js"></script>
 </body>

@@ -100,6 +100,7 @@
             </div>
             <div class="panel-row">
                 <div><label><input type="checkbox" id="miniRequiresTicket" checked /> Wymagaj Biletu do Mini-Turnieju, żeby dołączyć</label></div>
+                <div><label><input type="checkbox" id="miniAllowBots" /> Boty aktywne (gracz w poczekalni może dobrać boty na wolne miejsca; boty nie dostają nagród)</label></div>
             </div>
             <button class="btn-action" onclick="createMiniTournamentRoom()">Utwórz Mini-Turniej</button>
         </div>
@@ -137,7 +138,8 @@
                     place2VPLN: numOrDefault(document.getElementById('miniPrize2').value, 0),
                     place3VPLN: numOrDefault(document.getElementById('miniPrize3').value, 0)
                 },
-                requiresMiniTournamentTicket: document.getElementById('miniRequiresTicket').checked
+                requiresMiniTournamentTicket: document.getElementById('miniRequiresTicket').checked,
+                allowBots: document.getElementById('miniAllowBots').checked
             };
             try {
                 const response = await fetch('/api/rooms', { method: 'POST', headers, body: JSON.stringify(payload) });
@@ -168,12 +170,15 @@
                     <div><strong>Prędkość:</strong> ${room.speedFactor ?? 1}x</div>
                     <div><strong>Nagrody VPLN:</strong> ${prizes.place1VPLN || 0} / ${prizes.place2VPLN || 0} / ${prizes.place3VPLN || 0}</div>
                     <div><strong>Bilet wymagany:</strong> ${room.requiresMiniTournamentTicket ? 'Tak' : 'Nie'}</div>
+                    <div><strong>Boty:</strong> ${room.allowBots ? 'Aktywne' : 'Wyłączone'}</div>
                 </div>
                 <div class="room-tile-players">
                     ${room.waitingPlayers?.length ? `W kolejce: ${room.waitingPlayers.map(p => p.username).join(', ')}` : 'Brak graczy w kolejce.'}
                 </div>
                 <div class="room-tile-actions">
                     <button class="btn-small" onclick="togglePauseRoom('${room._id}')">${isPaused ? 'Wznów' : 'Pauza'}</button>
+                    <button class="btn-small" onclick="setRoomFlag('${room._id}', 'requiresMiniTournamentTicket', ${!room.requiresMiniTournamentTicket})">${room.requiresMiniTournamentTicket ? 'Bilet: wyłącz' : 'Bilet: włącz'}</button>
+                    <button class="btn-small" onclick="setRoomFlag('${room._id}', 'allowBots', ${!room.allowBots})">${room.allowBots ? 'Boty: wyłącz' : 'Boty: włącz'}</button>
                     <button class="btn-small btn-red" onclick="deleteAdminRoom('${room._id}', '${(room.nazwaPokoju || room.roomName || '').replace(/'/g, "\\'")}')">Usuń pokój</button>
                 </div>
             `;
@@ -194,6 +199,17 @@
                 rooms.forEach((room) => container.appendChild(createRoomTile(room)));
             } catch (err) {
                 container.innerHTML = `<p style="color:#f87171;">${err.message}</p>`;
+            }
+        }
+
+        async function setRoomFlag(roomId, field, value) {
+            try {
+                const response = await fetch(`/api/rooms/${roomId}`, { method: 'PUT', headers, body: JSON.stringify({ [field]: value }) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Nie udało się zapisać zmiany.');
+                await loadRooms();
+            } catch (err) {
+                showAdminError(err.message);
             }
         }
 

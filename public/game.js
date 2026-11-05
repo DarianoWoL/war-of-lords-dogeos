@@ -770,6 +770,19 @@ function renderMapNodes() {
       label.style.pointerEvents = 'none';
       element.appendChild(label);
     }
+    // Free neighbouring village the player can buy: small "Buy · 4,000 gold" tag under the circle.
+    if (village && !village.owner && myPlayerName) {
+      const buyParentId = getVillageParentId(village);
+      const buyParent = buyParentId ? state.villages[buyParentId] : null;
+      if (buyParent && buyParent.owner === myPlayerName) {
+        const tag = document.createElement('span');
+        tag.className = 'map-node-buy';
+        tag.textContent = i18n.t('game.map.buyTag', { cost: formatNumber(GameEngine.auxiliaryVillageCost) });
+        tag.style.pointerEvents = 'none';
+        element.appendChild(tag);
+        element.classList.add('map-node-buyable');
+      }
+    }
     if (village && village.owner && village.color) {
       const isMine = myPlayerName && village.owner === myPlayerName;
       // Fill fully transparent (0 alpha) so the map art (esp. the team map's hand-painted castles)
@@ -920,8 +933,8 @@ function showMapActionPanel(node, villageId) {
         <strong>${selectedLabel}</strong><br>${summary}
       </div>
       <div class="attack-arrival-info">
-        Dotrze o: <strong id="pendingArrivalClock">--:--:--</strong><br>
-        Czas dotarcia: <span id="pendingArrivalCountdown">--:--:--</span>
+        ${i18n.t('game.map.arrivesAt')} <strong id="pendingArrivalClock">--:--:--</strong><br>
+        ${i18n.t('game.map.travelTime')} <span id="pendingArrivalCountdown">--:--:--</span>
       </div>
       <div class="action-buttons">
         <button class="confirm" data-action="${confirmAction}">${confirmLabel}</button>
@@ -955,7 +968,7 @@ function showMapActionPanel(node, villageId) {
         `).join('') : `<span>${emptyLabel}</span>`}
       </div>
       <div class="action-buttons">
-        ${attackableUnits.length > 0 ? '<button class="select" data-action="attack-select-all">Wszystkie</button>' : ''}
+        ${attackableUnits.length > 0 ? `<button class="select" data-action="attack-select-all">${i18n.t('game.map.selectAll')}</button>` : ''}
         <button class="attack" data-action="${sendAction}" ${hasAnySelected ? '' : 'disabled'} title="${hasAnySelected ? '' : i18n.t('game.map.selectOne')}">${sendLabel}</button>
         <button class="cancel" data-action="attack-cancel">${i18n.t('common.cancel')}</button>
       </div>
@@ -1076,7 +1089,7 @@ function showMapActionPanel(node, villageId) {
         const selectedEntries = Object.entries(pending.selectedUnits || {}).filter(([, count]) => Number(count) > 0);
         if (!selectedEntries.length) {
           const label = pending.mode === 'recon' ? i18n.t('game.map.oneScout') : (pending.mode === 'support' ? i18n.t('game.map.oneSupport') : i18n.t('game.map.oneAttack'));
-          alert(`Wybierz przynajmniej ${label}.`);
+          alert(i18n.t('game.map.selectAtLeast', { what: label }));
           return;
         }
         pending.stage = 'confirm';
@@ -1196,7 +1209,7 @@ function updateGameClocks() {
       selectors.roundTimerDisplay.textContent = i18n.t('game.roundFinishedShort');
       selectors.roundTimerDisplay.title = i18n.t('game.results.title');
     } else {
-      selectors.roundTimerDisplay.textContent = `Za ${formatClock(remaining)}`;
+      selectors.roundTimerDisplay.textContent = formatClock(remaining);
       selectors.roundTimerDisplay.title = i18n.t('game.roundEndsIn', { time: formatClock(remaining) });
     }
   }
@@ -1286,6 +1299,10 @@ let roundEndingIntervalId = null;
 // showRoundResults -> hideRoundEndingOverlay above); this local countdown is only cosmetic.
 function showRoundEndingOverlay(seconds, reason) {
   if (!selectors.roundEndingOverlay || !selectors.roundEndingCountdown) return;
+  try { console.log('[game] roundEnding', seconds, reason); } catch (e) { /* ignore */ }
+  // Keep the countdown on <html>, above every panel and window (.page-shell has its own zoom).
+  if (selectors.roundEndingOverlay.parentNode !== document.documentElement) document.documentElement.appendChild(selectors.roundEndingOverlay);
+  selectors.roundEndingOverlay.style.zIndex = '2147480000';
   closeAllGameModals();
   clearRoundEndingInterval();
   let remaining = Math.max(1, Math.round(Number(seconds) || 5));
@@ -1383,7 +1400,9 @@ function updateRecruitButtonState(unitId) {
     const popCostPerUnit = GameEngine.unitPopulationCost[unitId] || 0;
     const goldLimit = unit.cost > 0 ? Math.floor(state.gold / unit.cost) : Infinity;
     const popLimit = popCostPerUnit > 0 ? Math.floor((capacity - used - reserved) / popCostPerUnit) : Infinity;
-    const maxAffordable = Math.max(0, Math.min(goldLimit, popLimit));
+    let maxAffordable = Math.max(0, Math.min(goldLimit, popLimit));
+    // A village can hold only one Lord: show 1 when one can be recruited right now, otherwise 0.
+    if (unitId === 'lord') maxAffordable = GameEngine.canRecruitLord(village) && !(village.lordQueue || []).length && maxAffordable >= 1 ? 1 : 0;
     maxHint.textContent = `(${formatNumber(maxAffordable)})`;
     maxHint.dataset.maxValue = String(maxAffordable);
   }
@@ -1397,7 +1416,7 @@ function updateRecruitButtonState(unitId) {
     if (isLordUnit && state.roundStatus !== 'finished') {
       const castleLevel = GameEngine.getVillageCastleLevel(village);
       if (castleLevel < 5) {
-        button.title = `Wymaga Zamku na poziomie 5 (obecnie: ${castleLevel}/5).`;
+        button.title = i18n.t('game.recruit.needCastle', { n: castleLevel });
       } else if (GameEngine.getVillageLordCount(village) >= 1) {
         button.title = i18n.t('game.recruit.lordInVillage');
       } else {
@@ -1939,6 +1958,9 @@ function setReportsMode(mode) {
   state.reportsMode = mode === 'defense' ? 'defense' : 'attack';
   if (selectors.reportsModeAttackBtn) selectors.reportsModeAttackBtn.classList.toggle('active', state.reportsMode === 'attack');
   if (selectors.reportsModeDefenseBtn) selectors.reportsModeDefenseBtn.classList.toggle('active', state.reportsMode === 'defense');
+  const byMode = visibleReportsByMode();
+  markModeSeen(state.reportsMode, byMode);
+  updateReportModeBadges(byMode);
   renderReports();
 }
 
@@ -2121,26 +2143,71 @@ function findNewestVisibleReport() {
 // Puts a pulsing highlight on the "Raporty" button the moment a NEW report the player can see
 // arrives (state.reports is newest-first, see addBattleReport) while they aren't already looking
 // at the reports modal - cleared again in markReportsAsSeen() once they open it.
+// Per-tab tracking (Attack / Defence inside the reports window): a report counts as "seen" once its
+// own tab was shown. notifiedReportIds = reports that existed when the window was last opened (the
+// main "Reports" button only lights up again for reports that arrived after that).
+const seenReportIds = new Set();
+const notifiedReportIds = new Set();
+const reportKey = (report) => String(report.id || report.timestamp);
+
+function visibleReportsByMode() {
+  const currentPlayer = getCurrentPlayer();
+  const out = { attack: [], defense: [] };
+  if (!currentPlayer) return out;
+  for (const rawReport of state.reports) {
+    const r = normalizeReportForDisplay(rawReport);
+    if (!r || !isReportVisibleToPlayer(r, currentPlayer.name)) continue;
+    if (isReportInSelectedMode(r, currentPlayer.name, 'attack')) out.attack.push(r);
+    if (isReportInSelectedMode(r, currentPlayer.name, 'defense')) out.defense.push(r);
+  }
+  return out;
+}
+
+function updateReportModeBadges(byMode) {
+  const unseen = (mode) => byMode[mode].some((r) => !seenReportIds.has(reportKey(r)));
+  if (selectors.reportsModeAttackBtn) selectors.reportsModeAttackBtn.classList.toggle('has-new-report', unseen('attack'));
+  if (selectors.reportsModeDefenseBtn) selectors.reportsModeDefenseBtn.classList.toggle('has-new-report', unseen('defense'));
+}
+
+function markModeSeen(mode, byMode) {
+  (byMode[mode] || []).forEach((r) => seenReportIds.add(reportKey(r)));
+}
+
 function checkForNewReports() {
   if (!selectors.showReportsBtn) return;
-  const newest = findNewestVisibleReport();
-  const newestId = newest ? (newest.id || newest.timestamp) : null;
+  const byMode = visibleReportsByMode();
+  const all = byMode.attack.concat(byMode.defense);
   if (!reportsBaselineInitialized) {
     reportsBaselineInitialized = true;
-    lastSeenReportId = newestId;
+    all.forEach((r) => { seenReportIds.add(reportKey(r)); notifiedReportIds.add(reportKey(r)); });
+    updateReportModeBadges(byMode);
     return;
   }
   const modalOpen = selectors.reportsModal && selectors.reportsModal.classList.contains('active');
-  if (newestId !== null && newestId !== lastSeenReportId && !modalOpen) {
+  if (modalOpen) {
+    markModeSeen(state.reportsMode, byMode);
+    all.forEach((r) => notifiedReportIds.add(reportKey(r)));
+  } else if (all.some((r) => !notifiedReportIds.has(reportKey(r)))) {
     selectors.showReportsBtn.classList.add('has-new-report');
   }
+  updateReportModeBadges(byMode);
 }
 
 function markReportsAsSeen() {
   if (!selectors.showReportsBtn) return;
   selectors.showReportsBtn.classList.remove('has-new-report');
-  const newest = findNewestVisibleReport();
-  if (newest) lastSeenReportId = newest.id || newest.timestamp;
+  const byMode = visibleReportsByMode();
+  byMode.attack.concat(byMode.defense).forEach((r) => notifiedReportIds.add(reportKey(r)));
+  // Open on the tab that has something new (attack first), so the new report is shown straight away.
+  const unseenIn = (mode) => byMode[mode].some((r) => !seenReportIds.has(reportKey(r)));
+  if (!unseenIn(state.reportsMode)) {
+    if (unseenIn('attack')) state.reportsMode = 'attack';
+    else if (unseenIn('defense')) state.reportsMode = 'defense';
+  }
+  if (selectors.reportsModeAttackBtn) selectors.reportsModeAttackBtn.classList.toggle('active', state.reportsMode === 'attack');
+  if (selectors.reportsModeDefenseBtn) selectors.reportsModeDefenseBtn.classList.toggle('active', state.reportsMode === 'defense');
+  markModeSeen(state.reportsMode, byMode);
+  updateReportModeBadges(byMode);
 }
 
 // --- Commands (the only way the client ever changes shared game state) --------------------------

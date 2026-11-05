@@ -1208,7 +1208,7 @@
         async function setupFillBots() {
             const btn = document.getElementById('mmFillBtn'); if (!btn) return;
             try {
-                if (demoFillOn === null) { const c = await fetch('/api/demo/config').then((r) => r.json()); demoFillOn = !!c.fill; }
+                if (demoFillOn === null) { const c = await fetch('/api/demo/config?roomId=' + encodeURIComponent(roomId)).then((r) => r.json()); demoFillOn = !!c.fill; }
             } catch (e) { demoFillOn = false; }
             if (!demoFillOn) return;
             btn.style.display = 'inline-block';

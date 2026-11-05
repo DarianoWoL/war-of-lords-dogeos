@@ -53,9 +53,20 @@
     document.__wolBodyPatched = true;
     var original = document.body.appendChild.bind(document.body);
     document.body.appendChild = function (node) {
-      if (node && node.tagName === 'IFRAME' && node.id === clientId) return document.documentElement.appendChild(node);
+      if (node && ((node.tagName === 'IFRAME' && node.id === clientId) || node.id === 'wol-wallet-root')) return document.documentElement.appendChild(node);
       return original(node);
     };
+    // Safety net (other insertion methods, e.g. on phones where the page is scaled down to ~20%): whenever the
+    // wallet UI root shows up inside <body>, move it to <html> so it keeps its real size.
+    function moveRoot() {
+      var r = document.getElementById('wol-wallet-root');
+      if (r && r.parentNode === document.body) document.documentElement.appendChild(r);
+    }
+    new MutationObserver(moveRoot).observe(document.body, { childList: true });
+    moveRoot();
+    var st = document.createElement('style');
+    st.textContent = '#wol-wallet-root{position:relative;z-index:2147483000}';
+    document.head.appendChild(st);
   }
 
   // Okno portfela DogeOS to ramka (iframe) na calej stronie. Pilnujemy, zeby zawsze lezala NAD naszymi okienkami,
@@ -84,6 +95,10 @@
       if (typeof e === 'string') t = e;
       else if (e.shortMessage || e.message) t = e.shortMessage || e.message;
       else { try { t = JSON.stringify(e).slice(0, 160); } catch (x) { /* keep fallback */ } }
+    }
+    // Wolna siec testowa (timeout przy pytaniu o nonce / wezel RPC) - to nie jest blad gracza.
+    if (/timeout|took too long|failed to get nonce|failed to fetch|network error|\b50[234]\b/i.test(String(t))) {
+      return 'The DogeOS testnet is responding slowly right now. Please wait a moment and try again. (If a payment already went through, it still counts - check your balance first.)';
     }
     // Poprzednie zapytanie do portfela wciaz wisi (np. nieukonczone okno zatwierdzenia).
     if (/another|pending|already.*(request|open)/i.test(String(t)) && /wallet|request|pending/i.test(String(t))) {
@@ -266,8 +281,15 @@
     return {
       step: function (t, passive) { setPassive(!!passive); msg.textContent = t; },
       error: function (t) { setPassive(false); spin.style.display = 'none'; msg.style.color = '#f87171'; msg.textContent = t; btn.textContent = 'Close'; },
-      success: function (t, label, fn) {
+      success: function (t, label, fn, link) {
         setPassive(false); spin.style.display = 'none'; msg.style.color = '#34d399'; msg.textContent = t;
+        if (link && link.href) {
+          var a = document.createElement('a');
+          a.href = link.href; a.target = '_blank'; a.rel = 'noopener';
+          a.textContent = link.text;
+          a.style.cssText = 'display:block;margin-top:10px;color:#e8c766;font-size:14px;font-weight:700;text-decoration:underline';
+          msg.appendChild(a);
+        }
         btn.textContent = label || 'Close'; btn.style.background = 'linear-gradient(#e8c766,#b8932f)'; btn.style.color = '#1a1405'; btn.style.border = '0';
         btn.onclick = function () { wrap.remove(); if (fn) fn(); };
       },
@@ -293,12 +315,20 @@
 
   // Czeka na efekt wyslanej transakcji. Serwer sprawdza stan gry (bilet / nagroda), a gdy portfel zwroci hash,
   // dodatkowo pytamy siec o jego los - zeby przy problemie pokazac prawdziwy powod zamiast kreconego kolka.
+  var lastTxHash = null;
+  function explorerLink(address) {
+    var base = (cfg && cfg.network && cfg.network.explorer) || 'https://blockscout.testnet.dogeos.com';
+    if (lastTxHash) return { href: base + '/tx/' + lastTxHash, text: 'View the transaction on the DogeOS explorer \u2197' };
+    if (address) return { href: base + '/address/' + address, text: 'View your wallet on the DogeOS explorer \u2197' };
+    return null;
+  }
   function watchSend(ui, token, send, cond, sentText, timeoutText, endpoint, resolveOnReceipt) {
     var walletAnswer = null, hash = null;
+    lastTxHash = null;
     var tx = Promise.resolve(send).then(function (res) {
       walletAnswer = res;
       var h = typeof res === 'string' ? res : (res && (res.hash || res.txHash || res.transactionHash)) || null;
-      if (h && /^0x[0-9a-fA-F]{64}$/.test(h)) hash = h;
+      if (h && /^0x[0-9a-fA-F]{64}$/.test(h)) { hash = h; lastTxHash = h; }
       ui.step(sentText + (hash ? ' (' + hash.slice(0, 10) + '…)' : ''));
       return new Promise(function () {}); // sukces rozstrzyga pytanie o stan na serwerze
     });
@@ -364,7 +394,7 @@
       trace('sending buyTicket'); var send = Promise.resolve(wallet.provider().request({ method: 'eth_sendTransaction', params: [{ from: wallet.address, to: chainCfg.contract, data: data, value: '0x' + BigInt(v.price).toString(16) }] }));
       return ui.race(watchSend(ui, token, send, function (m) { return (kind === 'mini' ? (m.hasMiniTicket ? 1 : 0) : (m.tournamentTickets || 0)) > before; }, 'Payment sent. Waiting for the network to confirm…', 'The payment was not confirmed in time.'));
     }).then(function () {
-      return new Promise(function (resolve) { closeWalletPopup(); ui.success('Ticket ready! Good luck.', 'Continue', function () { resolve(true); }); });
+      return new Promise(function (resolve) { closeWalletPopup(); ui.success('Ticket ready! Good luck.', 'Continue', function () { resolve(true); }, explorerLink(wallet && wallet.address)); });
     })).catch(function (e) {
       if (!ui.cancelled) {
         var text = errorText(e, 'Something went wrong.');
@@ -439,7 +469,7 @@
       var before = Number(stats0[field]);
       return ui.race(watchSend(ui, token, send, function (d) { return Number(d[field]) >= before + amount - 0.001; }, 'Sent. Waiting for the network to confirm…', 'The transfer was not confirmed in time.', '/api/chain/stats', true));
     }).then(function () {
-      return new Promise(function (resolve) { closeWalletPopup(); ui.success(successText, 'Done', function () { resolve(true); }); });
+      return new Promise(function (resolve) { closeWalletPopup(); ui.success(successText, 'Done', function () { resolve(true); }, explorerLink(wallet && wallet.address)); });
     })).catch(function (e) {
       if (!ui.cancelled) {
         var text = errorText(e, 'Something went wrong.');
@@ -542,7 +572,7 @@
       trace('sending claim'); var send = Promise.resolve(wallet.provider().request({ method: 'eth_sendTransaction', params: [{ from: wallet.address, to: target, data: data, value: '0x0' }] }));
       return ui.race(watchSend(ui, token, send, function (m) { return legacy ? (m.legacyItems || []).every(function (i) { return i.address.toLowerCase() !== String(target).toLowerCase() || !(Number(i.amount) > 0); }) : !(Number(m.claimable) > 0); }, 'Sent. Waiting for the network to confirm…', 'The prize transaction was not confirmed in time.'));
     }).then(function () {
-      return new Promise(function (resolve) { closeWalletPopup(); try { window.dispatchEvent(new Event('wol:claimed')); } catch (e) { /* ignore */ } ui.success(legacy ? 'Prize received. If more is waiting, press Claim again.' : 'Prize received in your wallet!', 'Done', function () { resolve(true); }); });
+      return new Promise(function (resolve) { closeWalletPopup(); try { window.dispatchEvent(new Event('wol:claimed')); } catch (e) { /* ignore */ } ui.success(legacy ? 'Prize received. If more is waiting, press Claim again.' : 'Prize received in your wallet!', 'Done', function () { resolve(true); }, explorerLink(wallet && wallet.address)); });
     })).catch(function (e) {
       if (!ui.cancelled) {
         var text = errorText(e, 'Something went wrong.');

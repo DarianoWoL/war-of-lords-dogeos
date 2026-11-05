@@ -1941,7 +1941,8 @@
   // payoutRoundRewards/computeSkillPointsDeltas both filter on isBot. No name heuristic is needed:
   // the flag is never ambiguous.
   function isBotPlayer(player) {
-    return !!(player && player.isBot);
+    // Demo_ accounts of the public demo are real user accounts played by the bot runner; they get the same built-in AI.
+    return !!(player && (player.isBot || /^Demo_/.test(String(player.name || ''))));
   }
 
   // Boty bez przypadku (Regulamin §1a): decyzje botow pochodza z deterministycznego generatora

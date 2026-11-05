@@ -33,10 +33,7 @@
     // Kazdy nowy gosc widzi strone po angielsku (decyzja wlasciciela, 2026-10-06) - bez wykrywania
     // kraju czy jezyka przegladarki. Wybor z przelacznika EN | PL jest zapamietywany i ma pierwszenstwo.
     function readLang() {
-        try {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (LANGS.includes(saved)) return saved;
-        } catch (e) { /* tryb prywatny / zablokowane dane strony */ }
+        // Contest build: English only. The EN | PL switcher is hidden and any saved Polish choice is ignored.
         return DEFAULT_LANG;
     }
 
@@ -409,7 +406,6 @@
     }
 
     function init() {
-        createSwitcher();
         apply();
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

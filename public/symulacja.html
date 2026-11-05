@@ -60,6 +60,15 @@
   .pod { text-align:center; padding:10px 12px; border-radius:10px 10px 0 0; min-width:140px; background:rgba(15,23,42,.85); border:1px solid #1f2a44; } .pod .nm { font-weight:800; } .pod.p1 { height:130px; border-color:var(--gold); background:rgba(232,199,102,.16); } .pod.p2 { height:104px; } .pod.p3 { height:86px; }
   details.set { margin-top:12px; } details.set summary { cursor:pointer; color:var(--gold); font-weight:700; }
   .setgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin-top:10px; } .setgrid label { font-size:12.5px; color:var(--muted); display:flex; flex-direction:column; gap:4px; } .setgrid input { background:#0f172a; color:#f8fafc; border:1px solid #334155; border-radius:6px; padding:7px 9px; font-size:14px; }
+  #money.moneyov { position:fixed; inset:0; z-index:60; background:rgba(5,8,18,.9); display:flex; align-items:center; justify-content:center; padding:12px; margin:0 !important; overflow:hidden; }
+  .mwrap { width:min(1300px,100%); transform-origin:center center; }
+  .moneyov .money { grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+  @media (max-width:900px) { .moneyov .money { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media (max-width:520px) { .moneyov .money { grid-template-columns:minmax(0,1fr); } }
+  .moneyov .card { padding:10px 14px; }
+  .moneyov .big { padding:4px 10px; } .moneyov .big .t { font-size:28px; } .moneyov .big .st { margin:4px 0 8px; font-size:14px; }
+  .moneyov table { font-size:12.5px; } .moneyov td, .moneyov th { padding:4px 6px; }
+  .mbtns { display:flex; gap:8px; justify-content:center; margin-top:12px; }
   .hidden { display:none !important; }
 </style>
 </head>
@@ -76,7 +85,7 @@
     <button class="s" id="restart">&#8635; Restart</button>
     <input type="range" id="seek" min="0" max="1000" value="0">
     <span class="time" id="time">0:00 / 0:00</span>
-    <button class="s" data-speed="0.5">0.5x</button><button class="s on" data-speed="1">1x</button><button class="s" data-speed="2">2x</button><button class="s" data-speed="4">4x</button>
+    <button class="s" data-speed="0.5">0.5x</button><button class="s" data-speed="1">1x</button><button class="s on" data-speed="2">2x</button><button class="s" data-speed="4">4x</button>
     <button class="s" id="short">Short version</button>
   </div>
 
@@ -179,7 +188,7 @@
   }
 
   // ------------------------------------------------------------------ timeline (seconds at 1x)
-  const FULL = { intro: 18, qual: 24, cut: 9, semi: 40, final: 62, money: 78 };
+  const FULL = { intro: 14, qual: 22, cut: 7, semi: 28, final: 36, money: 40 };
   const SHORT = { intro: 8, qual: 11, cut: 4, semi: 18, final: 28, money: 38 };
   function buildTimeline(durs) {
     const ph = [];
@@ -195,7 +204,7 @@
   }
 
   // ------------------------------------------------------------------ state
-  let sim, tl, T = 0, playing = true, speed = 1, short = false, last = 0;
+  let sim, tl, T = 0, playing = true, speed = 2, short = false, last = 0;
   const cv = $('cv'), cx = cv.getContext('2d');
   function fit() { const w = cv.clientWidth || 900; const dpr = Math.min(2, window.devicePixelRatio || 1); cv.width = Math.round(w * dpr); cv.height = Math.round(Math.min(480, Math.max(300, w * 0.5)) * dpr); cv.style.height = (cv.height / dpr) + 'px'; cx.setTransform(dpr, 0, 0, dpr, 0, 0); }
   const W = () => cv.clientWidth, H = () => cv.clientHeight;
@@ -288,14 +297,14 @@
       sim.semiRooms.forEach((rm, j) => ev.push({ t: ph.start + ph.dur * (0.3 + j * 0.2), html: `Semifinal ${j + 1}: <b>${nm(rm.ranked[0].id)}</b> takes the room, ${nm(rm.ranked[1].id)} follows` }));
       ev.push({ t: ph.start + ph.dur * 0.92, html: `Wildcards: <b>${sim.wild.map(nm).join(', ')}</b>` });
     } else if (ph.kind === 'final') {
-      ev.push({ t: ph.start + ph.dur * 0.5, html: 'The final has started — 10 lords fight for the crown' });
-      ev.push({ t: ph.start + ph.dur * 0.86, html: `<b>${nm(sim.winnerId)}</b> wins the Monthly Tournament!` });
+      ev.push({ t: ph.start + ph.dur * 0.3, html: 'The final has started — 10 lords fight for the crown' });
+      ev.push({ t: ph.start + ph.dur * 0.82, html: `<b>${nm(sim.winnerId)}</b> wins the Monthly Tournament!` });
     }
     return ev;
   }
 
   // ------------------------------------------------------------------ phase renderers
-  function show(which) { $('intro').style.display = which === 'intro' ? 'block' : 'none'; $('stage').classList.toggle('hidden', which === 'intro' || which === 'money'); $('betbox').classList.toggle('hidden', which !== 'final'); $('money').classList.toggle('hidden', which !== 'money'); }
+  function show(which) { $('intro').style.display = which === 'intro' ? 'block' : 'none'; $('stage').classList.toggle('hidden', which === 'intro'); $('betbox').classList.toggle('hidden', which !== 'final' && which !== 'money'); $('money').classList.toggle('hidden', which !== 'money'); }
 
   function drawIntro(ph, p) {
     show('intro');
@@ -361,9 +370,9 @@
 
   function drawFinal(ph, p) {
     show('final');
-    const names = sim.P.map((x) => x.name), F = sim.finalists, openP = seg(p, 0.04, 0.3), runP = seg(p, 0.5, 0.82);
+    const names = sim.P.map((x) => x.name), F = sim.finalists, openP = seg(p, 0.04, 0.3), runP = seg(p, 0.12, 0.78);
     $('stTitle').textContent = 'Final';
-    $('stSub').textContent = p < 0.84 ? 'The 10 finalists fight' : 'Result';
+    $('stSub').textContent = p < 0.8 ? 'The 10 finalists fight' : 'Result';
     cx.clearRect(0, 0, W(), H());
     const members = sim.finalRanked.map((m) => ({ ...m })), order = F.map((id) => members.find((m) => m.id === id));
     const rowH = (H() - 16) / 10, maxCount = Math.max(...sim.counts, 1), maxS = 420;
@@ -379,26 +388,29 @@
     cx.fillStyle = '#94a3b8'; cx.font = '11px Segoe UI'; cx.fillText('final score', 150, 8);
     setLb('Final standings', order.map((m) => ({ name: names[m.id], score: m.s * runP })).sort((a, b) => b.score - a.score), 0);
     const b = sim.bet; let html = '';
-    if (p > 0.86) html = `<p style="text-align:center;margin-top:12px;font-size:15px">Winner <b class="g">${names[sim.winnerId]}</b> takes the crown and the first prize.</p>`;
+    if (p > 0.8) html = `<p style="text-align:center;margin-top:12px;font-size:15px">Winner <b class="g">${names[sim.winnerId]}</b> takes the crown and the first prize.</p>`;
     $('betbox').innerHTML = html;
   }
 
+  let moneyClosed = false;
+  function fitMoney() { const box = $('money'), wrap = box.querySelector('.mwrap'); if (!wrap) return; wrap.style.transform = ''; const k = Math.min(1, (box.clientHeight - 24) / wrap.offsetHeight, (box.clientWidth - 24) / wrap.offsetWidth); wrap.style.transform = 'scale(' + (k > 0 && isFinite(k) ? k : 1) + ')'; }
   const shownCards = new Set();
   function drawMoney(ph, p) {
     show('money');
+    if (moneyClosed) { $('money').classList.add('hidden'); return; }
     const M = sim.money, b = sim.bet, names = sim.P.map((x) => x.name), c = sim.cfg, win = names[sim.winnerId];
     const podium = sim.finalRanked.slice(0, 3);
     const gameEarn = M.treasury + b.house;
     const cards = [
       { at: 0.00, html: `<div class="card" style="grid-column:1/-1"><div class="big" style="padding:10px"><div class="t">🏆 ${win}</div><div class="st">Monthly Tournament champion</div>
         <div class="podium"><div class="pod p2"><div>🥈</div><div class="nm">${names[podium[1].id]}</div><div class="g">${fmt(M.prizes[1].prize)} DOGE</div></div><div class="pod p1"><div>🥇</div><div class="nm">${win}</div><div class="g">${fmt(M.prizes[0].prize)}${b.bonus ? ' + ' + fmt(b.bonus, 1) : ''} DOGE</div></div><div class="pod p3"><div>🥉</div><div class="nm">${names[podium[2].id]}</div><div class="g">${fmt(M.prizes[2].prize)} DOGE</div></div></div></div></div>` },
-      { at: 0.16, html: `<div class="card panel"><h3>Tickets</h3><table><tr><td>${fmt(c.players)} tickets × ${c.price} DOGE</td><td class="n g">${fmt(M.revenue)} DOGE</td></tr><tr><td>→ game treasury (10%)</td><td class="n">${fmt(M.treasury)}</td></tr><tr><td>→ prize pool (90%)</td><td class="n">${fmt(M.pool)}</td></tr>${M.prizeTotal > M.pool ? '<tr><td colspan="2" class="l">Prizes are higher than the pool from tickets — the rest comes from the reserve.</td></tr>' : ''}</table></div>` },
+      { at: 0.15, html: `<div class="card panel"><h3>Tickets</h3><table><tr><td>${fmt(c.players)} tickets × ${c.price} DOGE</td><td class="n g">${fmt(M.revenue)} DOGE</td></tr><tr><td>→ game treasury (10%)</td><td class="n">${fmt(M.treasury)}</td></tr><tr><td>→ prize pool (90%)</td><td class="n">${fmt(M.pool)}</td></tr>${M.prizeTotal > M.pool ? '<tr><td colspan="2" class="l">Prizes are higher than the pool from tickets — the rest comes from the reserve.</td></tr>' : ''}</table></div>` },
       { at: 0.30, html: `<div class="card panel"><h3>Prizes paid to players</h3><table>${M.prizes.map((x) => `<tr><td>#${x.place} ${names[x.id]}</td><td class="n ${x.place <= 3 ? 'g' : ''}">${fmt(x.prize)}${x.bonus ? ' + ' + fmt(x.bonus, 1) + ' bonus' : ''}</td></tr>`).join('')}<tr><td><b>Total prizes</b></td><td class="n g">${fmt(M.prizeTotal)}</td></tr></table></div>` },
-      { at: 0.62, html: `<div class="card panel"><h3>What the game earned</h3><table><tr><td>Treasury from tickets</td><td class="n">${fmt(M.treasury)}</td></tr><tr><td><b>Game earned</b></td><td class="n g">${fmt(gameEarn, 1)} DOGE</td></tr><tr><td>Left in the prize pool for the next tournaments</td><td class="n w">${fmt(M.carry)} DOGE</td></tr></table></div>` },
-      { at: 0.78, html: `<div class="card panel"><h3>Who earned what</h3><table><tr><td>Champion ${win}</td><td class="n g">${fmt(M.prizes[0].amount, 1)} − ${c.price} ticket</td></tr><tr><td>Other 9 finalists</td><td class="n w">${fmt(M.prizes.slice(1).reduce((s, x) => s + x.prize, 0))} total</td></tr><tr><td>${fmt(c.players - 10)} other players</td><td class="n l">− ${c.price} each</td></tr></table></div>` }
+      { at: 0.45, html: `<div class="card panel"><h3>What the game earned</h3><table><tr><td>Treasury from tickets</td><td class="n">${fmt(M.treasury)}</td></tr><tr><td><b>Game earned</b></td><td class="n g">${fmt(gameEarn, 1)} DOGE</td></tr><tr><td>Left in the prize pool for the next tournaments</td><td class="n w">${fmt(M.carry)} DOGE</td></tr></table></div>` },
+      { at: 0.60, html: `<div class="card panel"><h3>Who earned what</h3><table><tr><td>Champion ${win}</td><td class="n g">${fmt(M.prizes[0].amount, 1)} − ${c.price} ticket</td></tr><tr><td>Other 9 finalists</td><td class="n w">${fmt(M.prizes.slice(1).reduce((s, x) => s + x.prize, 0))} total</td></tr><tr><td>${fmt(c.players - 10)} other players</td><td class="n l">− ${c.price} each</td></tr></table></div>` }
     ];
     const box = $('money');
-    if (box.dataset.sim !== String(c.seed) + c.players + c.spectators || !box.children.length) { box.dataset.sim = String(c.seed) + c.players + c.spectators; box.className = 'money'; box.innerHTML = cards.map((x, i) => x.html.replace('<div class="card', `<div data-at="${x.at}" class="card`)).join(''); }
+    if (box.dataset.sim !== String(c.seed) + c.players + c.spectators || !box.children.length) { box.dataset.sim = String(c.seed) + c.players + c.spectators; box.className = 'moneyov'; box.innerHTML = '<div class="mwrap"><div class="money">' + cards.map((x, i) => x.html.replace('<div class="card', `<div data-at="${x.at}" class="card`)).join('') + '</div><div class="mbtns"><button class="s" id="mReplay">&#8635; Replay</button><button class="s" id="mClose">Close</button></div></div>'; $('mReplay').onclick = () => $('restart').onclick(); $('mClose').onclick = () => { moneyClosed = true; box.classList.add('hidden'); }; fitMoney(); }
     box.classList.remove('hidden');
     box.querySelectorAll('.card').forEach((el) => el.classList.toggle('in', p >= Number(el.dataset.at)));
   }
@@ -408,6 +420,7 @@
     const ph = tl.phases.find((x) => T >= x.start && T < x.start + x.dur) || tl.phases[tl.phases.length - 1];
     const p = Math.min(1, (T - ph.start) / ph.dur);
     updatePipeline(ph);
+    if (ph.kind !== 'money') moneyClosed = false;
     if (ph.kind === 'intro') drawIntro(ph, p);
     else if (ph.kind === 'qual') drawQual(ph, p);
     else if (ph.kind === 'cut') drawCut(ph, p);
@@ -434,7 +447,7 @@
   document.querySelectorAll('[data-speed]').forEach((b) => b.onclick = () => { speed = Number(b.dataset.speed); document.querySelectorAll('[data-speed]').forEach((x) => x.classList.toggle('on', x === b)); });
   $('short').onclick = () => { short = !short; $('short').classList.toggle('on', short); $('short').textContent = short ? 'Full version' : 'Short version'; tl = buildTimeline(short ? SHORT : FULL); T = 0; playing = true; $('money').innerHTML = ''; $('play').innerHTML = '&#10074;&#10074; Pause'; };
   $('apply').onclick = () => { $('money').innerHTML = ''; start(); playing = true; $('play').innerHTML = '&#10074;&#10074; Pause'; $('settings').open = false; };
-  window.addEventListener('resize', fit);
+  window.addEventListener('resize', () => { fit(); fitMoney(); });
 
   buildLb(); start();
   window.__sim = { seek: (s) => { T = s; lastTickerCount = -1; playing = false; render(); }, total: () => tl.total, data: () => sim, setSpeed: (x) => { speed = x; } };

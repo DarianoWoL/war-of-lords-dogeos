@@ -579,6 +579,7 @@ async function leaveMiniTournamentQueue(roomId, userId) {
   if (queue) {
     const idx = queue.findIndex((p) => p.userId === uidStr);
     if (idx !== -1) queue.splice(idx, 1);
+    dropBotsIfNoHumans(queue);
   }
   return { ok: true };
 }
@@ -587,10 +588,20 @@ function pruneDisconnectedFromQueue(queue) {
   const now = Date.now();
   for (let i = queue.length - 1; i >= 0; i--) {
     const p = queue[i];
-    if (!p.socketId && p.disconnectedAt && (now - p.disconnectedAt) > MM_QUEUE_DISCONNECT_GRACE_MS) {
+    if (!p.isBot && !p.socketId && p.disconnectedAt && (now - p.disconnectedAt) > MM_QUEUE_DISCONNECT_GRACE_MS) {
       queue.splice(i, 1);
     }
   }
+  dropBotsIfNoHumans(queue);
+}
+
+// Server bots (rooms with allowBots) only wait in the queue for the player who called them in;
+// once no real player is left there they are removed and their temporary accounts deleted.
+function dropBotsIfNoHumans(queue) {
+  if (!queue.length || queue.some((p) => !p.isBot)) return;
+  const ids = queue.filter((p) => p.isBot).map((p) => p.userId);
+  queue.length = 0;
+  User.deleteMany({ _id: { $in: ids }, isBot: true }).catch((err) => console.error('drop queue bots error', err));
 }
 
 // Longest-waiting player anchors the search; its own elapsed queue time sets the MMR range used to
@@ -628,7 +639,7 @@ function startPendingMatch(roomId, players) {
   const matchId = uuidv4();
   const deadlineAt = Date.now() + MM_ACCEPT_WINDOW_MS;
   const timer = setTimeout(() => resolveMatch(roomId, matchId).catch((err) => console.error('resolveMatch (timeout) error', err)), MM_ACCEPT_WINDOW_MS);
-  pendingMatches.set(roomId, { matchId, players, acceptedUserIds: new Set(), deadlineAt, timer });
+  pendingMatches.set(roomId, { matchId, players, acceptedUserIds: new Set(players.filter((p) => p.isBot).map((p) => p.userId)), deadlineAt, timer });
   players.forEach((p) => io.sockets.sockets.get(p.socketId)?.emit('matchmaking:matchFound', { matchId, deadlineAt }));
 }
 
@@ -656,21 +667,22 @@ async function resolveMatch(roomId, matchId) {
     // room fail with reason:'ticket_lost' right after a full, successful accept from every player —
     // a match that had nothing to do with tickets got reported to players as "you didn't accept".
     if (room.requiresMiniTournamentTicket) {
-      const stillTicketed = await User.find({ _id: { $in: accepted.map((p) => p.userId) }, hasUnusedMiniTournamentTicket: true }).select('_id');
-      if (stillTicketed.length !== accepted.length) {
+      const humans = accepted.filter((p) => !p.isBot);
+      const stillTicketed = await User.find({ _id: { $in: humans.map((p) => p.userId) }, hasUnusedMiniTournamentTicket: true }).select('_id');
+      if (stillTicketed.length !== humans.length) {
         accepted.forEach((p) => io.sockets.sockets.get(p.socketId)?.emit('matchmaking:removed', { reason: 'ticket_lost' }));
         return;
       }
     }
     const entries = [];
-    accepted.forEach((p) => entries.push({ userId: p.userId, username: p.username, isBot: false, color: nextAvailableColor(entries) }));
+    accepted.forEach((p) => entries.push({ userId: p.userId, username: p.username, isBot: !!p.isBot, color: nextAvailableColor(entries) }));
     room.waitingPlayers.push(...entries);
     await room.save();
     // Only spend a ticket for rooms that actually required one — a free Mini-Turniej room burning
     // an unrelated ticket the player happens to hold (for some other, paid Mini-Turniej) would be a
     // real loss for them with nothing to show for it.
     if (room.requiresMiniTournamentTicket) {
-      await User.updateMany({ _id: { $in: accepted.map((p) => p.userId) } }, { hasUnusedMiniTournamentTicket: false });
+      await User.updateMany({ _id: { $in: accepted.filter((p) => !p.isBot).map((p) => p.userId) } }, { hasUnusedMiniTournamentTicket: false });
     }
     io.to(roomId).emit('roomUpdated', room);
     io.to(roomId).emit('lobby:update_list', room.waitingPlayers);
@@ -888,7 +900,7 @@ registerRoundFinishHook(async (round) => {
     const vplnAwarded = prizeByPlacement[placement];
     const p = ranked[i];
     if (!vplnAwarded || !p?.userId) continue;
-    if (demoBotIds.has(String(p.userId))) continue;
+    if (p.isBot || demoBotIds.has(String(p.userId))) continue;
     prizeResults.push({ placement, userId: p.userId, username: p.name, vplnAwarded });
     // Paid out 100% gross — no tax withheld (see regulamin.html §5b / TournamentResults.js comment).
     try {
@@ -3035,7 +3047,7 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 app.post('/api/rooms', authMiddleware, requireAdmin, async (req, res) => {
-  const { name, maxPlayers, isPaused, settings, roomType, teamCount, playersCanAddBots, isTournament, isMiniTournament, miniTournamentPrizes, requiresMiniTournamentTicket } = req.body;
+  const { name, maxPlayers, isPaused, settings, roomType, teamCount, playersCanAddBots, isTournament, isMiniTournament, miniTournamentPrizes, requiresMiniTournamentTicket, allowBots } = req.body;
   const resolvedIsMiniTournament = Boolean(isMiniTournament);
   // Tournament rounds only ever support the 'standard' room type — created exclusively from the
   // dedicated admin subpage (admin-turnieje.html), which never sends roomType at all.
@@ -3068,6 +3080,7 @@ app.post('/api/rooms', authMiddleware, requireAdmin, async (req, res) => {
         place3VPLN: numberOrDefault(miniTournamentPrizes?.place3VPLN, 0)
       },
       requiresMiniTournamentTicket: resolvedIsMiniTournament ? Boolean(requiresMiniTournamentTicket) : false,
+      allowBots: resolvedIsMiniTournament ? Boolean(allowBots) : false,
       teamCount: resolvedTeamCount,
       playersCanAddBots: resolvedRoomType === 'team' ? false : Boolean(playersCanAddBots),
       settings: {
@@ -3457,7 +3470,7 @@ app.get('/api/rooms/:id', async (req, res) => {
 });
 
 app.put('/api/rooms/:id', authMiddleware, requireAdmin, async (req, res) => {
-  const { nazwaPokoju, maxGraczy, roundDurationMinutes, economyTimeModifier, militaryTimeModifier, playersCanAddBots } = req.body;
+  const { nazwaPokoju, maxGraczy, roundDurationMinutes, economyTimeModifier, militaryTimeModifier, playersCanAddBots, requiresMiniTournamentTicket, allowBots } = req.body;
   const room = await Room.findById(req.params.id);
   if (!room) return res.status(404).json({ error: 'room not found' });
   if (nazwaPokoju) room.roomName = nazwaPokoju;
@@ -3471,6 +3484,8 @@ app.put('/api/rooms/:id', authMiddleware, requireAdmin, async (req, res) => {
   // caps at TEAM_REGION_SIZE), leaving them stuck in the queue until they manually leave.
   if (Number.isFinite(Number(maxGraczy)) && room.roomType !== 'team') room.maxPlayers = Number(maxGraczy);
   if (typeof playersCanAddBots === 'boolean' && room.roomType !== 'team') room.playersCanAddBots = playersCanAddBots;
+  if (room.isMiniTournament && typeof requiresMiniTournamentTicket === 'boolean') room.requiresMiniTournamentTicket = requiresMiniTournamentTicket;
+  if (room.isMiniTournament && typeof allowBots === 'boolean') room.allowBots = allowBots;
   room.settings = {
     ...room.settings,
     // Number(x) ? ... : fallback is the falsy-zero bug this project has hit before (see
@@ -3706,19 +3721,35 @@ app.get('/api/game/layout', authMiddleware, async (req, res) => {
 // The bot runner (chain/scripts/demo-players.js, ONDEMAND=1) polls the demo_fill_requests collection and
 // puts that many idle bots into the queue. Off by default, so a normal deployment never sees this.
 const DEMO_FILL_ROOMS = (process.env.DEMO_FILL_ROOMS || 'Mini Tournament · 30 min,Mini Tournament · 1 hour').split(',').map((x) => x.trim());
-app.get('/api/demo/config', (req, res) => res.json({ fill: process.env.DEMO_FILL === 'on' }));
+app.get('/api/demo/config', async (req, res) => {
+  try {
+    const room = req.query.roomId ? await Room.findById(String(req.query.roomId)).select('roomName allowBots isMiniTournament') : null;
+    const fill = !!room && room.isMiniTournament && (room.allowBots || (process.env.DEMO_FILL === 'on' && DEMO_FILL_ROOMS.includes(room.roomName)));
+    res.json({ fill });
+  } catch (err) { res.json({ fill: false }); }
+});
 app.post('/api/demo/fill-bots', authMiddleware, async (req, res) => {
   try {
-    if (process.env.DEMO_FILL !== 'on') return res.status(403).json({ error: 'Not available.' });
     const roomId = String(req.body.roomId || '');
-    const room = await Room.findById(roomId).select('roomName maxPlayers isMiniTournament');
+    const room = await Room.findById(roomId).select('roomName maxPlayers isMiniTournament allowBots');
     if (!room || !room.isMiniTournament) return res.status(404).json({ error: 'Room not found.' });
-    if (!DEMO_FILL_ROOMS.includes(room.roomName)) return res.status(400).json({ error: 'Bots are not available in this room.' });
+    const demoRoom = process.env.DEMO_FILL === 'on' && DEMO_FILL_ROOMS.includes(room.roomName);
+    if (!room.allowBots && !demoRoom) return res.status(400).json({ error: 'Bots are not available in this room.' });
     const queue = miniTournamentQueues.get(roomId) || [];
-    if (!queue.some((p) => p.userId === String(req.userId))) return res.status(400).json({ error: 'Join the queue first.' });
+    const me = queue.find((p) => p.userId === String(req.userId));
+    if (!me) return res.status(400).json({ error: 'Join the queue first.' });
     if (pendingMatches.has(roomId)) return res.status(400).json({ error: 'A match is already forming.' });
     const need = (room.maxPlayers || 10) - queue.length;
     if (need <= 0) return res.json({ ok: true, need: 0 });
+    if (room.allowBots) {
+      // Server bots: temporary isBot accounts (deleted after the round), auto-accept the match, never get prizes.
+      for (let i = 0; i < need; i += 1) {
+        const bot = await User.create({ username: `Bot_${uuidv4().slice(0, 8)}`, passwordHash: 'bot', isBot: true });
+        queue.push({ userId: bot._id.toString(), username: bot.username, tournamentMMR: me.tournamentMMR ?? 1000, queuedAt: Date.now(), socketId: null, disconnectedAt: null, isBot: true });
+      }
+      if (!miniTournamentQueues.has(roomId)) miniTournamentQueues.set(roomId, queue);
+      return res.json({ ok: true, need });
+    }
     await mongoose.connection.db.collection('demo_fill_requests').insertOne({ roomId, need, createdAt: new Date(), done: false });
     res.json({ ok: true, need });
   } catch (err) {
