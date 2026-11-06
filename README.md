@@ -6,6 +6,8 @@ Live demo: invite link is provided in the hackathon submission (the demo runs on
 
 > **Testnet only. Test DOGE has no value.** Hackathon build for *Vibe Code on DOGE* (Noah AI × DogeOS).
 
+**Companion app built with Noah AI:** [live app](https://war-of-lords-arena.netlify.app) · [source code](https://github.com/DarianoWoL/noah-6aeb4bd17d19514dabedd287-s84x) (reads the DogeOS contract live, wallet lookup, tournament simulation).
+
 War of Lords is a browser strategy game (real-time villages, armies, tournaments with a Monthly Tournament and
 Mini-Tournaments). This build lets players **connect their DogeOS wallet, pay tournament entry on-chain, receive prizes
 from a smart contract**.
