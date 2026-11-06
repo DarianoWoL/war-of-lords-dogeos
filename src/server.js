@@ -612,8 +612,11 @@ function tryFormGroup(queue, need) {
   for (const anchor of anchors) {
     const waited = Date.now() - anchor.queuedAt;
     const range = waited >= MM_TIER2_MS ? Infinity : waited >= MM_TIER1_MS ? MM_TIER2_RANGE : MM_TIER1_RANGE;
+    // Filler bots (server bots and the Demo_* accounts) can sit next to any player: skill-based pairing is
+    // meant for humans, and a 150+ MMR gap used to delay a bot match by a full minute.
+    const isFiller = (p) => !!p.isBot || /^Demo_/.test(String(p.username || ''));
     const pool = queue
-      .filter((p) => p !== anchor && Math.abs(p.tournamentMMR - anchor.tournamentMMR) <= range)
+      .filter((p) => p !== anchor && (isFiller(p) || isFiller(anchor) || Math.abs(p.tournamentMMR - anchor.tournamentMMR) <= range))
       .sort((a, b) => Math.abs(a.tournamentMMR - anchor.tournamentMMR) - Math.abs(b.tournamentMMR - anchor.tournamentMMR));
     if (pool.length + 1 >= need) return [anchor, ...pool.slice(0, need - 1)];
   }
@@ -623,7 +626,7 @@ function tryFormGroup(queue, need) {
 async function runMatchingTick() {
   for (const [roomId, queue] of miniTournamentQueues) {
     pruneDisconnectedFromQueue(queue);
-    if (!queue.length || pendingMatches.has(roomId)) continue; // one match forming per room at a time
+    if (!queue.length || pendingMatches.has(roomId) || roomCountdowns.has(roomId)) continue; // one match forming per room at a time
     const room = await Room.findById(roomId).select('maxPlayers isPaused enabled isMiniTournament');
     if (!room || !room.isMiniTournament || room.isPaused || room.enabled === false) continue;
     const need = room.maxPlayers || 10;
@@ -1399,12 +1402,18 @@ async function getTicketPricePLN() {
 // Resets `settings.tournamentTicketsSoldThisMonth` to 0 in place if the stored month key is
 // stale, and returns how many of the GLOBAL monthly pool are left — this is one shared pool
 // across every player, not a per-player allowance (see Settings.js).
+// Monthly ticket pool limits (300 mini / 350 monthly tickets) are switched OFF for this build. The code stays;
+// set TICKET_POOL_LIMIT_ENABLED to true (or env TICKET_POOL_LIMIT=on) to bring the limits back.
+const TICKET_POOL_LIMIT_ENABLED = process.env.TICKET_POOL_LIMIT === 'on';
+const TICKET_POOL_UNLIMITED = 999999999;
+
 async function remainingMonthlyTicketPool(settings) {
   const monthKey = currentMonthKey();
   if (settings.tournamentTicketsMonthKey !== monthKey) {
     settings.tournamentTicketsMonthKey = monthKey;
     settings.tournamentTicketsSoldThisMonth = 0;
   }
+  if (!TICKET_POOL_LIMIT_ENABLED) return TICKET_POOL_UNLIMITED;
   const poolSize = await getTicketPoolSize();
   return poolSize - (settings.tournamentTicketsSoldThisMonth || 0);
 }
@@ -1419,6 +1428,7 @@ function remainingMiniTournamentTicketPool(settings) {
     settings.miniTournamentTicketsMonthKey = monthKey;
     settings.miniTournamentTicketsSoldThisMonth = 0;
   }
+  if (!TICKET_POOL_LIMIT_ENABLED) return TICKET_POOL_UNLIMITED;
   return settings.miniTournamentTicketsMonthlyPool - (settings.miniTournamentTicketsSoldThisMonth || 0);
 }
 
@@ -2801,9 +2811,10 @@ app.get('/api/settings/tournament-tickets', async (req, res) => {
     place4to10: tournament.prizesConfig.place4to10VPLN
   } : null;
   res.json({
+    unlimited: !TICKET_POOL_LIMIT_ENABLED,
     total,
     sold,
-    remaining: Math.max(0, total - sold),
+    remaining: TICKET_POOL_LIMIT_ENABLED ? Math.max(0, total - sold) : TICKET_POOL_UNLIMITED,
     title: (tournament && tournament.title) || null,
     ticketPricePLN: await getTicketPricePLN(),
     prizes,
@@ -2839,6 +2850,7 @@ app.get('/api/settings/mini-tournament-ticket-price', async (req, res) => {
   res.json({
     priceZl: settings.miniTournamentTicketPricePLN,
     poolSize: settings.miniTournamentTicketsMonthlyPool,
+    unlimited: !TICKET_POOL_LIMIT_ENABLED,
     remaining: Math.max(0, remaining)
   });
 });
@@ -3616,7 +3628,8 @@ app.get('/api/ranking', async (req, res) => {
   // search (filterRanking()) over the full list. A hardcoded .limit(20) here silently made every
   // player outside the top 20 by Skill Points impossible to find via that search, including the
   // admin's own account despite it genuinely existing.
-  const ranking = await User.find({ isBot: false, isSystemAccount: { $ne: true } }).sort({ skillPoints: -1 }).select('username skillPoints roundsPlayed roundsWon');
+  // Demo build: the Demo_* filler accounts and players who never played stay out of the Hall of Fame.
+  const ranking = await User.find({ isBot: false, isSystemAccount: { $ne: true }, username: { $not: /^Demo_/ }, roundsPlayed: { $gt: 0 } }).sort({ skillPoints: -1 }).select('username skillPoints roundsPlayed roundsWon');
   res.json(ranking.map((item, index) => ({
     nick: item.username,
     mmr: item.skillPoints,

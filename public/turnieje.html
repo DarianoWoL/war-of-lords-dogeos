@@ -774,7 +774,7 @@
                 ]);
                 if (poolRes.ok) {
                     const pool = await poolRes.json();
-                    document.getElementById('mmrPoolHint').textContent = i18n.t('tour.mmr.poolHint', { remaining: pool.remaining, total: pool.total });
+                    document.getElementById('mmrPoolHint').textContent = pool.unlimited ? '' : i18n.t('tour.mmr.poolHint', { remaining: pool.remaining, total: pool.total });
                 }
                 if (!leaderboardRes.ok) throw new Error(i18n.t('tour.mmr.loadError'));
                 const data = await leaderboardRes.json();

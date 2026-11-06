@@ -1039,7 +1039,7 @@
                     if (dashEl) {
                         dashEl.textContent = data.salesPausedByAdmin
                             ? '⛔ Ticket sales paused'
-                            : `🎫 Tickets left: ${data.remaining ?? '—'} / ${data.total ?? '—'}`;
+                            : (data.unlimited ? '' : `🎫 Tickets left: ${data.remaining ?? '—'} / ${data.total ?? '—'}`);
                     }
                 })
                 .catch((err) => console.error('Błąd ładowania puli biletów turniejowych:', err));
@@ -1074,5 +1074,6 @@
     <script src="/wol-guest.js"></script>
     <script src="/doge-mascot.js"></script>
     <script src="/wol-helper.js"></script>
+    <script src="/doge-badges.js"></script>
 </body>
 </html>

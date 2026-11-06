@@ -527,7 +527,12 @@ Issued: ${new Date().toISOString()}`;
   async function marketTick() {
     const now = new Date();
     for (const m of await ChainMarket.find({ status: 'opening' })) await openOnChain(m).catch((e) => console.error('[chain] open retry', e.shortMessage || e.message));
-    for (const m of await ChainMarket.find({ status: 'open', closesAt: { $lte: now } })) await closeOnChain(m).catch((e) => console.error('[chain] close', e.shortMessage || e.message));
+    for (const m of await ChainMarket.find({ status: 'open', closesAt: { $lte: now } })) await closeOnChain(m).catch(async (e) => {
+      const msg = e.shortMessage || e.message || '';
+      // Rynek nie jest juz otwarty w kontrakcie - nie ponawiaj w nieskonczonosc.
+      if (/not open/.test(msg)) { m.status = 'closed'; await m.save().catch(() => {}); return; }
+      console.error('[chain] close', msg);
+    });
   }
 
   // ---------------------------------------------------------------- nagrody

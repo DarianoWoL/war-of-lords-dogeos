@@ -367,7 +367,7 @@
                 // "(całkowity koszt: X zł)" so it's unambiguous this IS the final amount charged -
                 // nothing else gets added on top (no VAT, no delivery - see regulamin.html §6.2).
                 document.getElementById('miniTicketPriceLabel').textContent = i18n.t('shop.priceTotal', { price: priceData.priceZl });
-                document.getElementById('miniTicketPoolLabel').textContent = i18n.t('shop.poolAvailable', { remaining: priceData.remaining, total: priceData.poolSize });
+                document.getElementById('miniTicketPoolLabel').textContent = priceData.unlimited ? '' : i18n.t('shop.poolAvailable', { remaining: priceData.remaining, total: priceData.poolSize });
                 document.getElementById('miniTicketPoolExhaustedBanner').style.display = priceData.remaining <= 0 ? 'block' : 'none';
                 const vplnBtn = document.getElementById('btnBuyMiniTicketVpln');
 
@@ -505,8 +505,8 @@
                     updateVplnButtonsAffordability();
                     return;
                 }
-                document.getElementById('ticketPoolInfo').textContent = i18n.t('shop.monthly.poolLeft', { remaining: data.remaining, total: data.total });
-                document.getElementById('ticketPoolLabel').textContent = i18n.t('shop.poolAvailable', { remaining: data.remaining, total: data.total });
+                document.getElementById('ticketPoolInfo').textContent = data.unlimited ? '' : i18n.t('shop.monthly.poolLeft', { remaining: data.remaining, total: data.total });
+                document.getElementById('ticketPoolLabel').textContent = data.unlimited ? '' : i18n.t('shop.poolAvailable', { remaining: data.remaining, total: data.total });
                 document.getElementById('ticketPoolExhaustedBanner').style.display = data.remaining <= 0 ? 'block' : 'none';
                 document.getElementById('salesPausedBanner').style.display = data.salesPausedByAdmin ? 'block' : 'none';
                 document.querySelectorAll('.btn-package-buy[data-quantity]').forEach((btn) => {

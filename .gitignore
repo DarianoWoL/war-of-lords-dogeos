@@ -27,3 +27,4 @@ runtime/
 node_modules/
 chain/artifacts/
 chain/cache/
+deploy/vps/deploy.sh

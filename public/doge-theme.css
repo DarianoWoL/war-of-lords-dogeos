@@ -266,6 +266,13 @@ html[data-theme="doge"] tr[data-unit-row="cavalry"] > td:first-child { backgroun
 html[data-theme="doge"] tr[data-unit-row="ram"] > td:first-child { background: url("/assets/unit-ram.png") no-repeat 4px center / 38px 38px; padding-left: 48px !important; min-height: 44px; }
 html[data-theme="doge"] tr[data-unit-row="lord"] > td:first-child { background: url("/assets/unit-lord.png") no-repeat 4px center / 38px 38px; padding-left: 48px !important; min-height: 44px; }
 html[data-theme="doge"] #recruitTable td, html[data-theme="doge"] #garrisonTable td { vertical-align: middle; }
+/* Recruitment + garrison tables must never be wider than their cards (fixed layout, column shares) */
+html[data-theme="doge"] #recruitTable, html[data-theme="doge"] #garrisonTable { table-layout: fixed; width: 100% !important; max-width: 100%; }
+html[data-theme="doge"] #recruitTable th:nth-child(1) { width: 44%; } html[data-theme="doge"] #recruitTable th:nth-child(2) { width: 22%; } html[data-theme="doge"] #recruitTable th:nth-child(3) { width: 34%; }
+html[data-theme="doge"] #garrisonTable th:nth-child(1) { width: 44%; } html[data-theme="doge"] #garrisonTable th:nth-child(2) { width: 30%; } html[data-theme="doge"] #garrisonTable th:nth-child(3) { width: 26%; }
+html[data-theme="doge"] #recruitTable td, html[data-theme="doge"] #garrisonTable td, html[data-theme="doge"] #recruitTable th, html[data-theme="doge"] #garrisonTable th { overflow-wrap: anywhere; box-sizing: border-box; }
+html[data-theme="doge"] #recruitTable input { width: 100% !important; max-width: 100%; box-sizing: border-box; }
+html[data-theme="doge"] #recruitTable .recruit-button { width: 100%; max-width: 100%; box-sizing: border-box; padding-left: 4px !important; padding-right: 4px !important; white-space: normal; }
 /* garrison rows are shorter: smaller icons with room around them */
 html[data-theme="doge"] #garrisonTable tr[data-unit-row] > td:first-child { background-size: 30px 30px !important; background-position: 2px center !important; padding-left: 38px !important; height: 36px; }
 
@@ -339,3 +346,26 @@ html[data-theme="doge"] :is(#reportsModal, body) .reports-mode-btn.has-new-repor
 }
 /* Classic look: a simple red glow on the tab */
 html:not([data-theme="doge"]) .reports-mode-btn.has-new-report { box-shadow: 0 0 0 2px #f87171, 0 0 12px rgba(248,113,113,.6) !important; color: #fecaca !important; }
+
+/* ===== Player profile ===== */
+html[data-theme="doge"] .profile-card { background: var(--d-card) !important; background-image: none !important; border: 4px solid var(--d-brown) !important; border-radius: 28px !important; box-shadow: 0 7px 0 #c98400, 0 12px 20px rgba(0,0,0,.18) !important; backdrop-filter: none !important; color: var(--d-brown) !important; }
+html[data-theme="doge"] .profile-card h1 { color: var(--d-brown) !important; text-shadow: 2px 2px 0 var(--d-yellow) !important; background: none !important; -webkit-text-fill-color: currentColor !important; }
+html[data-theme="doge"] .profile-card > p, html[data-theme="doge"] .profile-card p:not(.stat-box p) { color: #5a3a10 !important; }
+html[data-theme="doge"] .stat-box { background: #fff3c4 !important; background-image: none !important; border: 3px solid var(--d-brown) !important; border-radius: 20px !important; box-shadow: 0 5px 0 #c98400 !important; }
+html[data-theme="doge"] .stat-box:nth-child(4n+2) { background: #d9f1ff !important; }
+html[data-theme="doge"] .stat-box:nth-child(4n+3) { background: #ffe0e6 !important; }
+html[data-theme="doge"] .stat-box:nth-child(4n) { background: #e3f7d4 !important; }
+html[data-theme="doge"] .stat-box h2 { color: #7a4a00 !important; text-shadow: none !important; }
+html[data-theme="doge"] .stat-box p { color: #d96a00 !important; text-shadow: none !important; }
+html[data-theme="doge"] .referral-card { background: #fff3c4 !important; background-image: none !important; border: 3px solid var(--d-brown) !important; border-radius: 22px !important; box-shadow: 0 5px 0 #c98400 !important; color: var(--d-brown) !important; }
+html[data-theme="doge"] .referral-card h2 { color: #c45a00 !important; text-shadow: none !important; }
+html[data-theme="doge"] .referral-card p, html[data-theme="doge"] .referral-card span, html[data-theme="doge"] .referral-card div { color: var(--d-brown) !important; }
+html[data-theme="doge"] .referral-card strong, html[data-theme="doge"] .referral-card b { color: #c45a00 !important; }
+html[data-theme="doge"] .referral-card a { color: #c45a00 !important; }
+html[data-theme="doge"] .referral-link-row input { background: #fff !important; color: var(--d-brown) !important; border: 3px solid var(--d-brown) !important; border-radius: 999px !important; }
+/* Ranking page subtitle on the wallpaper */
+html[data-theme="doge"] .subtitle { color: #4a2c00 !important; background: rgba(255,246,214,.92); display: table; margin-left: auto !important; margin-right: auto !important; padding: 4px 14px; border-radius: 999px; border: 2px solid #4a2c00; text-shadow: none !important; }
+
+/* "Claim X DOGE" sits LEFT of the wallet button on one line (it used to wrap above it and stick out of the bar on phones) */
+html[data-theme="doge"] #wolWalletWidget { flex-wrap: nowrap !important; max-width: none !important; white-space: nowrap; }
+html[data-theme="doge"] #wolWalletWidget .wolClaim, html[data-theme="doge"] #wolWalletWidget .wolPill { flex: 0 0 auto; }

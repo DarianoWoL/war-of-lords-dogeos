@@ -1219,7 +1219,7 @@
                     const res = await fetch('/api/demo/fill-bots', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ roomId: roomId }) });
                     const d = await res.json();
                     note.style.display = 'block';
-                    if (res.ok) note.textContent = d.need ? ('Bots are joining (' + d.need + ')…') : 'The room is already full.';
+                    if (res.ok) note.textContent = d.need ? ('Bots are joining (' + d.need + ')…') : 'All places are taken - the match is about to start.';
                     else { note.textContent = d.error || 'Not available.'; btn.disabled = false; }
                 } catch (e) { note.style.display = 'block'; note.textContent = 'Not available.'; btn.disabled = false; }
             });

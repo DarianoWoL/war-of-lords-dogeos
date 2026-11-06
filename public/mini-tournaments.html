@@ -125,7 +125,7 @@
 
             const statusText = document.getElementById('ticketStatusText');
             const actionBtn = document.getElementById('ticketActionBtn');
-            const poolInfo = `This month’s pool: <strong>${formatNumber(poolRemaining)} / ${formatNumber(poolSize)}</strong>.`;
+            const poolInfo = priceData.unlimited ? '' : `This month’s pool: <strong>${formatNumber(poolRemaining)} / ${formatNumber(poolSize)}</strong>.`;
 
             if (!token) {
                 statusText.innerHTML = `Mini-Tournament entry: <strong>${priceDoge()} DOGE</strong> (testnet). ${poolInfo} Connect your wallet to join.`;

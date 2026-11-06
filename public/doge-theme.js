@@ -50,7 +50,7 @@
     if (links.length < 2) return;
     var nr = nav.getBoundingClientRect(), k = nr.width / nav.offsetWidth || 1;
     var pin = pinnedEl(), end = nav.offsetWidth - PAD, slots = links.length - 1;
-    if (pin && window.innerWidth > 900) { var pr = pin.getBoundingClientRect(); if (pr.width > 0) { end = (pr.left - nr.left) / k; slots = links.length; } }
+    if (pin) { var pr = pin.getBoundingClientRect(); if (pr.width > 0) { end = (pr.left - nr.left) / k - (window.innerWidth <= 900 ? 10 : 0); slots = links.length; } }
     var start = PAD, total = 0;
     links.forEach(function (a) { total += a.offsetWidth; });
     // equal gaps between all buttons, including the gap before the wallet button
@@ -62,9 +62,13 @@
     var nav = document.querySelector('.nav-menu'), ref = document.getElementById('navHome');
     ['wolGuestConnect', 'wolWalletWidget'].forEach(function (id) {
       var el = document.getElementById(id); if (!el) return;
-      if (window.innerWidth <= 900 || !ref || !nav || !nav.offsetWidth) { el.style.removeProperty('top'); el.style.removeProperty('right'); return; }
+      if (!ref || !nav || !nav.offsetWidth) { el.style.removeProperty('top'); el.style.removeProperty('right'); return; }
       var r = ref.getBoundingClientRect(), nr = nav.getBoundingClientRect(), k = nr.width / nav.offsetWidth || 1;
-      el.style.setProperty('top', Math.round(r.top + r.height / 2 - el.offsetHeight / 2) + 'px', 'important');
+      // phones: the whole page is a 1998px canvas shrunk to fit, so shrink the wallet button with it
+      if (window.innerWidth <= 900) { el.style.setProperty('transform', 'scale(' + (k * 1.2).toFixed(3) + ')', 'important'); el.style.setProperty('transform-origin', 'top right', 'important'); }
+      else { el.style.removeProperty('transform'); el.style.removeProperty('transform-origin'); }
+      // the visual height matters (on phones the button is scaled down with a transform)
+      el.style.setProperty('top', Math.round(r.top + r.height / 2 - el.getBoundingClientRect().height / 2) + 'px', 'important');
       el.style.setProperty('right', Math.round(window.innerWidth - (nr.right - PAD * k)) + 'px', 'important');
     });
   }

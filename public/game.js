@@ -1772,7 +1772,7 @@ function patchRecruitQueueCountdowns(queue) {
       const remainingUnits = Number.isFinite(item.remainingUnits) ? item.remainingUnits : item.count;
       const wholeRemainingSeconds = currentUnitRemaining + Math.max(0, (remainingUnits - 1) * unitDurationSeconds);
       const readyClock = new Date(now + wholeRemainingSeconds * 1000).toLocaleTimeString(wolLocale(), { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      if (timeEl) timeEl.textContent = `gotowe o ${readyClock} (za ${wholeRemainingSeconds}s)`;
+      if (timeEl) timeEl.textContent = `ready at ${readyClock} (in ${wholeRemainingSeconds}s)`;
       const durationMs = unitDurationSeconds * 1000;
       const elapsed = Math.max(0, Math.min(now - item.startTime, durationMs));
       const progressFill = itemEl.querySelector('[data-progress-fill]');
@@ -1781,7 +1781,7 @@ function patchRecruitQueueCountdowns(queue) {
       const remainingUnits = Number.isFinite(item.remainingUnits) ? item.remainingUnits : item.count;
       const batchEndTime = item.startTime + remainingUnits * unitDurationSeconds * 1000;
       const readyClock = new Date(batchEndTime).toLocaleTimeString(wolLocale(), { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      if (timeEl) timeEl.textContent = `gotowe o ${readyClock}`;
+      if (timeEl) timeEl.textContent = `ready at ${readyClock}`;
     }
   });
 }
@@ -2588,3 +2588,41 @@ function initialize() {
 }
 
 window.addEventListener('DOMContentLoaded', initialize);
+
+// Phones: the page is wider than the screen, so "centered in the layout viewport" can be far off-screen
+// (the attack / buy-village panel then seemed to appear at the bottom). Keep the map action panel and the
+// modal windows centered on what the player actually SEES (visual viewport), whatever the zoom/scroll.
+(function keepOverlaysInView() {
+  var vv = window.visualViewport;
+  if (!vv) return;
+  var busy = false;
+  var mo = null;
+  function place() {
+    busy = false;
+    if (mo) mo.disconnect();
+    try {
+      var panel = document.getElementById('mapActionPanel');
+      if (panel && panel.style.display !== 'none') {
+        panel.style.setProperty('left', (vv.offsetLeft + vv.width / 2) + 'px', 'important');
+        panel.style.setProperty('top', (vv.offsetTop + vv.height / 2) + 'px', 'important');
+        var k = vv.scale > 0 ? 1 / vv.scale : 1;
+        panel.style.setProperty('transform', 'translate(-50%, -50%) scale(' + Math.min(1.6, k).toFixed(3) + ')', 'important');
+        panel.style.setProperty('max-height', (vv.height * 0.9) + 'px', 'important');
+      }
+      document.querySelectorAll('.modal-backdrop.active').forEach(function (m) {
+        m.style.setProperty('inset', 'auto', 'important');
+        m.style.setProperty('left', vv.offsetLeft + 'px', 'important');
+        m.style.setProperty('top', vv.offsetTop + 'px', 'important');
+        m.style.setProperty('width', vv.width + 'px', 'important');
+        m.style.setProperty('height', vv.height + 'px', 'important');
+      });
+    } catch (e) { /* cosmetic only */ }
+    if (mo) mo.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+  }
+  function schedule() { if (!busy) { busy = true; requestAnimationFrame(place); } }
+  vv.addEventListener('resize', schedule);
+  vv.addEventListener('scroll', schedule);
+  window.addEventListener('scroll', schedule, { passive: true });
+  mo = new MutationObserver(schedule);
+  schedule();
+})();

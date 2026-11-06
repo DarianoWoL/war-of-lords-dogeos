@@ -144,7 +144,7 @@
             tile.innerHTML = `
                 <h1>${data.title || data.monthKey}</h1>
                 <span class="tournament-status">${STATUS_LABELS[data.simplifiedStatus] || data.simplifiedStatus}</span>
-                <p class="tournament-tickets">Tickets available: <strong>${data.tickets.remaining} / ${data.tickets.total}</strong> · Ticket price: <strong>${data.ticketPricePLN} DOGE</strong></p>
+                <p class="tournament-tickets">${data.tickets.unlimited ? '' : `Tickets available: <strong>${data.tickets.remaining} / ${data.tickets.total}</strong> · `}Ticket price: <strong>${data.ticketPricePLN} DOGE</strong></p>
 
                 <div class="tile-section">
                     <h2>📅 Schedule</h2>
